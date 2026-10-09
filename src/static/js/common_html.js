@@ -531,7 +531,6 @@ const html = {
      * includeall: Have an all/(all) option at the top of the list
      */
     animal_flag_options: function(a, flags, node, includeall) {
-
         var opt = [];
         var field_option = function(fieldname, post, label) {
             var sel = a && a[fieldname] == 1 ? 'selected="selected"' : "";
@@ -551,15 +550,11 @@ const html = {
             return '<option ' + sel + ' value="' + html.title(flag) + '">' + flag + '</option>';
         };
 
-        var h = [
-            { loc: "any", label: _("Courtesy Listing"), html: field_option("ISCOURTESY", "courtesy", _("Courtesy Listing")) },
-            { loc: "on", label: _("Cruelty Case"), html: field_option("CRUELTYCASE", "crueltycase", _("Cruelty Case")) },
-            { loc: "any", label: _("Non-Shelter"), html: field_option("NONSHELTERANIMAL", "nonshelter", _("Non-Shelter")) },
-            { loc: "on", label: _("Not For Adoption"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Not For Adoption")) },
-            { loc: "off", label: _("Do Not Publish"), html: field_option("ISNOTAVAILABLEFORADOPTION", "notforadoption", _("Do Not Publish")) },
-            { loc: "any", label: _("Do Not Register Microchip"), html: field_option("ISNOTFORREGISTRATION", "notforregistration", _("Do Not Register Microchip")) },
-            { loc: "on", label: _("Quarantine"), html: field_option("ISQUARANTINE", "quarantine", _("Quarantine")) }
-        ];
+        let h = [];
+
+        $.each(asm.animalflags, function(i, v) {
+            h.push({ label: _(v[1].LABEL), html: field_option(v[1].FIELD, v[0], _(v[1].LABEL)), loc: v[1].LOCATION });
+        });
 
         $.each(flags, function(i, v) {
             h.push({ label: v.FLAG, html: flag_option(v.FLAG) });
@@ -573,15 +568,17 @@ const html = {
 
         $.each(h, function(i, v) {
             // Skip if the flag is only for on-shelter and the animal is off-shelter
-            if (v.loc == "on" && a && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2) { return; }
-            // Skip if the flag is for off shelter only and the animal is on shelter
-            if (v.loc == "off" && a && a.ARCHIVED == 0) { return; }
-            opt.push(v.html);    
+            if (v.loc == "on" && a && a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2) {
+                // Pass
+            } else if (v.loc == "off" && a && a.ARCHIVED == 0) { // Skip if the flag is for off shelter only and the animal is on shelter
+                // Pass
+            } else {
+                opt.push(v.html);
+            }
         });
 
         node.html(opt.join("\n"));
         node.change();
-
     },
 
     /**
@@ -710,7 +707,6 @@ const html = {
      * includeall: Have an all/(all) option at the top of the list
      */
     person_flag_options: function(p, flags, node, include_all, include_previous_adopter) {
-
         var opt = [];
         var field_option = function(fieldname, post, label) {
             var sel = p && p[fieldname] == 1 ? 'selected="selected"' : "";
@@ -730,34 +726,17 @@ const html = {
             return '<option ' + sel + ' value="' + html.title(flag) + '">' + flag + '</option>';
         };
 
-        var h = [
-            { label: _("ACO"), html: field_option("ISACO", "aco", _("ACO")) },
-            { label: _("Adopter"), html: field_option("ISADOPTER", "adopter", _("Adopter")) },
-            { label: _("Adoption Coordinator"), html: field_option("ISADOPTIONCOORDINATOR", "coordinator", _("Adoption Coordinator")) },
-            { label: _("Banned"), html: field_option("ISBANNED", "banned", _("Banned")) },
-            { label: _("Dangerous"), html: field_option("ISDANGEROUS", "dangerous", _("Dangerous")) },
-            { label: _("Deceased"), html: field_option("ISDECEASED", "deceased", _("Deceased")) },
-            { label: _("Donor"), html: field_option("ISDONOR", "donor", _("Donor")) },
-            { label: _("Driver"), html: field_option("ISDRIVER", "driver", _("Driver")) },
-            { label: _("Exclude from bulk email"), html: field_option("EXCLUDEFROMBULKEMAIL", "excludefrombulkemail", _("Exclude from bulk email")) },
-            { label: _("Fosterer"), html: field_option("ISFOSTERER", "fosterer", _("Fosterer")) },
-            { label: _("Homechecked"), html: field_option("IDCHECK", "homechecked", _("Homechecked")) },
-            { label: _("Homechecker"), html: field_option("ISHOMECHECKER", "homechecker", _("Homechecker")) },
-            { label: _("Member"), html: field_option("ISMEMBER", "member", _("Member")) },
-            { label: _("Other Shelter"), html: field_option("ISSHELTER", "shelter", _("Other Shelter")) },
-            { label: _("Sponsor"), html: field_option("ISSPONSOR", "sponsor", _("Sponsor")) },
-            { label: _("Staff"), html: field_option("ISSTAFF", "staff", _("Staff")) },
-            { label: _("Supplier"), html: field_option("ISSUPPLIER", "supplier", _("Supplier")) },
-            { label: _("Vet"), html: field_option("ISVET", "vet", _("Vet")) },
-            { label: _("Volunteer"), html: field_option("ISVOLUNTEER", "volunteer", _("Volunteer")) }
-        ];
-
-        if (!config.bool("DisableRetailer")) {
-            h.push({ label: _("Retailer"), html: field_option("ISRETAILER", "retailer", _("Retailer")) });
-        }
-        if (asm.locale == "en_GB") {
-            h.push({ label: _("UK Giftaid"), html: field_option("ISGIFTAID", "giftaid", _("UK Giftaid"))});
-        }
+        let h = [];
+        
+        $.each(asm.personflags, function(i, v) {
+            if (config.bool("DisableRetailer") && v[0] == "retailer") {
+                // Pass
+            } else if (asm.locale != "en_GB" && v[0] == "giftaid") {
+                // Pass
+            } else {
+                h.push({ label: _(v[1].LABEL), html: field_option(v[1].FIELD, v[0], _(v[1].LABEL))});
+            }
+        });
 
         if (include_previous_adopter) {
             h.push({ label: _("Previous Adopter"), html: field_option("", "padopter", _("Previous Adopter"))});
@@ -835,7 +814,7 @@ const html = {
             warn.push(_("This person has previously surrendered an animal."));
         }
         // Person at this address previously banned?
-        if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
+        if (p.BANNEDADDRESS > 0 && p.ISBANNED == 0 && config.bool("WarnBannedAddress")) {
             warn.push(_("This person lives at the same address as someone who was previously banned."));
         }
         // Is this owner not homechecked?
@@ -1116,22 +1095,27 @@ const html = {
      * state: highlight (default) | error 
      * icon: info (default, jquery ui icon)
      * padding: (default 5px)
+     * marginleft: (default auto)
+     * marginright: (default auto)
      * margintop: (default not set)
      * maxwidth: (default 900px)
      */
     textbar: function(s, o) {
-        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", maxwidth = "max-width: 900px;";
+        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", 
+            marginleft = "margin-left: auto;", marginright = "margin-right: auto;", maxwidth = "max-width: 900px;";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
         if (o.display) { display = "display: " + o.display + ";"; }
         if (o.state) { state = o.state; }
         if (o.icon) { icon = o.icon; }
-        if (o.padding) { padding = "padding: " + o.padding + ";"; }
+        if (o.padding) { padding = "padding: " + o.padding + "; "; }
         if (o.margintop) { margintop = "margin-top: " + o.margintop + ";"; }
+        if (o.marginleft) { marginleft = "margin-left: " + o.marginleft + ";"; }
+        if (o.marginright) { marginright = "margin-right: " + o.marginright + ";"; }
         if (o.maxwidth) { maxwidth = "max-width: " + o.maxwidth + ";"; }
         return [
-            '<div class="ui-widget" ' + containerid + ' style="margin-left: auto; margin-right: auto; ' + margintop + display + maxwidth + '">',
+            '<div class="ui-widget" ' + containerid + ' style="' + margintop + marginleft + marginright + display + maxwidth + '">',
             '<div class="ui-state-' + state + ' ui-corner-all" style="' + padding + '"><p>',
             '<span class="ui-icon ui-icon-' + icon + '"></span>',
             s,
@@ -1617,8 +1601,29 @@ const html = {
         });
         node.html(opt.join("\n"));
         node.change();
-    }
+    },
 
+    substitute_person_flag_names: function(flagstring) {
+        let flags = [];
+        let stock = [];
+        let labels = {};
+        $.each(asm.personflags, function(i, v) {
+            stock.push(v[0]);
+            labels[v[0]] = _(v[1].LABEL);
+        });
+
+        if (flags != null) {
+            $.each(flagstring.split(","), function(i, v) {
+                if ($.inArray(v, stock) > 0) {
+                    flags.push(labels[v]);
+                } else {
+                    flags.push(v);
+                }
+            });
+        }
+        flags.sort();
+        return flags.join(", ");
+    }
 };
 
 

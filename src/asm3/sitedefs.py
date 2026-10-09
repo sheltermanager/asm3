@@ -301,6 +301,9 @@ MYPET_API_KEY = get_string("mypet_api_key", "")
 PETCADEMY_FTP_HOST = get_string("petcademy_ftp_host", "")
 PETCADEMY_FTP_USER = get_string("petcademy_ftp_user", "")
 PETCADEMY_FTP_PASSWORD = get_string("petcademy_ftp_password", "")
+PETCO_LOVELOST_API_KEY = get_string("petco_lovelost_api_key", "")
+PETCO_LOVELOST_BASE_URL = get_string("petco_lovelost_base_url", "")
+PETCO_LOVELOST_DEBUG = get_boolean("petco_lovelost_debug", False)
 PETFBI_FTP_HOST = get_string("petfbi_ftp_host", "petfiles.petfbi.org")
 PETFINDER_FTP_HOST = get_string("petfinder_ftp_host", "members.petfinder.com")
 PETFINDER_SEND_PHOTOS_BY_FTP = get_boolean("petfinder_send_photos_by_ftp", True)
@@ -347,6 +350,9 @@ EMERGENCY_NOTICE = get_string("emergency_notice", "")
 # SMTP_SERVER = { "sendmail": False, "host": "mail.yourdomain.com", "port": 25, "username": "userifauth", "password": "passifauth", "usetls": False }
 # SMTP_SERVER = { "sendmail": False, "host": "mail.yourdomain.com", "port": 25, "username": "", "password": "", "usetls": False }
 SMTP_SERVER = get_dict("smtp_server", { "sendmail": True })
+
+#Whitelist of mail server IPs that are allowed to call the email_received_log method of the service API
+EMAIL_SERVER_IP_WHITELIST = get_string("email_server_ip_whitelist", "127.0.0.1 localhost")
 
 # The from address for all outgoing emails. The email address configured
 # in the database will be used as the Reply-To header to avoid
@@ -413,3 +419,4 @@ AMQP_ENABLED = get_boolean("amqp_enabled", False)
 VIDEO_ENABLED = get_boolean("video_enabled", False)
 VIDEO_SIZE_LIMIT = get_integer("video_size_limit", 10485760)
 VIDEO_THUMBNAIL_CMD = get_string("video_thumbnail_cmd", "ffmpeg -v 0 -y -an -i %(input)s -ss 00:00:2.000 -vframes 1 %(output)s")
+

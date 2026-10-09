@@ -105,6 +105,23 @@ $(document).ready(function() {
         imreader.readAsDataURL(file);
     };
 
+    // Loads and scales a pdf into an pdf form field for upload
+    const process_pdf = function(field) {
+        let filedata = null;
+        let pdfreader = new FileReader();
+        pdfreader.onload = function(e) { 
+            filedata = e.target.result;
+            if (filedata.length > 2097152) { alert("PDF file is too large"); field.val(""); return; }
+            $("input[name='" + field.attr("data-name") + "']").val(filedata);
+        };
+        let file = field[0].files[0];
+
+        // Is this a pdf? If not, stop now
+        if (!file.type.match('application.pdf')) { alert("File is not a pdf"); field.val(""); return; }
+        
+        pdfreader.readAsDataURL(file);
+    };
+
     // Validates that all mandatory signature fields have something in them.
     // returns false for failure.
     const validate_signatures = function() {
@@ -138,6 +155,23 @@ $(document).ready(function() {
                 v = $(this).val();
             if (!v) {
                 alert("You must attach an image");
+                $(this).focus();
+                rv = false;
+                return false;
+            }
+        });
+        return rv;
+    };
+
+    const validate_pdfs = function() {
+        let rv = true;
+        $(".asm-onlineform-pdf").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
+            let fieldname = $(this).attr("data-name"),
+                v = $(this).val();
+            if (!v) {
+                alert("You must attach a PDF file");
                 $(this).focus();
                 rv = false;
                 return false;
@@ -520,13 +554,22 @@ $(document).ready(function() {
         listClass: 'bsmList-custom',  
         listItemClass: 'bsmListItem-custom',
         listItemLabelClass: 'bsmListItemLabel-custom',
-        removeClass: 'bsmListItemRemove-custom'
+        noWrapLabel: RENDERER=='bootstrap', 
+        removeClass: 'bsmListItemRemove-custom',
+        selectClass: RENDERER=='bootstrap' ? 'form-select' : 'asmSelect'
     });
 
     // Attach event handlers to load images when they are selected
     $(".asm-onlineform-image").each(function() {
         $(this).change(function(e) {
             process_image($(this));
+        });
+    });
+
+    // Attach event handlers to load pdfs when they are selected
+    $(".asm-onlineform-pdf").each(function() {
+        $(this).change(function(e) {
+            process_pdf($(this));
         });
     });
 
@@ -614,6 +657,7 @@ $(document).ready(function() {
         if (!validate_number()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
+        if (!validate_pdfs()) { enable(); return false; }
         if (!validate_phone()) { enable(); return false; }
         if (html5_required && !$("form")[0].checkValidity()) { 
             enable(); // the default behaviour highlights the required fields so we need it to happen
@@ -624,6 +668,7 @@ $(document).ready(function() {
             if (typeof asm3_onlineform_submit !== 'undefined') { asm3_onlineform_submit(); }
             $("form").submit();
         }
+        $("form").addClass("was-validated");
     });
 
     // This is used to handle resizing the form when it is embedded in an iframe
@@ -638,7 +683,7 @@ $(document).ready(function() {
     
     // If address/postcode fields are present, offer an address lookup button to complete the address
     if (SMCOM && AL_COUNTRIES.hasOwnProperty(LOCALE) && $(".asm-onlineform-postcode").length > 0 && $(".asm-onlineform-address").length > 0) {
-        $(".asm-onlineform-postcode").after('&nbsp;<span id="postcodelookup"><img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
+        $(".asm-onlineform-postcode").after('<span id="postcodelookup" type="button" class="btn btn-light">&nbsp;<img src="/static/images/icons/find.png" style="height: 15px;cursor: pointer;"></span>');
         $("#postcodelookup").click(function() {
             let country = AL_COUNTRIES[LOCALE];
             let postcode = $(".asm-onlineform-postcode").val();

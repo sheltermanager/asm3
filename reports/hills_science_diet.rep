@@ -2,30 +2,28 @@ Hills Science Diet Adopter List
 ###
 Figures
 ###
-3000/Any rev04
+3000/Any rev06
 ###
 The Hills Science Diet adopter list for exporting as a CSV file.
 ###
 en
 ###
 SELECT
-'' AS SAP,
-m.MovementDate AS AdoptionDate,
-o.OwnerTitle AS Prefix,
-replace(o.OwnerForeNames, '&', 'and') AS FirstName,
-replace(o.OwnerSurname, '&', 'and') AS LastName,
-o.OwnerAddress AS Address,
-o.OwnerTown AS City,
-o.OwnerCounty AS State,
-o.OwnerPostcode AS Zip,
-o.HomeTelephone AS Phone,
-o.EmailAddress AS Email,
-CASE WHEN o.ExcludeFromBulkEmail = 1 THEN 'N' ELSE 'Y' END AS EmailOptin,
-s.SpeciesName AS Species,
-a.DateOfBirth AS PetBirthDate,
-replace(replace(a.AnimalName, '(', ''), ')', '') AS PetName,
-o.OwnerTown AS AdoptionLocation,
-r.OwnerName AS RetailPartner
+replace(o.OwnerForeNames, '&', 'and') AS "First Name*",
+replace(o.OwnerSurname, '&', 'and') AS "Last Name*",
+o.EmailAddress AS "Email*",
+o.HomeTelephone AS "Phone",
+o.OwnerAddress AS "Address*",
+o.OwnerTown AS "City*",
+o.OwnerCounty AS "State*",
+o.OwnerPostcode AS "Zip*",
+replace(replace(a.AnimalName, '(', ''), ')', '') AS "Pet Name*",
+s.SpeciesName AS "Species*",
+a.DateOfBirth AS "Pet Estimated BirthDate",
+m.MovementDate AS "Adoption Date*",
+'Shelter' AS "Adoption Location*",
+r.OwnerName AS "Retail Partner",
+1 AS TitleCaseHeader
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
 INNER JOIN owner o ON m.OwnerID = o.ID
@@ -41,23 +39,20 @@ $$HEADER
 <table border="1">
 <thead>
 <tr>
-<th>SAP</th>
-<th>ADOPTIONDATE</th>
-<th>PREFIX</th>
-<th>FIRSTNAME</th>
-<th>LASTNAME</th>
-<th>ADDRESS</th>
-<th>CITY</th>
-<th>STATE</th>
-<th>ZIP</th>
-<th>PHONE</th>
-<th>EMAIL</th>
-<th>EMAILOPTIN</th>
-<th>SPECIES</th>
-<th>PETBIRTHDATE</th>
-<th>PETNAME</th>
-<th>ADOPTIONLOCATION</th>
-<th>RETAILPARTNER</th>
+<th>First Name*</th>
+<th>Last Name*</th>
+<th>Email*</th>
+<th>Phone</th>
+<th>Address*</th>
+<th>City*</th>
+<th>State*</th>
+<th>Zip*</th>
+<th>Pet Name*</th>
+<th>Species*</th>
+<th>Pet Estimated Birthdate</th>
+<th>Adoption Date*</th>
+<th>Adoption Location*</th>
+<th>Retail Partner</th>
 </tr>
 </thead>
 <tbody>
@@ -65,23 +60,20 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$SAP</td>
-<td>$ADOPTIONDATE</td>
-<td>$PREFIX</td>
-<td>$FIRSTNAME</td>
-<td>$LASTNAME</td>
-<td>$ADDRESS</td>
-<td>$CITY</td>
-<td>$STATE</td>
-<td>$ZIP</td>
+<td>$FIRST NAME*</td>
+<td>$LAST NAME*</td>
+<td>$EMAIL*</td>
 <td>$PHONE</td>
-<td>$EMAIL</td>
-<td>$EMAILOPTIN</td>
-<td>$SPECIES</td>
-<td>$PETBIRTHDATE</td>
-<td>$PETNAME</td>
-<td>$ADOPTIONLOCATION</td>
-<td>$RETAILPARTNER</td>
+<td>$ADDRESS*</td>
+<td>$CITY*</td>
+<td>$STATE*</td>
+<td>$ZIP*</td>
+<td>$PET NAME*</td>
+<td>$SPECIES*</td>
+<td>$PET ESTIMATED BIRTHDATE</td>
+<td>$ADOPTION DATE*</td>
+<td>$ADOPTION LOCATION*</td>
+<td>$RETAIL PARTNER</td>
 </tr>
 BODY$$
 

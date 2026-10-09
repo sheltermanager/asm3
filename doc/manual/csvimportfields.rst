@@ -53,10 +53,16 @@ ANIMALNAME
     The animal's name.
 ANIMALIMAGE
     A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI.
+ANIMALLINK
+    A URL to associate with the animal.
+ANIMALMEDIATYPE
+    An integer representing the type of link, 2 for a link to a video, 1 for a link to a document and 0 for all other media.
 ANIMALPDFDATA
     A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.
 ANIMALPDFNAME
     The filename associated with the PDF data.
+ANIMALVIDEO
+    An MP4 video file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI.
 ANIMALNONSHELTER
     Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal.
 ANIMALNOTFORADOPTION
@@ -288,6 +294,8 @@ MEDICALGIVENDATE
     The date the medical regimen started (only one-off treatment regimens can be created via import).
 MEDICALCOMMENTS
     Any comments on the medical regimen.
+MEDICALCOST
+    The total cost of the medical regimen.
 MOVEMENTTYPE
     The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.
 MOVEMENTDATE
@@ -446,6 +454,8 @@ TESTPERFORMEDDATE
    The date the test was performed.
 TESTCOMMENTS
    Any comments for the test.
+TESTCOST
+   The cost of the test.
 VACCINATIONTYPE
     The type of vaccination on this line. 
 VACCINATIONDUEDATE
@@ -462,4 +472,5 @@ VACCINATIONRABIESTAG
     The rabies tag accompanying the vaccine.
 VACCINATIONCOMMENTS
     Comments on the vaccine.
-
+VACCINATIONCOST
+    The cost of the vaccine.

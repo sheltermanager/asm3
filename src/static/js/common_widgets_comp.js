@@ -258,15 +258,7 @@ $.fn.emailform = asm_widget({
         if ( config.bool("AuditOnSendEmail"))
         $("#em-body").richtextarea();
         $("#em-logtype, #em-template").select();
-        $("#em-docrepo").asmSelect({
-            animate: true,
-            sortable: true,
-            removeLabel: '<strong>&times;</strong>',
-            listClass: 'bsmList-custom',  
-            listItemClass: 'bsmListItem-custom',
-            listItemLabelClass: 'bsmListItemLabel-custom',
-            removeClass: 'bsmListItemRemove-custom'
-        });
+        $("#em-docrepo").selectmulti();
         let b = {}; 
         b[_("Send")] = {
             text: _("Send"),
@@ -304,10 +296,11 @@ $.fn.emailform = asm_widget({
             let o = t.data("o");
             let formdata = "mode=emailtemplate&dtid=" + $("#em-template").val();
             if (o.animalcontrolid) { formdata += "&animalcontrolid=" + o.animalcontrolid; }
-            if (o.licenceid) { formdata += "&licenceid=" + o.licenceid; }
-            if (o.donationids) { formdata += "&donationids=" + o.donationids; }
-            if (o.personid) { formdata += "&personid=" + o.personid; }
             if (o.animalid) { formdata += "&animalid=" + o.animalid; }
+            if (o.donationids) { formdata += "&donationids=" + o.donationids; }
+            if (o.licenceid) { formdata += "&licenceid=" + o.licenceid; }
+            if (o.movementid) { formdata += "&movementid=" + o.movementid; }
+            if (o.personid) { formdata += "&personid=" + o.personid; }
             header.show_loading(_("Loading..."));
             common.ajax_post("document_gen", formdata, function(response) {
                 let j = jQuery.parseJSON(response);

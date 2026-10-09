@@ -80,10 +80,24 @@ $(function() {
                     return false;
                 }
 
+                // area lost
+                if (lostfound_new.mode == "lost" && common.trim($("#arealost").val()) == "") {
+                    header.show_error(_("Area lost cannot be blank"));
+                    validate.highlight("arealost");
+                    return false;
+                }
+
                 // date found
                 if (lostfound_new.mode == "found" && common.trim($("#datefound").val()) == "") {
                     header.show_error(_("Date found cannot be blank."));
                     validate.highlight("datefound");
+                    return false;
+                }
+
+                // area found
+                if (lostfound_new.mode == "found" && common.trim($("#areafound").val()) == "") {
+                    header.show_error(_("Area found cannot be blank"));
+                    validate.highlight("areafound");
                     return false;
                 }
 
@@ -101,7 +115,7 @@ $(function() {
 
             };
 
-            validate.indicator([ "datelost", "datefound", "datereported", "owner" ]);
+            validate.indicator([ "datelost", "datefound", "arealost", "areafound", "datereported", "owner" ]);
 
             const add_lf_animal = async function(addmode) {
                 if (!validation()) { return; }
@@ -116,7 +130,7 @@ $(function() {
                             header.show_info(_("Lost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
                         else {
-                            header.show_info(_("FoundLost animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
+                            header.show_info(_("Found animal entry {0} successfully created.").replace("{0}", format.padleft(createdID, 6)));
                         }
                     }
                     else {
@@ -150,6 +164,18 @@ $(function() {
             $('#species').change(function() {
                 lostfound_new.update_breed_select();
                 additional.toggle_elements_by_species("additional", $("#species").val());
+            });
+            
+            // Auto fill area and postcode if not set
+            $("#owner").on("change", async function(event, rec) {
+                let areainput = $("#arealost");
+                if ( lostfound_new.mode == "found" ) {
+                    areainput = $("#areafound");
+                }
+                if ( !areainput.val() && !$("#areapostcode").val() ) {
+                    areainput.val(rec.OWNERADDRESS);
+                    $("#areapostcode").val(rec.OWNERPOSTCODE);
+                }
             });
         },
 

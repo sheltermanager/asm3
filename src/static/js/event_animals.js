@@ -1,10 +1,175 @@
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
 
 $(function(){
 
     "use strict";
 
+    const EVENT_ANIMAL_LINKTYPE = 32;
+
     const event_animals ={
+
+        column_names: function() {
+            let cols = [];
+            $.each(config.str("EventAnimalViewColumns").split(","), function(i, v) {
+                cols.push(common.trim(v));
+            });
+            return cols;
+        },
+
+        column_label: function(name) {
+            let labels = {
+                "ArrivalDate": _("Arrived"),
+                "IMAGE": _("Image"),
+                "ANIMAL": _("Animal"),
+                "DISPLAYLOCATION": _("Location"),
+                "AGEGROUP": _("Age Group"),
+                "SPECIESNAME": _("Species"),
+                "BASECOLOURNAME": _("Color"),
+                "LITTERID": _("Litter"),
+                "COMMENTS": _("Comments"),
+                "LASTFOSTERER": _("Last Fosterer"),
+                "ADOPTED": _("Adopted")
+            };
+            if (labels.hasOwnProperty(name)) {
+                return labels[name];
+            }
+            if (controller.eventanimaladditional) {
+                let addrow = common.get_row(controller.eventanimaladditional, name, "FIELDNAME");
+                if (addrow) { return addrow.FIELDLABEL; }
+            }
+            return name;
+        },
+
+        sync_additional_values_from_row: function(row) {
+            if (!controller.eventanimaladditionalvalues) {
+                controller.eventanimaladditionalvalues = [];
+            }
+            $.each(controller.eventanimaladditional || [], function(i, f) {
+                if (f.LINKTYPE != EVENT_ANIMAL_LINKTYPE) { return; }
+                let val = row[f.FIELDNAME.toUpperCase()];
+                if (val === undefined) { return; }
+                let entry = null;
+                $.each(controller.eventanimaladditionalvalues, function(j, v) {
+                    if (v.LINKID == row.ID && v.FIELDNAME.toLowerCase() == f.FIELDNAME.toLowerCase()) {
+                        entry = v;
+                        return false;
+                    }
+                });
+                if (!entry) {
+                    entry = { LINKID: row.ID, FIELDNAME: f.FIELDNAME, FIELDTYPE: f.FIELDTYPE, VALUE: val, ANIMALNAME: "", OWNERNAME: "" };
+                    controller.eventanimaladditionalvalues.push(entry);
+                }
+                else {
+                    entry.VALUE = val;
+                    entry.FIELDTYPE = f.FIELDTYPE;
+                }
+                let element = $("#add_" + f.ID);
+                if (f.FIELDTYPE == additional.ANIMAL_LOOKUP && element.length) {
+                    let a = element.animalchooser("get_selected");
+                    if (a) { entry.ANIMALNAME = a.ANIMALNAME; }
+                }
+                else if (additional.is_person_type(f.FIELDTYPE) && element.length) {
+                    let p = element.personchooser("get_selected");
+                    if (p) { entry.OWNERNAME = p.OWNERNAME; }
+                }
+            });
+        },
+
+        format_additional_column: function(row, name) {
+            let rv = "";
+            if (!controller.eventanimaladditionalvalues) { return rv; }
+            $.each(controller.eventanimaladditionalvalues, function(i, v) {
+                if (v.LINKID == row.ID && v.FIELDNAME.toLowerCase() == name.toLowerCase()) {
+                    if (v.FIELDTYPE == additional.YESNO) {
+                        rv = v.VALUE == "1" ? _("Yes") : _("No");
+                    }
+                    else if (v.FIELDTYPE == additional.MONEY) {
+                        rv = format.currency(v.VALUE);
+                    }
+                    else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                        rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
+                    }
+                    else if (additional.is_person_type(v.FIELDTYPE)) {
+                        rv = html.person_link(v.VALUE, v.OWNERNAME);
+                    }
+                    else {
+                        rv = common.nulltostr(v.VALUE);
+                    }
+                    return false;
+                }
+            });
+            return rv;
+        },
+
+        standard_columns: function() {
+            return {
+                "ArrivalDate": { field: "ArrivalDate", display: _("Arrived"),
+                    formatter: function(row) {
+                        let linktext = format.date(row.ARRIVALDATE);
+                        if (linktext == "") {
+                            linktext = _("(blank)");
+                        }
+                        else if (format.time(row.ARRIVALDATE) != "00:00:00") {
+                            linktext += " " + format.time(row.ARRIVALDATE);
+                        }
+                        linktext = "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + linktext + '</a>';
+                        let chkbox = '<input type="checkbox" data-id="' + row.ID + '" title="' + _("Select") + '">';
+                        return chkbox + linktext;
+                    }
+                },
+                "IMAGE": { field: "IMAGE", display: "",
+                    formatter: function(row) {
+                        return html.animal_link_thumb_bare(row);
+                    }
+                },
+                "ANIMAL": { field: "ANIMAL", display: _("Animal"),
+                    formatter: function(row) {
+                        return html.animal_link(row, { noemblems: controller.name == "event_animals" }) + "<br/>" + row.IDENTICHIPNUMBER;
+                    },
+                    hideif: function(row) {
+                        if (controller.animal) { return true; }
+                    }
+                },
+                "DISPLAYLOCATION": { field: "DISPLAYLOCATION", display: _("Location") },
+                "AGEGROUP": { field: "AGEGROUP", display: _("Age Group") },
+                "SPECIESNAME": { field: "SPECIESNAME", display: _("Species") },
+                "BASECOLOURNAME": { field: "BASECOLOURNAME", display: _("Color") },
+                "LITTERID": { field: "LITTERID", display: _("Litter") },
+                "COMMENTS": { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments },
+                "LASTFOSTERER": { field: "LASTFOSTERER", display: _("Last Fosterer"),
+                    formatter: function(row) {
+                        return '<span ' +
+                                (row.LASTFOSTERERRETURNDATE ? 'class="asm-completerow"' : '') + ">" +
+                                html.person_link(row.LASTFOSTERERID, row.LASTFOSTERERNAME) +
+                                '<br/>' + common.nulltostr(row.LASTFOSTERERMOBILETELEPHONE) + '<br/>' + common.nulltostr(row.LASTFOSTERERHOMETELEPHONE) + '<br/>' + common.nulltostr(row.LASTFOSTERERWORKTELEPHONE) + '</span>';
+                    }
+                },
+                "ADOPTED": { field: "ADOPTED", display: _("Adopted"),
+                    formatter: function(row) {
+                        return row.ADOPTED == 1 ? "&#9989;" : "&nbsp;";
+                    }
+                }
+            };
+        },
+
+        build_columns: function() {
+            let columns = [], standard = event_animals.standard_columns();
+            $.each(event_animals.column_names(), function(i, name) {
+                if (standard.hasOwnProperty(name)) {
+                    columns.push(standard[name]);
+                }
+                else if (controller.eventanimaladditional && common.get_row(controller.eventanimaladditional, name, "FIELDNAME")) {
+                    columns.push({
+                        field: name,
+                        display: event_animals.column_label(name),
+                        formatter: function(row) {
+                            return event_animals.format_additional_column(row, name);
+                        }
+                    });
+                }
+            });
+            return columns;
+        },
 
         model: function() {
 
@@ -19,92 +184,50 @@ $(function(){
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "ARRIVALDATE", post_field: "arrival", label: _("Arrived"), type: "datetime" },
-                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
+                    { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { type: "additional", markup: additional.additional_fields_tableform(additional.merge_definitions_and_values(controller.eventanimaladditional || [], {}), -1, true, "additionaldialog")}
                 ]
             };
 
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                edit: async function(row) {
-                    tableform.fields_populate_from_json(dialog.fields, row);
-                    await tableform.dialog_show_edit(dialog, row);
-                    tableform.fields_update_row(dialog.fields, row);
-                    try {
-                        await tableform.fields_post(dialog.fields, "mode=update&eventanimalid=" + row.ID, "event_animals");
-                        tableform.table_update(table);
-                        tableform.dialog_close();
-                    }
-                    catch(err) {
-                        log.error(err, err);
-                        tableform.dialog_enable_buttons();
-                    }
+                edit: function(row) {
+                    tableform.dialog_show_edit(dialog, row, {
+                        onload: function() {
+                            additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.eventanimaladditional || [], row));
+                            tableform.fields_populate_from_json(dialog.fields, row);
+                        },
+                        onvalidate: function() {
+                            return additional.validate_mandatory_dialog("additionaldialog");
+                        },
+                        onchange: async function() {
+                            let afpost = additional.additional_fields_post(controller.eventanimaladditional || [], EVENT_ANIMAL_LINKTYPE);
+                            tableform.fields_update_row(dialog.fields, row);
+                            try {
+                                await tableform.fields_post(dialog.fields, "mode=update&eventanimalid=" + row.ID + afpost, "event_animals");
+                                additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.eventanimaladditional || [], row), EVENT_ANIMAL_LINKTYPE, row);
+                                event_animals.sync_additional_values_from_row(row);
+                                tableform.table_update(table);
+                                tableform.dialog_close();
+                            }
+                            catch(err) {
+                                log.error(err, err);
+                                tableform.dialog_enable_buttons();
+                            }
+                        }
+                    });
                 },
                 complete: function(row) {
                     if (row.ARRIVED) { return true; }
                     return false;
                 },
-                columns: [
-                    { field: "ArrivalDate", display: _("Arrived") ,
-                        formatter: function(row) {
-                            let linktext = format.date(row.ARRIVALDATE);
-                            if (linktext == "") { 
-                                linktext = _("(blank)"); 
-                            }
-                            else if (format.time(row.ARRIVALDATE) != "00:00:00") {
-                                linktext += " " + format.time(row.ARRIVALDATE);
-                            }  
-                            linktext = "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + linktext + '</a>';
-                            let chkbox = '<input type="checkbox" data-id="' + row.ID + '" title="' + _("Select") + '">';
-                            return chkbox + linktext;
-                        }
-                    },
-                    { field: "IMAGE", display: "", 
-                        formatter: function(row) {
-                            return html.animal_link_thumb_bare(row);
-                        }
-                    },
-                    { field: "ANIMAL", display: _("Animal"), 
-                        formatter: function(row) {
-                            return html.animal_link(row, { noemblems: controller.name == "event_animals" }) + "<br/>" + row.IDENTICHIPNUMBER;
-                        },
-                        hideif: function(row) {
-                            // Don't show for animal records
-                            if (controller.animal) { return true; }
-                        }
-                    },
-                    { field: "DISPLAYLOCATION", display: _("Location")
-                    },
-                    { field: "AGEGROUP", display: _("Age Group")
-                    },
-                    { field: "SPECIESNAME", display: _("Species")
-                    },
-                    { field: "BASECOLOURNAME", display: _("Color")
-                    },
-
-                    { field: "LITTERID", display: _("Litter"),
-                    },
-                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments
-                    },
-                    { field: "LASTFOSTERER", display: _("Last Fosterer"),
-                        formatter: function(row) {
-                            return '<span ' +
-                                    (row.LASTFOSTERERRETURNDATE ? 'class="asm-completerow"' : '') + ">" + 
-                                    html.person_link(row.LASTFOSTERERID, row.LASTFOSTERERNAME) + 
-                                    '<br/>' + common.nulltostr(row.LASTFOSTERERMOBILETELEPHONE) + '<br/>' + common.nulltostr(row.LASTFOSTERERHOMETELEPHONE) + '<br/>' + common.nulltostr(row.LASTFOSTERERWORKTELEPHONE) + '</span>';
-                        }
-                    },
-                    { field: "ADOPTED", display: _("Adopted"),
-                        formatter: function(row) {  
-                            return row.ADOPTED == 1 ? "&#9989;" : "&nbsp;";
-                        }
-                    }
-                ]
+                columns: event_animals.build_columns()
             };
 
             const buttons = [
                     { id: "addanimal", text: _("Add Animal"), icon: "animal-add", tooltip: _("Add animal to this event"), enabled: "always", perm: "cea",
-                        click: async function() { 
+                        click: async function() {
                             $("#addanimal").animalchooser("clear");
                             await tableform.show_okcancel_dialog("#dialog-addanimal", _("Add"), { notzero: [ "addanimal" ] });
                             let a = $("#addanimal").animalchooser("get_selected");
@@ -121,18 +244,18 @@ $(function(){
                             common.route_reload();
                         }
                     },
-                    { id: "removeanimal", text: _("Remove"), icon: "delete", tooltip: _(""), enabled: "multi", perm: "cea", 
-                        click: async function() { 
+                    { id: "removeanimal", text: _("Remove"), icon: "delete", tooltip: _(""), enabled: "multi", perm: "cea",
+                        click: async function() {
                             await tableform.delete_dialog();
                             tableform.buttons_default_state(buttons);
                             let ids = tableform.table_ids(table);
                             await common.ajax_post("event_animals", "mode=delete&ids=" + ids);
                             tableform.table_remove_selected_from_json(table, controller.rows);
                             tableform.table_update(table);
-                        } 
+                        }
                     },
                     { id: "animalarrived", text: _("Arrived"), icon: "complete", tooltip: _(""), enabled: "multi", perm: "cea",
-                        click: async function() { 
+                        click: async function() {
                             await tableform.show_okcancel_dialog("#dialog-arrived", _("Ok"));
                             tableform.buttons_default_state(buttons);
                             let ids = tableform.table_ids(table);
@@ -145,10 +268,10 @@ $(function(){
                                 }
                             });
                             tableform.table_update(table);
-                        } 
+                        }
                     },
-                    { id: "animalendactivefoster", text: _("End active foster"), icon: "movement", 
-                        tooltip: _("Set current foster movement return date to event start or current time, whichever is later"), 
+                    { id: "animalendactivefoster", text: _("End active foster"), icon: "movement",
+                        tooltip: _("Set current foster movement return date to event start or current time, whichever is later"),
                         enabled: "multi", perm: "cea",
                         click: async function() {
                             await tableform.show_okcancel_dialog("#dialog-endactivefoster", _("Ok"));
@@ -163,19 +286,19 @@ $(function(){
                                 }
                             });
                             tableform.table_update(table);
-                        } 
+                        }
                     },
-                    { id: "filter", type: "dropdownfilter", 
-                        options: [ "all|" + _("All"), "arrived|" + _("Arrived"), 
-                        "noshow|" + _("No show"), "neednewfoster|" + _("Need new foster"), 
+                    { id: "filter", type: "dropdownfilter",
+                        options: [ "all|" + _("All"), "arrived|" + _("Arrived"),
+                        "noshow|" + _("No show"), "neednewfoster|" + _("Need new foster"),
                         "dontneednewfoster|" + _("Don't need new foster"),
-                        "adopted|" + _("Adopted"), 
+                        "adopted|" + _("Adopted"),
                         "notadopted|" + _("Not adopted") ],
                         click: function(selval) {
                             common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
                         }
                     },
-                    { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", perm: "vea", 
+                    { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", perm: "vea",
                         click: async function() {
                             event_animals.tablefilters = $("#tableform").table("save_filters");
                             common.route_reload();
@@ -192,13 +315,13 @@ $(function(){
             return ['<div id="dialog-arrived" style="display: none" title="' + html.title(_("Arrival")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span>' + _("Update selected animals arrival time?") + '</p>  ',
                 '</div>'].join("\n");
-        }, 
+        },
 
         render_endactivefosterdialog: function() {
             return ['<div id="dialog-endactivefoster" style="display: none" title="' + html.title(_("End active foster")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span>' + _("Update selected animals foster return date?") + '</p>  ',
                 '</div>'].join("\n");
-        }, 
+        },
 
         render_addanimaldialog: function() {
             return ['<div id="dialog-addanimal" style="display: none" title="' + html.title(_("Add animal")) + '">',
@@ -224,7 +347,7 @@ $(function(){
             s += event_animals.render_endactivefosterdialog();
             s += event_animals.render_addanimaldialog();
             s += event_animals.render_addanimalsdialog();
-            s += edit_header.event_edit_header(controller.event, "animals", []);
+            s += edit_header.event_edit_header(controller.event, "animals", controller.tabcounts);
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();

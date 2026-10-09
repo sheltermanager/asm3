@@ -76,6 +76,7 @@ def get_citation_query(dbo: Database) -> str:
 def get_donation_query(dbo: Database) -> str:
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, od.MovementID, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
+        "od.FundedByOwnerDonationID, od.IsFundingSource, " \
         "od.Quantity, od.UnitPrice, " \
         "od.Donation AS Gross, " \
         "od.Donation - COALESCE(od.VATAmount, 0) - COALESCE(od.Fee, 0) AS Net, " \
@@ -118,6 +119,9 @@ def get_donation_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
         "LEFT OUTER JOIN donationtype dt ON dt.ID = od.DonationTypeID " \
         "LEFT OUTER JOIN lksdonationfreq fr ON fr.ID = od.Frequency "
+
+def get_fundable_donations(dbo: Database) -> Results:
+    return dbo.query("SELECT d.ID, CONCAT(o.OwnerSurname, ' ', d.ReceiptNumber) AS FundName FROM ownerdonation d INNER JOIN owner o ON d.OwnerID = o.ID WHERE d.IsFundingSource = 1")
 
 def get_licence_query(dbo: Database) -> str:
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
@@ -293,8 +297,8 @@ def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, t
     elif reconciled == NONRECONCILED:
         recfilter = " AND Reconciled = 0"
     r = dbo.first_row( dbo.query("SELECT a.AccountType, " \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate < ? %s) AS withdrawal," \
-        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate < ? %s) AS deposit " \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE SourceAccountID = a.ID AND TrxDate >= ? AND TrxDate <= ? %s) AS withdrawal," \
+        "(SELECT SUM(Amount) FROM accountstrx WHERE DestinationAccountID = a.ID AND TrxDate >= ? AND TrxDate <= ? %s) AS deposit " \
         "FROM accounts a " \
         "WHERE a.ID = ?" % (recfilter, recfilter), (fromdate, todate, fromdate, todate, aid)) )
     deposit = r.deposit
@@ -364,13 +368,13 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
     the BALANCE column and WITHDRAWAL and DEPOSIT.
     """
     l = dbo.locale
-    period = asm3.configuration.accounting_period(dbo)
-    if not asm3.configuration.account_period_totals(dbo):
-        period = ""
-    # If we have an accounting period set and it's after the from date,
-    # use that instead
-    if period != "" and asm3.i18n.after(asm3.i18n.display2python(l, period), datefrom):
-        datefrom = asm3.i18n.display2python(l, period)
+    # If we have an accounting period set and it's after our from date,
+    # use that instead of the from date
+    period = None
+    if asm3.configuration.account_period_totals(dbo):
+        period = asm3.i18n.display2python(l, asm3.configuration.accounting_period(dbo))
+        if period is not None and asm3.i18n.after(period, datefrom):
+            datefrom = period
     recfilter = ""
     if reconciled == RECONCILED:
         recfilter = " AND Reconciled = 1"
@@ -415,8 +419,8 @@ def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: 
         "AND (t.SourceAccountID = %d OR t.DestinationAccountID = %d) " \
         "ORDER BY t.TrxDate, t.ID" % ( dbo.sql_date(datefrom, includeTime=False), dbo.sql_date(dateto, includeTime=False), recfilter, accountid, accountid))
     balance = 0
-    if period != "":
-        balance = get_balance_fromto_date(dbo, accountid, asm3.i18n.display2python(l, period), datefrom, reconciled)
+    if period is not None:
+        balance = get_balance_fromto_date(dbo, accountid, period, datefrom, reconciled)
     else:
         balance = get_balance_to_date(dbo, accountid, datefrom, reconciled)
     for r in rows:
@@ -851,32 +855,36 @@ def insert_donation_from_form(dbo: Database, username: str, post: PostedData) ->
         post.data["receiptnumber"] = get_next_receipt_number(dbo)
     
     donationid = dbo.insert("ownerdonation", {
-        "OwnerID":              post.integer("person"),
-        "AnimalID":             post.integer("animal"),
-        "MovementID":           post.integer("movement"),
-        "DonationTypeID":       post.integer("type"),
-        "DonationPaymentID":    post.integer("payment"),
-        "Frequency":            post.integer("frequency"),
-        "Quantity":             post.integer("quantity"),
-        "UnitPrice":            post.integer("unitprice"),
-        "Donation":             post.integer("amount"),
-        "DateDue":              post.date("due"),
-        "Date":                 post.date("received"),
-        "NextCreated":          0,
-        "ChequeNumber":         post["chequenumber"],
-        "ReceiptNumber":        post["receiptnumber"],
-        "Fee":                  post.integer("fee"),
-        "IsGiftAid":            post.boolean("giftaid"),
-        "IsVAT":                post.boolean("vat"),
-        "VATRate":              post.floating("vatrate"),
-        "VATAmount":            post.integer("vatamount"),
-        "Comments":             post["comments"]
+        "OwnerID":                  post.integer("person"),
+        "AnimalID":                 post.integer("animal"),
+        "IsFundingSource":          post.boolean("isfundingsource"),
+        "MovementID":               post.integer("movement"),
+        "DonationTypeID":           post.integer("type"),
+        "DonationPaymentID":        post.integer("payment"),
+        "FundedByOwnerDonationID":  post.integer("funding"),
+        "Frequency":                post.integer("frequency"),
+        "Quantity":                 post.integer("quantity"),
+        "UnitPrice":                post.integer("unitprice"),
+        "Donation":                 post.integer("amount"),
+        "DateDue":                  post.date("due"),
+        "Date":                     post.date("received"),
+        "NextCreated":              0,
+        "ChequeNumber":             post["chequenumber"],
+        "ReceiptNumber":            post["receiptnumber"],
+        "Fee":                      post.integer("fee"),
+        "IsGiftAid":                post.boolean("giftaid"),
+        "IsVAT":                    post.boolean("vat"),
+        "VATRate":                  post.floating("vatrate"),
+        "VATAmount":                post.integer("vatamount"),
+        "Comments":                 post["comments"]
     }, username)
 
-    if asm3.configuration.donation_trx_override(dbo):
-        update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
-    else:
-        update_matching_donation_transaction(dbo, username, donationid)
+    # Only create a transaction if payment is not funded
+    if post.integer("funding") == 0:
+        if asm3.configuration.donation_trx_override(dbo):
+            update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
+        else:
+            update_matching_donation_transaction(dbo, username, donationid)
 
     check_create_next_donation(dbo, username, donationid)
     asm3.movement.update_movement_donation(dbo, post.integer("movement"))
@@ -892,32 +900,38 @@ def update_donation_from_form(dbo: Database, username: str, post: PostedData) ->
 
     receiveddate = dbo.query_date("SELECT Date FROM ownerdonation WHERE ID = ?", [donationid])
 
-    dbo.update("ownerdonation", donationid, {
-        "OwnerID":              post.integer("person"),
-        "AnimalID":             post.integer("animal"),
-        "MovementID":           post.integer("movement"),
-        "DonationTypeID":       post.integer("type"),
-        "DonationPaymentID":    post.integer("payment"),
-        "Frequency":            post.integer("frequency"),
-        "Quantity":             post.integer("quantity"),
-        "UnitPrice":            post.integer("unitprice"),
-        "Donation":             post.integer("amount"),
-        "DateDue":              post.date("due"),
-        "Date":                 post.date("received"),
-        "ChequeNumber":         post["chequenumber"],
-        "ReceiptNumber":        post["receiptnumber"],
-        "Fee":                  post.integer("fee"),
-        "IsGiftAid":            post.boolean("giftaid"),
-        "IsVAT":                post.boolean("vat"),
-        "VATRate":              post.floating("vatrate"),
-        "VATAmount":            post.integer("vatamount"),
-        "Comments":             post["comments"]
+    dbo.update("ownerdonation",     donationid, {
+        "OwnerID":                  post.integer("person"),
+        "AnimalID":                 post.integer("animal"),
+        "IsFundingSource":          post.boolean("isfundingsource"),
+        "MovementID":               post.integer("movement"),
+        "DonationTypeID":           post.integer("type"),
+        "DonationPaymentID":        post.integer("payment"),
+        "FundedByOwnerDonationID":  post.integer("funding"),
+        "Frequency":                post.integer("frequency"),
+        "Quantity":                 post.integer("quantity"),
+        "UnitPrice":                post.integer("unitprice"),
+        "Donation":                 post.integer("amount"),
+        "DateDue":                  post.date("due"),
+        "Date":                     post.date("received"),
+        "ChequeNumber":             post["chequenumber"],
+        "ReceiptNumber":            post["receiptnumber"],
+        "Fee":                      post.integer("fee"),
+        "IsGiftAid":                post.boolean("giftaid"),
+        "IsVAT":                    post.boolean("vat"),
+        "VATRate":                  post.floating("vatrate"),
+        "VATAmount":                post.integer("vatamount"),
+        "Comments":                 post["comments"]
     }, username)
 
-    if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
-        update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
+    # Only create a transaction if payment is not funded
+    if post.integer("funding") == 0:
+        if asm3.configuration.donation_trx_override(dbo) and receiveddate is None:
+            update_matching_donation_transaction(dbo, username, donationid, post.integer("destaccount"))
+        else:
+            update_matching_donation_transaction(dbo, username, donationid)
     else:
-        update_matching_donation_transaction(dbo, username, donationid)
+        dbo.delete("accountstrx", "OwnerDonationID = %d" % donationid, username) # remove matching trx if exists
 
     check_create_next_donation(dbo, username, donationid)
     asm3.movement.update_movement_donation(dbo, post.integer("movement"))
@@ -1176,6 +1190,11 @@ def update_matching_donation_transaction(dbo: Database, username: str, odid: int
     # the transaction as we're going to do a separate transaction for the tax
     if d.VATAMOUNT is not None and d.VATAMOUNT > 0 and not isrefund:
         amount -= d.VATAMOUNT
+
+    # Is there a fee portion? If so, remove it from the amount before creating
+    # the transaction as we're going to do a separate transaction for the fee
+    if d.FEE is not None and d.FEE > 0 and not isrefund:
+        amount -= d.FEE
 
     # Create the transaction
     tid = dbo.insert("accountstrx", {
@@ -1723,14 +1742,22 @@ def update_licence_renewed(dbo: Database, username: str, typeid: int, personid: 
     """
     Finds all licences that match the given triplet of typeid, personid and animalid 
     and marks all but the one with the latest issuedate as renewed.
+    If the RestrictLicenseRenewal option is enabled, typeid is ignored.
     Returns the number of affected rows.
     If the animalid or personid is 0 does nothing. By doing this, records that are 
     not linked to animal allow their renewed flag to be edited.
     """
     if animalid == 0 or personid == 0: return 0
-    rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
-        "WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC", \
+
+    if asm3.configuration.restrict_license_renewal(dbo):
+        rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
+        "WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC",
         [ typeid, personid, animalid ])
+    else:
+        rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
+        "WHERE OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC",
+        [ personid, animalid ])
+    
     if len(rows) == 0: return 0
     for i, r in enumerate(rows):
         renewed = 1

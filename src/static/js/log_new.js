@@ -42,7 +42,7 @@ $(function() {
                 }
                 if (controller.mode == "person") {
                     // person
-                    if ($("#person").val() == "" || $("#person").val() == "0") {
+                    if ($("#person").val() == "0") {
                         header.show_error(_("Log requires a person."));
                         validate.highlight("person");
                         return false;
@@ -83,6 +83,10 @@ $(function() {
                     $("#button-log").button("enable");
                 }
             });
+        },
+
+        sync: function() {
+            validate.indicator(["animal", "person"]);
         },
 
         name: "log_new",

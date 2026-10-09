@@ -128,11 +128,11 @@ $.fn.personchooser = asm_widget({
             '<td><label>' + _("Address") + '</label></td>',
             '<td><textarea class="asm-textareafixed chooser personchooser-address" data="address" rows="3"></textarea></td>',
             '</tr>',
-            '<tr class="personchooser-towncountyrow">',
+            '<tr class="personchooser-townrow">',
             '<td><label>' + _("City") + '</label></td>',
             '<td><input class="asm-textbox chooser personchooser-town" maxlength="100" data="town" type="text" /></td>',
             '</tr>',
-            '<tr class="personchooser-towncountyrow">',
+            '<tr class="personchooser-countyrow">',
             '<td><label>' + _("State") + '</label></td>',
             '<td>',
             common.iif(config.bool("USStateCodes"),
@@ -262,8 +262,12 @@ $.fn.personchooser = asm_widget({
             dialogadd.find(".personchooser-countryrow").hide();
         }
 
-        if (config.bool("HideTownCounty")) {
-            dialogadd.find(".personchooser-towncountyrow").hide();
+        if (config.bool("HideTown")) {
+            dialogadd.find(".personchooser-townrow").hide();
+        }
+
+        if (config.bool("HideCounty")) {
+            dialogadd.find(".personchooser-countyrow").hide();
         }
 
         if (config.bool("HideHomeWorkPhone")) {
@@ -442,26 +446,10 @@ $.fn.personchooser = asm_widget({
                 });
                 // Setup person flag select widget
                 dialogadd.find(".personchooser-flags").attr("title", _("Select"));
-                dialogadd.find(".personchooser-flags").asmSelect({
-                    animate: true,
-                    sortable: true,
-                    removeLabel: '<strong>X</strong>',
-                    listClass: 'bsmList-custom',  
-                    listItemClass: 'bsmListItem-custom',
-                    listItemLabelClass: 'bsmListItemLabel-custom',
-                    removeClass: 'bsmListItemRemove-custom'
-                });
+                dialogadd.find(".personchooser-flags").selectmulti();
                 // Setup GDPR select widget
                 dialogadd.find(".personchooser-gdpr").attr("title", _("Select"));
-                dialogadd.find(".personchooser-gdpr").asmSelect({
-                    animate: true,
-                    sortable: true,
-                    removeLabel: '<strong>X</strong>',
-                    listClass: 'bsmList-custom',  
-                    listItemClass: 'bsmListItem-custom',
-                    listItemLabelClass: 'bsmListItemLabel-custom',
-                    removeClass: 'bsmListItemRemove-custom'
-                });
+                dialogadd.find(".personchooser-gdpr").selectmulti();
                 // Setup phone number widgets
                 dialogadd.find(".asm-phone").phone();
                 // Add sites
@@ -483,8 +471,10 @@ $.fn.personchooser = asm_widget({
                 }
                 // Hide retired options from the lookups
                 dialogadd.find(".asm-selectbox").select("removeRetiredOptions", "all");
+                // Is value blank? If so change to zero
+                if (t.val() == "")  { t.val("0"); }
                 // Was there a value already set by the markup? If so, use it
-                if (t.val() != "" && t.val() != "0") {
+                if (t.val() != "0") {
                     self.loadbyid.call(self, t, t.val());
                 }
             },

@@ -68,7 +68,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
+                { id: "rename", text: _("Rename"), icon: "link", enabled: "one", perm: "ard", 
                     click: async function() { 
                         $("#newname").val(tableform.table_selected_row(table).NAME);
                         await tableform.show_okcancel_dialog("#dialog-rename", _("Rename"), { width: 550, notblank: [ "newname" ] });

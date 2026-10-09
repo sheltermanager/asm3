@@ -96,7 +96,7 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicalcombined", "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", 
     "v_animalwaitinglist", "v_owner", "v_ownercitation", "v_ownerdonation", "v_ownerlicence", 
-    "v_ownertraploan", "v_ownervoucher" )
+    "v_ownerlookingfor", "v_ownertraploan", "v_ownervoucher" )
 
 def sql_structure(dbo: Database) -> str:
     """
@@ -337,6 +337,8 @@ def sql_structure(dbo: Database) -> str:
         fint("DiedOffShelter"),
         fint("Size"),
         ffloat("Weight", True),
+        ffloat("Weight1", True),
+        ffloat("Weight2", True),
         fstr("RabiesTag", True),
         fint("Archived"),
         fint("Adoptable", True),
@@ -412,6 +414,8 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animal_TattooNumber", "animal", "TattooNumber")
     sql += index("animal_UniqueCodeID", "animal", "UniqueCodeID")
     sql += index("animal_Weight", "animal", "Weight")
+    sql += index("animal_Weight1", "animal", "Weight1")
+    sql += index("animal_Weight2", "animal", "Weight2")
     sql += index("animal_YearCodeID", "animal", "YearCodeID")
     sql += index("animal_IdentichipStatus", "animal", "IdentichipStatus")
     sql += index("animal_Identichip2Status", "animal", "Identichip2Status")
@@ -610,6 +614,14 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animalfiguresannual_EntryReasonID", "animalfiguresannual", "EntryReasonID")
     sql += index("animalfiguresannual_Year", "animalfiguresannual", "Year")
 
+    sql += table("animalfiguresonshelter", (
+        fint("AnimalID"),
+        fdate("MonthMidPoint"),
+        fint("Month"),
+        fint("Year"),
+        fint("DaysOnShelter")), False)
+    sql += index("animalfiguresonshelter_AnimalID", "animalfiguresonshelter", "AnimalID")
+
     sql += table("animalfound", (
         fid(),
         fint("AnimalTypeID"),
@@ -622,6 +634,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaFound"),
         fstr("AreaPostcode"),
+        fstr("AreaLatLong", True),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         fdate("ReturnToOwnerDate", True),
@@ -674,6 +687,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("DistFeat", False),
         fstr("AreaLost"),
         fstr("AreaPostcode"),
+        fstr("AreaLatLong", True),
         fstr("MicrochipNumber", True),
         fint("OwnerID"),
         flongstr("Comments") ))
@@ -961,6 +975,7 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fint("ClinicAppointmentID"),
         flongstr("Description"),
+        fstr("StockUsageIDs", True),
         fint("Amount") ))
     sql += index("clinicinvoiceitem_ClinicAppointmentID", "clinicinvoiceitem", "ClinicAppointmentID")
 
@@ -1090,6 +1105,7 @@ def sql_structure(dbo: Database) -> str:
         fdate("EndDateTime"),
         fstr("EventName"),
         flongstr("EventDescription", True),
+        fstr("EventLink", True),
         fint("EventOwnerID", True),
         fstr("EventAddress", True),
         fstr("EventTown", True),
@@ -1398,6 +1414,7 @@ def sql_structure(dbo: Database) -> str:
         fint("AutoProcess", True),
         flongstr("SubmitterReplyAddress", True),
         fint("RetainFor", True),
+        fint("EmailSubmissionLimitDays", True),
         fint("EmailSubmitter", True),
         fint("EmailCoordinator", True),
         fint("EmailFosterer", True),
@@ -1406,8 +1423,10 @@ def sql_structure(dbo: Database) -> str:
         flongstr("Header", True),
         flongstr("Footer", True),
         flongstr("Description", True),
+        fint("Renderer", True),
         fint("InternalUse", True)), False)
 
+    sql += index("onlineform_EmailSubmissionLimitDays", "onlineform", "EmailSubmissionLimitDays")
     sql += index("onlineform_Name", "onlineform", "Name")
     sql += index("onlineform_InternalUse", "onlineform", "InternalUse")
 
@@ -1604,12 +1623,14 @@ def sql_structure(dbo: Database) -> str:
         fint("Donation"),
         fint("Quantity", True),
         fint("UnitPrice", True),
+        fint("IsFundingSource", True),
         fint("IsGiftAid"),
         fint("Fee", True), 
         fint("IsVAT", True),
         ffloat("VATRate", True),
         fint("VATAmount", True),
         fint("Frequency"),
+        fint("FundedByOwnerDonationID", True),
         fint("NextCreated", True),
         flongstr("Comments") ))
     sql += index("ownerdonation_OwnerID", "ownerdonation", "OwnerID")
@@ -1617,6 +1638,8 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownerdonation_ChequeNumber", "ownerdonation", "ChequeNumber")
     sql += index("ownerdonation_Date", "ownerdonation", "Date")
     sql += index("ownerdonation_DateDue", "ownerdonation", "DateDue")
+    sql += index("ownerdonation_FundedByOwnerDonationID", "ownerdonation", "FundedByOwnerDonationID")
+    sql += index("ownerdonation_IsFundingSource", "ownerdonation", "IsFundingSource")
     sql += index("ownerdonation_IsVAT", "ownerdonation", "IsVAT")
 
     sql += table("ownerlookingfor", (
@@ -2712,6 +2735,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksfieldlink", "LinkType", 28, _("Movement - Released", l))
     sql += lookup1("lksfieldlink", "LinkType", 29, _("Movement - Retailer", l))
     sql += lookup1("lksfieldlink", "LinkType", 30, _("Movement - Reservation", l))
+    sql += lookup1("lksfieldlink", "LinkType", 32, _("Animal in Event", l))
     sql += lookup1("lksfieldtype", "FieldType", 0, _("Yes/No", l))
     sql += lookup1("lksfieldtype", "FieldType", 1, _("Text", l))
     sql += lookup1("lksfieldtype", "FieldType", 2, _("Notes", l))
@@ -2959,6 +2983,7 @@ def install_db_views(dbo: Database) -> int:
     create_view("v_ownercitation", asm3.financial.get_citation_query(dbo))
     create_view("v_ownerdonation", asm3.financial.get_donation_query(dbo))
     create_view("v_ownerlicence", asm3.financial.get_licence_query(dbo))
+    create_view("v_ownerlookingfor", asm3.person.get_person_lookingfor_query(dbo))
     create_view("v_ownertraploan", asm3.animalcontrol.get_traploan_query(dbo))
     create_view("v_ownervoucher", asm3.financial.get_voucher_query(dbo))
     create_view("v_product", asm3.stock.get_product_query(dbo))

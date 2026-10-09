@@ -43,8 +43,6 @@ $(function() {
                     { json_field: "", post_field: "quantity", label: _("Quantity"), type: "intnumber", validation: "notblank", 
                         defaultval: "1", min: 1, max: 100, readonly: true, 
                         callout: _("The number of stock records to create (containers)") },
-                    { json_field: "STOCKLOCATIONID", post_field: "location", label: _("Location"), type: "select", 
-                        options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.stocklocations }},
                     { json_field: "BALANCE", post_field: "balance", label: _("Balance"), type: "number", validation: "notblank",
                         callout: _("The remaining units in the container") },
                     { json_field: "LOW", post_field: "low", label: _("Low"), type: "number",

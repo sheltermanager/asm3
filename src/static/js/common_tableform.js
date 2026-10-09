@@ -1124,7 +1124,7 @@ const tableform = {
      *        label: "label", // if label contains <label markup, overrides generation and uses supplied value instead
      *        labelpos: "before|after|above", (only valid for textarea (before|above) and check (before|after))
      *        labelclasses: "exraclass", extra classes to apply to the label
-     *        type: "check|text|textarea|richtextarea|date|time|currency|number|select|animal|person|raw|nextcol", 
+     *        type: "check|text|textarea|richtextarea|date|time|currency|number|intnumber|select|animal|person|raw|nextcol", 
      *        rowid: "thisrow", (id for the row containing the label/field)
      *        readonly: false, (shown in dialog_show_add, hidden in dialog_show_edit)
      *        halfsize: false, (use the asm-halftextbox class)
@@ -1151,7 +1151,7 @@ const tableform = {
      *        options: "<option>test</option>"
      *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
-     *        personfilter: "all",   (only valid for person type)
+     *        personfilter: "all",   (only valid for person and personmulti type)
      *        persontype: "all",   (only valid for person type, other options individual or organization)
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), (note: done in fields_bind, not here)
@@ -1206,6 +1206,7 @@ const tableform = {
             else if (v.type == "number") { d += tableform.render_number(v); }
             else if (v.type == "password") { d += tableform.render_text(v); }
             else if (v.type == "person") { d += tableform.render_person(v); }
+            else if (v.type == "personmulti") { d += tableform.render_personmulti(v); }
             else if (v.type == "phone") { d += tableform.render_phone(v); }
             else if (v.type == "product") { d += tableform.render_product(v); }
             else if (v.type == "raw") { d += tableform.render_markup(v); }
@@ -1428,6 +1429,25 @@ const tableform = {
         if (v.extraattributes)
         if (v.readonly) { d += "data-noedit=\"true\" "; }
         if (v.animalfilter) { d += "data-filter=\"" + v.animalfilter + "\" "; }
+        if (v.validation) { d += tableform._render_validation_attr(v); }
+        if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
+        if (v.xattr) { d += v.xattr + " "; }
+        d += "/>";
+        return tableform._render_formfield(v, d);
+    },
+
+    render_personmulti: function(v) {
+        let d = "";
+        tableform._check_id(v);
+        d += "<input type=\"hidden\" ";
+        d += tableform._render_class(v, "asm-personchoosermulti");
+        if (v.id) { d += "id=\"" + v.id + "\" "; }
+        if (v.name) { d += "name=\"" + v.name + "\" "; }
+        if (v.json_field) { d += "data-json=\"" + v.json_field + "\" "; }
+        if (v.post_field) { d += "data-post=\"" + v.post_field + "\" "; }
+        if (v.extraattributes)
+        if (v.readonly) { d += "data-noedit=\"true\" "; }
+        if (v.personfilter) { d += "data-filter=\"" + v.personfilter + "\" "; }
         if (v.validation) { d += tableform._render_validation_attr(v); }
         if (v.value) { d += "value=\"" + tableform._attr_value(v.value) + "\" "; }
         if (v.xattr) { d += v.xattr + " "; }
@@ -1907,9 +1927,18 @@ const tableform = {
         return tableform._render_formfield(v, d);
     },
 
-    render_tabs: function(l) {
+    render_tabs: function(l, options) {
+        if (options.searchable) {
+            l.push({
+                id: "tab-tabsearch",
+                title: '<span class="ui-button-icon ui-icon ui-icon-search"></span>',
+                fields: [
+                    { label: _("Search tabs"), type: "text", classes: "asm-tab-search" },
+                ]
+            });
+        }
         let h = [];
-        h.push('<div class="asm-tabs">');
+        h.push('<div class="asm-tabs" data-searchable="' + options.searchable + '">');
         h.push('<ul class="asm-tablist">');
         $.each(l, function(i, v) {
             if (v.hideif && v.hideif()) { return; }
@@ -2035,6 +2064,7 @@ const tableform = {
                 else if (v.type == "animalmulti") { $("#" + v.post_field).animalchoosermulti("clear"); return; }
                 else if (v.type == "datetime") { $("#" + v.post_field + "date, #" + v.post_field + "time").val(""); return; }
                 else if (v.type == "person") { $("#" + v.post_field).personchooser("clear"); return; }
+                else if (v.type == "personmulti") { $("#" + v.post_field).personchoosermulti("clear"); return; }
                 else if (v.type == "textarea") { $("#" + v.post_field).val("");  return; }
                 else if (v.type == "richtextarea") { $("#" + v.post_field).richtextarea("value", ""); return; }
                 else if (v.type == "htmleditor") { $("#" + v.post_field).htmleditor("value", ""); return; }
@@ -2042,7 +2072,7 @@ const tableform = {
                 else if (v.type == "select") {  $("#" + v.post_field).select("firstvalue"); return; }
                 else if (v.type == "selectcolour") {  $("#" + v.post_field).selectcolour("clear"); return; }
                 else if (v.type == "selectmulti") {  $("#" + v.post_field).selectmulti("clear"); return; }
-                else if ([ "phone", "number", "intnumber", "date", "time", "text" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
+                else if ([ "phone", "number", "intnumber", "date", "time", "text", "autotext" ].includes(v.type)) { $("#" + v.post_field).val(""); return; }
             }
             else {
                 // Is the default value a function? If so, run it 
@@ -2091,6 +2121,10 @@ const tableform = {
             else if (v.type == "person") {
                 n.personchooser("clear", false);
                 n.personchooser("loadbyid", row[v.json_field]);
+            }
+            else if (v.type == "personmulti") {
+                n.personchoosermulti("clear");
+                n.personchoosermulti("selectbyids", row[v.json_field]);
             }
             else if (v.type == "currency") {
                 n.currency("value", row[v.json_field]);

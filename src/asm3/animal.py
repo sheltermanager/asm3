@@ -1294,6 +1294,9 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_filter("goodwithchildren", "a.IsGoodWithChildren = 0")
     ss.add_filter("goodwithdogs", "a.IsGoodWithDogs = 0")
     ss.add_filter("goodwithcats", "a.IsGoodWithCats = 0")
+    ss.add_filter("goodwithelderly", "a.IsGoodWithElderly = 0")
+    ss.add_filter("goodtraveller", "a.IsGoodTraveller = 0")
+    ss.add_filter("cratetrained", "a.IsCrateTrained = 0")
     ss.add_filter("housetrained", "a.IsHouseTrained = 0")
     ss.add_filter("showtransfersonly", "a.IsTransfer = 1")
     ss.add_filter("showpickupsonly", "a.IsPickup = 1")
@@ -1304,6 +1307,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     ss.add_filter("heartwormplus", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 2")
     ss.add_filter("heartwormneg", "a.HeartwormTested = 1 AND a.HeartwormTestResult = 1")
     ss.add_filter("unaltered", "a.Neutered = 0")
+    ss.add_filter("unmicrochipped", "a.Identichipped = 0")
     ss.add_words("comments", "a.AnimalComments")
     ss.add_words("hiddencomments", "a.HiddenAnimalDetails")
     ss.add_words("features", "a.Markings")
@@ -1332,9 +1336,13 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: 
     if post["sheltercode"] != "":
         ilike1 = dbo.sql_ilike("a.ShelterCode", "?")
         ilike2 = dbo.sql_ilike("ShelterCode", "?")
-        ss.ands.append(f"({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID))")
-        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
-        ss.values.append("%%%s%%" % post["sheltercode"].lower() )
+        ss.ands.append(f"( ( ({ilike1} OR EXISTS (SELECT ShelterCode FROM animalentry WHERE {ilike2} AND AnimalID = a.ID)) ) OR ( (LOWER(a.ShortCode) = ? OR EXISTS (SELECT ShortCode FROM animalentry WHERE LOWER(ShortCode) = ? AND AnimalID = a.ID)) ) )")
+        ss.values += [
+            "%%%s%%" % post["sheltercode"].lower(),
+            "%%%s%%" % post["sheltercode"].lower(),
+            post["sheltercode"].lower(),
+            post["sheltercode"].lower()
+        ]
 
     if post["insuranceno"] != "":
         ilike = dbo.sql_ilike("InsuranceNumber", "?")
@@ -1661,11 +1669,12 @@ def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Resu
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
             "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s AND SpeciesID IN ( %(alertlngterm)s )) AS lngterm, " \
+        "(SELECT COUNT(*) FROM animal WHERE Weight1 IS NOT NULL AND Weight2 IS NOT NULL AND Weight < Weight1 AND Weight1 < Weight2 AND Archived = 0) AS lostweight, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
                 "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
-                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
+                "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter,
                 "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
                 "alertnevervacc": alertnevervacc, "alertrabies": alertrabies,
                 "alertrsvhck": alertrsvhck, "alertlngterm": alertlngterm }
@@ -2326,7 +2335,12 @@ def calc_shelter_code(dbo: Database, animaltypeid: int, entryreasonid: int, spec
     unique = False
     code = ""
     shortcode = ""
+
     while not unique:
+        # NOTE: This routine can cause an endless loop if the coding format is incapable
+        # of generating codes (eg: If it's blank). 
+        # To defend against this, configuration.csave validates all CodingFormat elements to make
+        # sure they contain tokens that will be substituted for numbers.
 
         # Generate the codes
         code = substitute_tokens(codeformat, highestyear, highestmonth, highestsyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
@@ -2405,6 +2419,12 @@ def get_code(dbo: Database, animalid: int) -> str:
         rv = get_shelter_code(dbo, animalid)
     return rv
 
+def get_lost_weight(dbo: Database) -> Results:
+    """
+    Returns shelter animals that have lost weight at 2 consecutive weighings.
+    """
+    return dbo.query(f"{get_animal_brief_query(dbo)} WHERE a.Weight2 > a.Weight1 AND a.Weight1 > a.Weight AND a.Archived = 0")
+
 def get_short_code(dbo: Database, animalid: int) -> str:
     """
     Returns the short code for animalid
@@ -2451,7 +2471,7 @@ def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: s
             if k != idtype: ids.append( "%s=%s" % (k, v))
     extraids = "|".join(ids)
     a.EXTRAIDS = extraids
-    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
+    dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user, setLastChanged=False)
     return extraids
 
 def get_animal_id_and_bonds(dbo: Database, animalid: int) -> List[int]:
@@ -2634,7 +2654,7 @@ def get_animalconditions(dbo: Database, animalid: int, sort: int = ASCENDING) ->
     """
     Returns animalcondition records for the given animal:
     """
-    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, " \
+    sql = "SELECT ac.ID, ac.StartDatetime, ac.EndDatetime, ac.ConditionID, ac.Comments, c.ConditionName, c.IsZoonotic, ct.ConditionTypeName, c.Description, " \
         "ac.CreatedBy, ac.CreatedDate, ac.LastChangedBy, ac.LastChangedDate " \
         "FROM animalcondition ac INNER JOIN lkcondition c ON ac.ConditionID = c.ID " \
         "INNER JOIN lksconditiontype ct ON c.ConditionTypeID = ct.ID " \
@@ -3065,22 +3085,25 @@ def get_satellite_counts(dbo: Database, animalid: int) -> Results:
     """
     return dbo.query("SELECT a.ID, " \
         "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID) AS vaccination, " \
+        f"(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID AND av.DateRequired < {dbo.sql_today()} AND av.DateOfVaccination IS NULL) AS vaccinationdue, " \
         "(SELECT COUNT(*) FROM animalcondition aco WHERE aco.AnimalID = a.ID) AS conditions, " \
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
+        f"(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID AND at.DateRequired < {dbo.sql_today()} AND at.DateOfTest IS NULL) AS testdue, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
+        "(SELECT COUNT(*) FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON amt.AnimalMedicalID = am.ID " \
+        f"WHERE amt.AnimalID = a.ID AND amt.DateRequired < {dbo.sql_today()} AND amt.DateGiven IS NULL AND am.Status = 0) AS medicaldue, " \
         "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.AnimalID = a.ID) AS boarding, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.AnimalID = a.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM animaldiet ad WHERE ad.AnimalID = a.ID) AS diet, " \
         "(SELECT COUNT(*) FROM animaltransport tr WHERE tr.AnimalID = a.ID) AS transport, " \
-        "(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = ?) AS media, " \
-        "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = ?) AS diary, " \
+        f"(SELECT COUNT(*) FROM media me WHERE me.LinkID = a.ID AND me.LinkTypeID = {asm3.media.ANIMAL}) AS media, " \
+        f"(SELECT COUNT(*) FROM diary di WHERE di.LinkID = a.ID AND di.LinkType = {asm3.diary.ANIMAL}) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.AnimalID = a.ID) AS movements, " \
-        "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = ?) AS logs, " \
+        f"(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = {asm3.log.ANIMAL}) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.AnimalID = a.ID) AS donations, " \
         "(SELECT COUNT(*) FROM ownerlicence ol WHERE ol.AnimalID = a.ID) AS licence, " \
         "(SELECT COUNT(*) FROM animalcost ac WHERE ac.AnimalID = a.ID) AS costs " \
-        "FROM animal a WHERE a.ID = ?", \
-        (asm3.media.ANIMAL, asm3.diary.ANIMAL, asm3.log.ANIMAL, animalid))
+        "FROM animal a WHERE a.ID = ?", [ animalid ])
 
 def get_random_name(dbo: Database, sex: int = 0) -> str:
     """
@@ -3123,11 +3146,12 @@ def get_random_name(dbo: Database, sex: int = 0) -> str:
 
 def get_recent_with_name(dbo: Database, name: str) -> Results:
     """
-    Returns a list of animals who have a brought in date in the last 3 weeks OR are on shelter
+    Returns a list of animals who have a recent brought in date OR are on shelter
     and have the name given.
     """
+    recentoffset = asm3.configuration.warn_similar_animal_name_period(dbo) * -1
     return dbo.query("SELECT ID, ID AS ANIMALID, SHELTERCODE, ANIMALNAME FROM animal " \
-        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) LIKE ?", (dbo.today(offset=-21), name.lower()))
+        "WHERE (DateBroughtIn >= ? OR Archived=0) AND LOWER(AnimalName) = ?", (dbo.today(offset=recentoffset), name.lower()))
 
 def get_recent_changes(dbo: Database, months: int = 1, include_additional_fields: bool = True) -> Results:
     """ Returns all animal records that were changed in the last months """
@@ -3137,6 +3161,27 @@ def get_recent_changes(dbo: Database, months: int = 1, include_additional_fields
     if include_additional_fields: 
         rows = asm3.additional.append_to_results(dbo, rows, "animal")
     return rows
+
+def get_recent_nonshelter_animals(dbo: Database, floor: datetime):
+    return dbo.query(
+        "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.SpeciesID, s.SpeciesName, o.LatLong, o.OwnerAddress, a.CreatedDate " \
+        "FROM animal a " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID " \
+        "INNER JOIN owner o ON a.OwnerID = o.ID " \
+        "WHERE a.NonShelterAnimal = 1 AND a.CreatedDate >= ?",
+        [floor]
+    )
+
+def get_recent_reclaimed_animals(dbo: Database, floor: datetime):
+    return dbo.query(
+        "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.SpeciesID, s.SpeciesName, o.LatLong, o.OwnerAddress, m.MovementDate " \
+        "FROM adoption m " \
+        "INNER JOIN animal a ON m.AnimalID = a.ID " \
+        "INNER JOIN species s ON a.SpeciesID = s.ID " \
+        "INNER JOIN owner o ON m.OwnerID = o.ID " \
+        "WHERE m.MovementType = 5 AND m.MovementDate >= ?",
+        [floor]
+    )
 
 def get_shelter_animals(dbo: Database, include_additional_fields: bool = True) -> Results:
     """ Return full animal records for all shelter animals """
@@ -3505,6 +3550,8 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     
     update_animallocation(dbo, nextid, username)
 
+    update_animal_figures_onshelter(dbo, nextid)
+
     return (nextid, get_code(dbo, nextid))
 
 def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> None:
@@ -3548,7 +3595,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
     # Look up the row pre-change so that we can see if any log messages need to be triggered
-    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, Weight1, Weight2, IsHold, AdditionalFlags, AnimalName, AnimalComments, HiddenAnimalDetails, Adoptable FROM animal WHERE ID=?", [aid]))
 
     # Record the location if it has changed
     insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
@@ -3567,6 +3614,12 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
 
     # If the option is on and the weight has changed, log it
     insert_weight_log(dbo, username, aid, post.floating("weight"), prerow.WEIGHT)
+    if post.floating("weight") != prerow.WEIGHT:
+        weight2 = prerow.WEIGHT1
+        weight1 = prerow.WEIGHT
+    else:
+        weight2 = prerow.WEIGHT2
+        weight1 = prerow.WEIGHT1
 
     # If the animal is newly deceased, mark any diary notes completed
     if post.date("deceaseddate") is not None and asm3.configuration.diary_complete_on_death(dbo):
@@ -3574,16 +3627,13 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
             asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
 
     # Sort out any flags
-    def bi(b): 
+    def bi(b):
         return b and 1 or 0
 
+    def fb(v):
+        return bi(v in flags)
+
     flags = post["flags"].split(",")
-    courtesy = bi("courtesy" in flags)
-    crueltycase = bi("crueltycase" in flags)
-    notforadoption = bi("notforadoption" in flags)
-    notforregistration = bi("notforregistration" in flags)
-    nonshelter = bi("nonshelter" in flags)
-    quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
 
     # If the option is on and the flags have changed, log it
@@ -3596,16 +3646,16 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # day. Non shelter animals don't have visible movements and this prevents a bug where
     # an open foster/retailer movement on a non-shelter animal can make it publish for adoption
     # when the "include fosters/retailers" publishing options are on.
-    if nonshelter == 1:
+    if fb("nonshelter"):
         dbo.execute("UPDATE adoption SET ReturnDate = MovementDate WHERE MovementType IN (2,8) AND AnimalID = ?", [aid])
 
     dbo.update("animal", aid, {
-        "NonShelterAnimal":     nonshelter,
-        "IsNotAvailableForAdoption": notforadoption,
-        "IsNotForRegistration": notforregistration,
-        "IsQuarantine":         quarantine,
-        "IsCourtesy":           courtesy,
-        "CrueltyCase":          crueltycase,
+        "NonShelterAnimal":     fb("nonshelter"),
+        "IsNotAvailableForAdoption": fb("notforadoption"),
+        "IsNotForRegistration": fb("notforregistration"),
+        "IsQuarantine":         fb("quarantine"),
+        "IsCourtesy":           fb("courtesy"),
+        "CrueltyCase":          fb("crueltycase"),
         "AdditionalFlags":      flagstr,
         "ShelterCode":          post["sheltercode"],
         "ShortCode":            post["shortcode"],
@@ -3619,6 +3669,8 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "CoatType":             post.integer("coattype"),
         "Size":                 post.integer("size"),
         "Weight":               post.floating("weight"),
+        "Weight1":              weight1,
+        "Weight2":              weight2,
         "SpeciesID":            post.integer("species"),
         "BreedID":              post.integer("breed1"),
         "Breed2ID":             post.integer("breed2"),
@@ -3720,6 +3772,8 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         update_litter_count(dbo, post["litterid"])
     
     update_animallocation(dbo, aid, username)
+
+    update_animal_figures_onshelter(dbo, aid)
 
 def update_flags(dbo: Database, username: str, animalid: int, flags: List[str]) -> None:
     """
@@ -4706,6 +4760,7 @@ def delete_animal(dbo: Database, username: str, animalid: int, ignore_movements:
     for t in [ "adoption", "animalentry", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
+    update_animal_figures_onshelter(dbo, animalid)
     # asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def delete_animals_from_form(dbo: Database, username: str, post: PostedData) -> int:
@@ -6125,16 +6180,23 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         # Died
         died = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "SpeciesID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (speciesid, firstofmonth, lastofmonth))
         add_row(119, "SP_DIED", 0, speciesid, daysinmonth, _("Died", l), 0, True, died)
 
         # PTS
         pts = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "SpeciesID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (speciesid, firstofmonth, lastofmonth))
         add_row(120, "SP_PTS", 0, speciesid, daysinmonth, _("Euthanized", l), 0, True, pts)
+
+        # DOA
+        doa = sql_days("SELECT DateBroughtIn AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
+            "SpeciesID = %d AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+            "AND NonShelterAnimal = 0 AND IsDOA = 1 " \
+            "GROUP BY DateBroughtIn" % (speciesid, firstofmonth, lastofmonth))
+        add_row(121, "SP_DOA", 0, speciesid, daysinmonth, _("DOA", l), 0, True, doa)
 
         # Other
         toother = sql_days("SELECT MovementDate AS TheDate, COUNT(adoption.ID) AS Total FROM adoption " \
@@ -6142,11 +6204,11 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
             "SpeciesID = %d AND MovementType NOT IN (1, 2, 3, 4, 5, 6, 7, 8) " \
             "AND MovementDate >= %s AND MovementDate <= %s " \
             "GROUP BY MovementDate" % (speciesid, firstofmonth, lastofmonth))
-        add_row(121, "SP_OUTOTHER", 0, speciesid, daysinmonth, _("To Other", l), 0, True, toother)
+        add_row(122, "SP_OUTOTHER", 0, speciesid, daysinmonth, _("To Other", l), 0, True, toother)
 
         # Out subtotal
         outsubtotal = add_days((adopted, reclaimed, escaped, stolen, released, transferred, fostered, retailer, died, pts, toother))
-        add_row(122, "SP_OUTTOTAL", 0, speciesid, daysinmonth, _("Out SubTotal", l), 1, False, outsubtotal)
+        add_row(123, "SP_OUTTOTAL", 0, speciesid, daysinmonth, _("Out SubTotal", l), 1, False, outsubtotal)
 
         # Start of day total
         starttotal = sub_days(sheltertotal, insubtotal)
@@ -6154,7 +6216,7 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         add_row(4, "SP_STARTTOTAL", 0, speciesid, daysinmonth, _("Start Of Day", l), 1, False, starttotal)
 
         # End of day
-        add_row(123, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
+        add_row(124, "SP_TOTAL", 0, speciesid, daysinmonth, _("End Of Day", l), 1, False, sheltertotal)
 
     asm3.asynctask.set_progress_value(dbo, 1)
 
@@ -6314,16 +6376,23 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
         # Died
         died = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "AnimalTypeID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep = 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (typeid, firstofmonth, lastofmonth))
         add_row(19, "AT_DIED", typeid, 0, daysinmonth, _("Died", l), 0, True, died)
 
         # PTS
         pts = sql_days("SELECT DeceasedDate AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
             "AnimalTypeID = %d AND DeceasedDate >= %s AND DeceasedDate <= %s " \
-            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 " \
+            "AND PutToSleep <> 0 AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 0 " \
             "GROUP BY DeceasedDate" % (typeid, firstofmonth, lastofmonth))
         add_row(20, "AT_PTS", typeid, 0, daysinmonth, _("Euthanized", l), 0, True, pts)
+
+        # DOA
+        doa = sql_days("SELECT DateBroughtIn AS TheDate, COUNT(animal.ID) AS Total FROM animal WHERE " \
+            "AnimalTypeID = %d AND DateBroughtIn >= %s AND DateBroughtIn <= %s " \
+            "AND IsDOA = 1 AND NonShelterAnimal = 0 " \
+            "GROUP BY DateBroughtIn" % (typeid, firstofmonth, lastofmonth))
+        add_row(21, "AT_DOA", typeid, 0, daysinmonth, _("DOA", l), 0, True, doa)
 
         # Other
         toother = sql_days("SELECT MovementDate AS TheDate, COUNT(adoption.ID) AS Total FROM adoption " \
@@ -6331,11 +6400,11 @@ def update_animal_figures(dbo: Database, month: int = 0, year: int = 0) -> str:
             "AnimalTypeID = %d AND MovementType NOT IN (1, 2, 3, 4, 5, 6, 7, 8) " \
             "AND MovementDate >= %s AND MovementDate <= %s " \
             "GROUP BY MovementDate" % (typeid, firstofmonth, lastofmonth))
-        add_row(21, "AT_OUTOTHER", typeid, 0, daysinmonth, _("To Other", l), 0, True, toother)
+        add_row(22, "AT_OUTOTHER", typeid, 0, daysinmonth, _("To Other", l), 0, True, toother)
 
         # Out subtotal
         outsubtotal = add_days((adopted, reclaimed, escaped, stolen, released, transferred, fostered, retailer, died, pts, toother))
-        add_row(22, "AT_OUTTOTAL", typeid, 0, daysinmonth, _("SubTotal", l), 1, False, outsubtotal)
+        add_row(23, "AT_OUTTOTAL", typeid, 0, daysinmonth, _("SubTotal", l), 1, False, outsubtotal)
 
         # Start of day total
         starttotal = sub_days(sheltertotal, insubtotal)
@@ -6588,11 +6657,11 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
 
     group = _("DOA {0}", l).format(year)
     for sp in allspecies:
-        species_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+        species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
-            "a.SpeciesID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND a.DiedOffShelter = 0 AND a.PutToSleep = 0 AND a.IsDOA = 1 AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_DOA", group, 80, showbabies, babymonths)
 
     group = _("Returned to Owner {0}", l).format(year)
@@ -7231,4 +7300,83 @@ def create_waitinglist(dbo: Database, username: str, aid: int) -> int:
         "dateofbirth":      python2display(l, a.DATEOFBIRTH)
     }
     return asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, l), username)
+
+def update_all_animal_figures_onshelter(dbo: Database) -> str:
+    animals = dbo.query_list("SELECT ID FROM animal")
+    asm3.asynctask.set_progress_max(dbo, len(animals))
+    for i, a in enumerate(animals):
+        update_animal_figures_onshelter(dbo, a)
+        asm3.asynctask.set_progress_value(dbo, i)
+    return f"OK {len(animals)}"
+
+def update_animal_figures_onshelter(dbo: Database, animalid: int):
+    # Get animals movement history
+    date = get_date_brought_in(dbo, animalid)
+    if not date:
+        return
+    date = date.replace(hour=0, minute=0, second=0, microsecond=0)
+    movements = dbo.query("SELECT MovementDate, ReturnDate, MovementType FROM adoption WHERE AnimalID = ? ORDER BY MovementDate", (animalid,))
+
+    # Get deceased date if died on shelter
+    deceaseddate = dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID = ? AND DiedOffShelter = 0", [animalid])
+
+    outboundmovements = []
+    inboundmovements = []
+    for movement in movements:
+        if asm3.movement.is_exit_movement(dbo, movement.MOVEMENTTYPE):
+            outboundmovements.append(movement.MOVEMENTDATE)
+            if movement.RETURNDATE:
+                inboundmovements.append(movement.RETURNDATE)
+
+    onshelter = True
+    month = 0
+    year = 0
+    figures = {}
+
+    def update_figures():
+        nonlocal month
+        nonlocal year
+        nonlocal date
+        nonlocal figures
+        figureskey = (date.month, date.year)
+        if date.month != month or date.year != year:
+            figures[figureskey] = 0
+            month = date.month
+            year = date.year
+        figures[figureskey] += 1
+    
+    while date <= dbo.today():
+        if onshelter:
+            update_figures()
+            if date == deceaseddate:
+                onshelter = False
+                break
+            nextoutboundmovement = None
+            if outboundmovements:
+                nextoutboundmovement = outboundmovements[0]
+                if date == nextoutboundmovement:
+                    onshelter = False
+                    outboundmovements.pop(0)
+                    if not inboundmovements:
+                        break
+        else:
+            nextinboundmovement = None
+            if inboundmovements:
+                nextinboundmovement = inboundmovements[0]
+                if date == nextinboundmovement:
+                    update_figures()
+                    onshelter = True
+                    inboundmovements.pop(0)
+        date = asm3.i18n.add_days(date, 1)
+
+    # Delete existing animalfiguresonshelter rows with this animalid
+    dbo.delete("animalfiguresonshelter", "AnimalID = %s" % animalid)
+    
+    values = []
+    for f in figures.items():
+        month = int(f[0][0])
+        year = int(f[0][1])
+        values.append( (animalid, datetime(year, month, 15), month, year, f[1]) )
+    if len(values) > 0:
+        dbo.execute_many("INSERT INTO animalfiguresonshelter (AnimalID, MonthMidPoint, Month, Year, DaysOnShelter) VALUES (?, ?, ?, ?, ?)", values)
 

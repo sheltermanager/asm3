@@ -73,6 +73,7 @@ locale_maps = {
     "en_AU":    ( "English", "Australia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_AU ),
     "en_AE":    ( "English", "United Arab Emirates", DMY, "&#x62f;&#x2e;&#x625;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_AW":    ( "English", "Aruba", DMY, "Awg.", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_BB":    ( "English", "Barbados", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_BE":    ( "English", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "en_BM":    ( "English", "Bermuda", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-203-111" ),
     "en_BG":    ( "English", "Bulgaria", HYMD, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK),
@@ -84,6 +85,7 @@ locale_maps = {
     "en_CR":    ( "English", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_CY":    ( "English", "Cyprus", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_EG":    ( "English", "Egypt", DMY, POUND, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_EG ),
+    "en_EL":    ( "English", "Greece", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "en_ES":    ( "English", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK ),
     "en_HK":    ( "English", "Hong Kong", HDMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_HU":    ( "English", "Hungary", DYMD, "Ft",  PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK), 
@@ -175,11 +177,11 @@ def real_locale(locale: str = "en") -> str:
     #   en_AU (Australia)
     #   en_CA (Canada)
     #   en_GB (UK)
-    if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_EG", 
-        "en_ES", "en_HK", "en_HU", "en_ID", "en_IE", "en_IN", "en_JO", "en_JP", "en_KE", "en_KH", 
-        "en_LB", "en_LU", "en_LV", "en_MU", "en_MY", "en_MZ", "en_NA", "en_NP", "en_PH", "en_PT", 
-        "en_QA", "en_RO", "en_RO2", "en_SA", "en_TH", "en_TR", "en_TW", "en_TW2", "en_TZ", "en_UA",
-        "en_UG", "en_VN", "en_ZA", "en_ZW"):
+    if locale in ("en_AE", "en_BB", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", 
+        "en_EG", "en_ES", "en_HK", "en_HU", "en_ID", "en_EL", "en_IE", "en_IN", "en_JO", "en_JP", 
+        "en_KE", "en_KH", "en_LB", "en_LU", "en_LV", "en_MU", "en_MY", "en_MZ", "en_NA", "en_NP", 
+        "en_PH", "en_PT", "en_QA", "en_RO", "en_RO2", "en_SA", "en_TH", "en_TR", "en_TW", "en_TW2", 
+        "en_TZ", "en_UA", "en_UG", "en_VN", "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):
@@ -367,12 +369,12 @@ def format_currency(locale: str, value: int, includeSymbol: bool = True) -> str:
         f = float(i)
     except:
         pass
-    f = f / 100
-    dp = str(get_currency_dp(locale))
+    dp = get_currency_dp(locale)
     symbol = get_currency_symbol(locale)
+    f = f / (pow(10, dp))
     # Start with a basic currency format with comma groupings every 3 digits
     # and the right number of decimal places for the locale
-    fstr = "{:,." + dp + "f}"
+    fstr = "{:,." + str(dp) + "f}"
     # Add the currency symbol to the format in the correct spot
     if includeSymbol:
         if get_currency_prefix(locale) == CURRENCY_PREFIX:

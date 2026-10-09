@@ -270,8 +270,10 @@ DEFAULTS = {
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
+    "EventAnimalViewColumns": "ArrivalDate,IMAGE,ANIMAL,DISPLAYLOCATION,AGEGROUP,SPECIESNAME,BASECOLOURNAME,LITTERID,COMMENTS,LASTFOSTERER,ADOPTED",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FundedPaymentsEnabled": "No",
     "AnimalFlagChangeLog": "Yes",
     "AnimalFlagChangeLogType": "3",
     "PersonFlagChangeLog": "Yes",
@@ -359,6 +361,7 @@ DEFAULTS = {
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
+    "OrganisationWebsite": "Website",
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
@@ -394,6 +397,7 @@ DEFAULTS = {
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
     "ReservesOverdueDays": "7",
+    "RestrictLicenseRenewal": "No",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",
@@ -478,6 +482,7 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
+    "WarnSimilarAnimalNamePeriod": "21",
     "WatermarkFontFile": "dejavu/DejaVuSans-Bold.ttf",
     "WatermarkFontFillColor": "white",
     "WatermarkFontMaxSize": "180",
@@ -552,7 +557,7 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
     """
     def valid_code(s: str) -> bool:
         """
-        Returns True if s has a valid code portion in it
+        Returns True if s has a valid numeric code portion token in it
         """
         VALID_CODES = ("OO", "XX", "NN", "UUUU", "PP")
         for v in VALID_CODES:
@@ -578,18 +583,10 @@ def csave(dbo: Database, username: str, post: PostedData) -> None:
             if k not in cmap or cmap[k] != v:
                 address_changed = True
                 put(k ,v)
-        elif k == "CodingFormat":
-            # If there's no valid N, X, O or U tokens in there, it's not valid so reset to
-            # the default.
+        elif k in ( "CodingFormat", "ShortCodingFormat", "IncidentCodingFormat" ):
+            # Make sure that coding formats contain valid tokens to make the code unique, otherwise reset to the default
             if not valid_code(v):
-                put(k, "TYYYYNNN")
-            else:
-                put(k, v)
-        elif k == "ShortCodingFormat":
-            # If there's no N, X, O or U in there, it's not valid so reset to
-            # the default.
-            if not valid_code(v):
-                put(k, "NNT")
+                put(k, DEFAULTS[k])
             else:
                 put(k, v)
         elif k == "DefaultDailyBoardingCost":
@@ -1028,6 +1025,9 @@ def default_location(dbo: Database) -> int:
 def default_log_filter(dbo: Database) -> int:
     return cint(dbo, "AFDefaultLogFilter", 0)
 
+def default_log_type(dbo: Database) -> int:
+    return cint(dbo, "AFDefaultLogType", 0)
+
 def default_media_notes_from_file(dbo: Database) -> bool:
     return cboolean(dbo, "DefaultMediaNotesFromFile", DEFAULTS["DefaultMediaNotesFromFile"] == "Yes")
 
@@ -1170,6 +1170,12 @@ def email_licence_reminder_days(dbo: Database) -> int:
 
 def email_licence_reminder_template(dbo: Database) -> int:
     return cint(dbo, "EmailLicenceReminderTemplate", DEFAULTS["EmailLicenceReminderTemplate"])
+
+def email_log(dbo: Database) -> bool:
+    return cboolean(dbo, "LogEmailByDefault")
+
+def email_log_type(dbo: Database) -> int:
+    return cint(dbo, "EmailLogType", DEFAULTS["EmailLogType"])
 
 def email_messages(dbo: Database) -> bool:
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
@@ -1465,6 +1471,9 @@ def organisation_latlong(dbo: Database, newvalue: str = "") -> str:
 def organisation_telephone(dbo: Database) -> str:
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def organisation_website(dbo: Database) -> str:
+    return cstring(dbo, "OrganisationWebsite", DEFAULTS["OrganisationWebsite"])
+
 def osm_map_tiles_override(dbo: Database) -> str:
     return cstring(dbo, "OSMMapTilesOverride")
 
@@ -1488,6 +1497,15 @@ def person_flag_change_log(dbo: Database) -> bool:
 
 def person_flag_change_log_type(dbo: Database) -> int:
     return cint(dbo, "PersonFlagChangeLogType", DEFAULTS["PersonFlagChangeLogType"])
+
+def petcolovelost_email(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostEmail")
+
+def petcolovelost_password(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostPassword")
+
+def petcolovelost_shelterid(dbo: Database) -> str:
+    return cstring(dbo, "PetCoLoveLostShelterID")
 
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
@@ -1551,6 +1569,9 @@ def product_movement_usage_type(dbo: Database) -> int:
 
 def event_search_columns(dbo: Database) -> str:
     return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
+
+def event_animal_view_columns(dbo: Database) -> str:
+    return cstring(dbo, "EventAnimalViewColumns", DEFAULTS["EventAnimalViewColumns"])
 
 def incident_search_columns(dbo: Database) -> str:
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
@@ -1693,6 +1714,9 @@ def rescuegroups_password(dbo: Database) -> str:
 def resize_images_spec(dbo: Database) -> str:
     return cstring(dbo, "ResizeImagesSpec")
 
+def restrict_license_renewal(dbo: Database) -> bool:
+    return cboolean(dbo, "RestrictLicenseRenewal", DEFAULTS["RestrictLicenseRenewal"] == "Yes")
+
 def retailer_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
@@ -1822,6 +1846,9 @@ def system_log_type(dbo: Database) -> int:
 def use_short_shelter_codes(dbo: Database) -> bool:
     return cboolean(dbo, "UseShortShelterCodes")
 
+def tax_id(dbo: Database) -> str:
+    return cstring(dbo, "ShelterTaxID")
+
 def third_party_publisher_sig(dbo: Database) -> str:
     return cstring(dbo, "TPPublisherSig")
 
@@ -1933,6 +1960,9 @@ def waiting_list_urgency_update_period(dbo: Database) -> int:
 
 def warn_no_homecheck(dbo: Database) -> bool:
     return cboolean(dbo, "WarnNoHomeCheck", DEFAULTS["WarnNoHomeCheck"] == "Yes")
+
+def warn_similar_animal_name_period(dbo: Database) -> int:
+    return cint(dbo, "WarnSimilarAnimalNamePeriod", 21)
 
 def watermark_x_offset(dbo: Database) -> int:
     return cint(dbo, "WatermarkXOffset", DEFAULTS["WatermarkXOffset"])

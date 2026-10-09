@@ -1499,6 +1499,8 @@ def post_data(url: str, data: bytes, contenttype: str = "", httpmethod: str = "P
             r = requests.patch(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         elif httpmethod == "PUT":
             r = requests.put(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
+        elif httpmethod == "DELETE":
+            r = requests.delete(url, headers=headers, cookies=cookies, data=data, allow_redirects=True)
         else:
             raise NotImplementedError(f"Unsupported HTTP method {httpmethod}")
     except Exception as err:

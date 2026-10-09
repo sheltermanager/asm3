@@ -282,7 +282,7 @@ $(function() {
                             '<div id="productsheader">',
                                 '<div class="productinfodescription">',
                                     _("Product Name"),
-                                    '<input type="text" id="posproductsearch" class="asm-field asm-textbox" placeholder="' + _("Search..") + '">',
+                                    '<input type="text" id="posproductsearch" class="asm-field asm-textbox" placeholder="' + _("Search") + '">',
                                 '</div>',
                                 '<div class="productinfounit">',
                                     _("Unit"),

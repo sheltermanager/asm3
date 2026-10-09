@@ -91,7 +91,7 @@ $(function() {
                             if (controller.animal) { return true; }
                         }
                     },
-                    { field: "ACCEPTANCENUMBER", display: _("Litter"),
+                    { field: "LITTERID", display: _("Litter"),
                         hideif: function(row) {
                             if (controller.animal) { return true; }
                             return config.bool("DontShowLitterID");

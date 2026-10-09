@@ -29,12 +29,17 @@ edit_header = {
      *           non-zero, an icon is shown on some tabs.
      */
     animal_edit_header: function(a, selected, counts) {
-        let check_display_icon = function(key, iconname) {
+        const check_display_icon = function(key, iconname) {
             if (key == "animal") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
-                return html.icon(iconname);
+                let icon = html.icon(iconname);
+                return icon;
             }
             return html.icon("blank");
+        };
+        const check_display_alert = function(key) {
+            if (counts[key.toUpperCase() + "DUE"]) { return '<span class="ui-icon ui-icon-alert"></span>'; }
+            return "";
         };
         let mediaprompt = "";
         if (a.WEBSITEMEDIANAME == null) {
@@ -269,16 +274,16 @@ edit_header = {
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "boarding") && a.HASACTIVEBOARDING == 0 && a.ARCHIVED == 0) { return; } // don't show boarding tab for non-owned shelter animals
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
-            if ((key == "condition") && config.bool("DisableConditions")) { return; }
+            if ((key == "conditions") && config.bool("DisableConditions")) { return; }
             if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
             if ((key == "movements") && a.NONSHELTERANIMAL == 1) { return; }
             if ((key == "transport") && config.bool("DisableTransport")) { return; }
             if (key == selected) {
-                s += "<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>";
+                s += "<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>";
             }
             else {
-                s += "<li><a href=\"" + url + "?id=" + a.ID + "\">" + display + " " + check_display_icon(key, iconname) + "</a></li>";
+                s += "<li><a href=\"" + url + "?id=" + a.ID + "\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>";
             }
         });
         s += "</ul>";
@@ -332,7 +337,7 @@ edit_header = {
      * counts:   A count of the number of records for each tab (in uppercase). If it's
      *           non-zero, an icon is shown on some tabs.
      */
-    event_edit_header: function(e, selected, counts){
+    event_edit_header: function(e, selected, counts) {
         var check_display_icon = function(key, iconname) {
             if (key == "event") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
@@ -383,11 +388,13 @@ edit_header = {
             '<ul class="asm-tablist">'
         ];
         var tabs = [[ "event", "event", _("Event"), "", "ve" ],
-            [ "animals", "event_animals", _("Animals"), "", "vea" ]
+            [ "animals", "event_animals", _("Animals"), "animal", "vea" ],
+            [ "media", "event_media", _("Media"), "media", "vam"]
             ];
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            console.log(key);
             if (key == selected) {
                 h.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }
@@ -583,17 +590,56 @@ edit_header = {
         const check_display_icon = function(key, iconname) {
             if (key == "person") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
-                return html.icon(iconname);
+                let icon = html.icon(iconname);
+                return icon;
             }
             return html.icon("blank");
         };
+        const check_display_alert = function(key) {
+            if (counts[key.toUpperCase() + "DUE"]) { return '<span class="ui-icon ui-icon-alert"></span>'; }
+            return "";
+        };
         let flags = this.person_flags(p);
-        let latestmove = "", latestmovedeceased = "";
-        if (p.LATESTMOVEANIMALID) { 
-            if (p.LATESTMOVEDECEASEDDATE) { latestmovedeceased = html.icon("death"); }
-            latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
-            latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
-            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b> ' + latestmovedeceased + '</td></tr>';
+        let fosters = [];
+        let ownedanimals = [];
+        $.each(controller.activeanimals, function(i, v) {
+            if (v.LINKTYPE == 2) {
+                fosters.push(v);
+            } else {
+                ownedanimals.push(v);
+            }
+        });
+        let fostershtml = "";
+        let ownedanimalshtml = "";
+        if (fosters.length) {
+            fostershtml = '<tr><td>' + _("Active Fosters") + ':</td>';
+        }
+        if (fosters.length > 5) {
+            // fostershtml += '<td><b><a href="animal?id=' + fosters[0].ANIMALID + '">' + fosters[0].ANIMALNAME + '</a> <a href="person_movements?id=' + controller.person.ID + '">' + _("plus {0} more...").replace("{0}",  (fosters.length - 1)) + '</a></b></td></tr>';
+            fostershtml += '<td><a href="person_movements?id=' + controller.person.ID + '">' + _("{0} plus {1} more...").replace("{0}", fosters[0].ANIMALNAME).replace("{1}",  (fosters.length - 1)) + '</a></td></tr>';
+        } else {
+            fostershtml += '<td>';
+            let fosterlinks = [];
+            $.each(fosters, function(i, v) {
+                fosterlinks.push('<a href="animal?id=' + v.ANIMALID + '">' + v.ANIMALNAME + '</a>');
+            });
+            fostershtml += fosterlinks.join(", ");
+            fostershtml += '</td></tr>';
+        }
+        if (ownedanimals.length) {
+            ownedanimalshtml = '<tr><td>' + _("Owned Animals") + ':</td>';
+        }
+        if (ownedanimals.length > 5) {
+            // ownedanimalshtml += '<td><b><a href="animal?id=' + ownedanimals[0].ANIMALID + '">' + ownedanimals[0].ANIMALNAME + '</a> <a href="person_movements?id=' + controller.person.ID + '">' + _("plus {0} more...").replace("{0}",  (ownedanimals.length - 1)) + '</a></b></td></tr>';
+            ownedanimalshtml += '<td><a href="person_movements?id=' + controller.person.ID + '">' + _("{0} plus {1} more...").replace("{0}", ownedanimals[0].ANIMALNAME).replace("{1}",  (ownedanimals.length - 1)) + '</a></td></tr>';
+        } else {
+            ownedanimalshtml += '<td>';
+            let ownedanimallinks = [];
+            $.each(ownedanimals, function(i, v) {
+                ownedanimallinks.push('<a href="animal?id=' + v.ANIMALID + '">' + v.ANIMALNAME + '</a>');
+            });
+            ownedanimalshtml += ownedanimallinks.join(", ");
+            ownedanimalshtml += '</td></tr>';
         }
         let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
@@ -615,7 +661,8 @@ edit_header = {
             '</div>',
             '<div class="col-sm">',
             '<table>',
-            latestmove,
+            fostershtml,
+            ownedanimalshtml,
             '<tr>',
             '<td></td><td>' + p.OWNERADDRESS + '<br />',
             p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '<br />',
@@ -661,10 +708,10 @@ edit_header = {
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
             if ((key == "rota") && ((!p.ISVOLUNTEER && !p.ISSTAFF) || config.bool("DisableRota"))) { return; }
             if (key == selected) {
-                s.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+                s.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }
             else {
-                s.push("<li><a href=\"" + url + "?id=" + p.ID + "\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+                s.push("<li><a href=\"" + url + "?id=" + p.ID + "\">" + check_display_alert(key) + display + " " + check_display_icon(key, iconname) + "</a></li>");
             }
         });
         s.push("</ul>");
@@ -691,23 +738,15 @@ edit_header = {
      */
     animal_flags: function(a) {
         var flags = [];
-        if (a.ISCOURTESY == 1) {
-            flags.push(_("Courtesy Listing"));
-        }
-        if (a.CRUELTYCASE == 1) {
-            flags.push(_("Cruelty Case"));
-        }
-        if (a.NONSHELTERANIMAL == 1) {
-            flags.push(_("Non-Shelter"));
-        }
-        if (a.ISNOTAVAILABLEFORADOPTION == 1) {
-            flags.push("<span style=\"color: red\">" + _("Not For Adoption") + "</span>");
-        }
-        if (a.ISQUARANTINE == 1) {
-            flags.push(_("Quarantine"));
-        }
+        var stock = [];
+        $.each(asm.animalflags, function(i, v) {
+            if (a[v[1].FIELD] == 1) {
+                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + _(v[1].LABEL) + "</span>");
+            }
+            stock.push(v[0]);
+        });
+
         if (a.ADDITIONALFLAGS != null) {
-            var stock = [ "courtesy", "crueltycase", "nonshelter", "notforadoption", "notforregistration", "quarantine" ];
             $.each(a.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {
                     flags.push(v);
@@ -724,79 +763,15 @@ edit_header = {
      */
     person_flags: function(p) {
         var flags = [];
-        if (p.ISACO == 1) {
-            flags.push(_("ACO"));
-        }
-        if (p.ISBANNED == 1) {
-            flags.push("<span class=\"asm-flag-banned\">" + _("Banned") + "</span>");
-        }
-        if (p.ISDANGEROUS == 1) {
-            flags.push("<span class=\"asm-flag-dangerous\">" + _("Dangerous") + "</span>");
-        }
-        if (p.INVESTIGATION > 0) {
-            flags.push("<span class=\"asm-flag-investigation\">" + _("Investigation") + "</span>");
-        }
-        if (p.INCIDENT > 0) {
-            flags.push("<span class=\"asm-flag-incident\">" + _("Incident") + "</span>");
-        }
-        if (p.ISDECEASED == 1) {
-            flags.push("<span class=\"asm-flag-deceased\">" + _("Deceased") + "</span>");
-        }
-        if (p.ISADOPTER == 1) {
-            flags.push(_("Adopter"));
-        }
-        if (p.ISADOPTIONCOORDINATOR == 1) {
-            flags.push(_("Adoption Coordinator"));
-        }
-        if (p.ISDONOR == 1) {
-            flags.push(_("Donor"));
-        }
-        if (p.ISDRIVER == 1) {
-            flags.push(_("Driver"));
-        }
-        if (p.ISFOSTERER == 1) {
-            flags.push(_("Fosterer"));
-        }
-        if (p.IDCHECK == 1) {
-            flags.push(_("Homechecked"));
-        }
-        if (p.ISHOMECHECKER == 1) {
-            flags.push(_("Homechecker"));
-        }
-        if (p.ISMEMBER == 1) {
-            flags.push(_("Member"));
-        }
-        if (p.ISRETAILER == 1) {
-            flags.push(_("Retailer"));
-        }
-        if (p.ISSHELTER == 1) {
-            flags.push(_("Shelter"));
-        }
-        if (p.ISSPONSOR == 1){
-            flags.push(_("Sponsor"));
-        }
-        if (p.ISSTAFF == 1) {
-            flags.push(_("Staff"));
-        }
-        if (p.ISSUPPLIER == 1) {
-            flags.push(_("Supplier"));
-        }
-        if (p.ISGIFTAID == 1) {
-            flags.push(_("UK Giftaid"));
-        }
-        if (p.ISVET == 1) {
-            flags.push(_("Vet"));
-        }
-        if (p.ISVOLUNTEER == 1) {
-            flags.push(_("Volunteer"));
-        }
-        if (p.EXCLUDEFROMBULKEMAIL == 1) {
-            flags.push(_("Exclude from bulk email"));
-        }
+        var stock = [];
+        $.each(asm.personflags, function(i, v) {
+            if (p[v[1].FIELD] == 1) {
+                flags.push("<span class=\"asm-flag-" + v[0].toLowerCase() + "\">" + _(v[1].LABEL) + "</span>");
+            }
+            stock.push(v[0]);
+        });
+
         if (p.ADDITIONALFLAGS != null) {
-            var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
-                "fosterer", "giftaid", "homechecked", "homechecker", "member", "retailer", "shelter", "sponsor", "supplier", "staff", 
-                "vet", "volunteer"];
             $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {
                     flags.push(v);

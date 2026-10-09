@@ -33,7 +33,7 @@ $(function() {
                 header.hide_error();
                 validate.reset();
                 // person
-                if ($("#person").val() == "") {
+                if ($("#person").val() == "0") {
                     header.show_error(_("Payments require a person"));
                     validate.highlight("person");
                     return false;
@@ -100,6 +100,10 @@ $(function() {
 
             $("#movementrow").hide();
         
+        },
+
+        sync: function() {
+            validate.indicator(["person", "received"]);
         },
 
         update_movements: async function(personid) {

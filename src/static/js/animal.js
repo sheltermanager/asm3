@@ -58,6 +58,8 @@ $(function() {
                     tableform.render_intnumber({ id: "weightoz", justwidget: true, style: "width: 70px" }),
                     '<span id="ozlabel">' + _("oz") + '</span>',
                     '</span>' ].join("\n") },
+                { post_field: "weight1", json_field: "WEIGHT1", type: "hidden" },
+                { post_field: "weight2", json_field: "WEIGHT2", type: "hidden" },
 
                 { type: "nextcol" }, 
 
@@ -642,7 +644,7 @@ $(function() {
 
             // DATA ===========================================
 
-            // Hide the view roles controls if incident permissions are off
+            // Hide the view roles controls if permissions are off
             if (!config.bool("AnimalPermissions")) {
                 $("#viewrolesrow").hide();
             }
@@ -1425,6 +1427,15 @@ $(function() {
 
             // Share button/links
             animal.set_sharinglinks();
+
+            // Make the role controls read only if user role not set
+            if (!common.has_permission("car")) {
+                if (controller.animal.VIEWROLEIDS) {
+                    $("#viewroles").selectmulti("disable");
+                } else {
+                    $("#viewrolesrow").hide();
+                }
+            }
 
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);

@@ -2,7 +2,7 @@ Payments Today
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by type for the current day
 ###
@@ -17,7 +17,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date = '$CURRENT_DATE$'
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date = '$CURRENT_DATE$'
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
@@ -67,7 +68,7 @@ Payments in the last week
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type for the last 7 days
 ###
@@ -82,7 +83,8 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.Date >= '$CURRENT_DATE-7$' AND ownerdonation.Date <= '$CURRENT_DATE$' 
+WHERE (ownerdonation.FundedByOwnerDonationID = 0 OR ownerdonation.FundedByOwnerDonationID IS NULL) 
+AND ownerdonation.Date >= '$CURRENT_DATE-7$' AND ownerdonation.Date <= '$CURRENT_DATE$' 
 ORDER BY donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER

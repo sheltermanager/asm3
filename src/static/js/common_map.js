@@ -1,4 +1,4 @@
-/*global $, google, asm, config, validate, L */
+/*global $, google, asm, config, log, validate, L */
 /*global mapping: true */
 
 "use strict";
@@ -9,15 +9,17 @@
  */
 const mapping = {
 
+    _markers: [],
+
     /**
      * Draws a map using our selected provider.
      * divid: The element to draw the map in
      * zoom: The zoom level for the map 1-18
      * latlong: A lat,long string to mark the center of the map (or empty string for current location)
-     * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false }
+     * markers: A list of marker objects to draw { latlong: "", popuptext: "", popupactive: false, pinurl: "" }
      */
     draw_map: function(divid, zoom, latlong, markers) {
-        var _draw_map = function(latlong) {
+        const _draw_map = function(latlong) {
             if (asm.mapprovider == "osm") {
                 mapping._leaflet_draw_map(divid, zoom, latlong, markers);
             }
@@ -25,27 +27,100 @@ const mapping = {
                 mapping._google_draw_map(divid, zoom, latlong, markers);
             }
         };
-        var first_valid = this._first_valid_latlong(markers);
+        let first_valid = this._first_valid_latlong(markers);
         // A center point has been specified, use that
         if (latlong != "") {
             _draw_map(latlong);
         }
+        // No https connection - assuming test environment, providing fallback location
+        else if (!document.location.href.startsWith("https://")) {
+            _draw_map("0,0");
+        }
         // No center point specified, use the device location
         else if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        // We got a position from the browser
-                        _draw_map(position.coords.latitude + "," + position.coords.longitude);
-                    },
-                    function() {
-                        // The user refused or an error occurred - use the first marker pin
-                        if (first_valid) { _draw_map(first_valid); }
-                    }
-                );
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // We got a position from the browser
+                    _draw_map(position.coords.latitude + "," + position.coords.longitude);
+                },
+                function() {
+                    // The user refused or an error occurred - use the first marker pin
+                    if (first_valid) { _draw_map(first_valid); }
+                }
+            );
         }
         else if (first_valid) {
             // Geolocation is not supported - use the first marker pin
             _draw_map(first_valid);
+        }
+    },
+
+    /**
+     * Redraws the map with a new set of markers/points
+     */
+    redraw_markers: function(markers) {
+        if (asm.mapprovider == "osm") {
+            $.each(mapping._markers, function(i, v) {
+                mapping.map.removeLayer(v);
+            });
+            mapping._markers = [];
+            $.each(markers, function(i, v) {
+                if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+                //if (!v.pinurl) { v.pinurl = 'static/images/mapping/marker-icon-2x.png'; } // Use default pin if no pinurl supplied
+                let ll = v.latlong.split(",");
+                let markeropts = {};
+                if (v.pinurl) { 
+                    markeropts = { icon: L.icon({
+                        iconUrl: v.pinurl,
+                        shadowUrl: 'static/images/mapping/marker-shadow.png',
+                        iconSize:     [50, 82], // size of the icon
+                        shadowSize:   [100, 164], // size of the shadow
+                        iconAnchor:   [25, 80], // point of the icon which will correspond to marker's location
+                        shadowAnchor: [30, 164], // the same for the shadow
+                        popupAnchor:  [0, -82]  // point from which the popup should open relative to the iconAnchor
+                    }) };
+                }
+                let marker = L.marker([ll[0], ll[1]], markeropts).addTo(mapping.map).bindPopup(v.popuptext);
+                if (v.popupactive) { marker.openPopup(); }
+                mapping._markers.push(marker);
+            });
+            if (markers.length > 0) {
+                let group = L.featureGroup(mapping._markers);
+                mapping.map.fitBounds(group.getBounds());
+            }
+        } 
+        else if (asm.mapprovider == "google") {
+            $.each(mapping._markers, function(i, v) {
+                v.setMap(null);
+            });
+            mapping._markers = [];
+            let latlngbounds = new google.maps.LatLngBounds();
+            $.each(markers, function(i, v) {
+                if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
+                //if (!v.pinurl) { v.pinurl = 'static/images/mapping/marker-icon-2x.png'; } // Use default pin if no pinurl supplied
+                let ll = v.latlong.split(",");
+                let gll = new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]));
+                let markeropts = { position: gll, map: mapping.map };
+                if (v.pinurl) {
+                    markeropts.icon = v.pinurl;
+                }
+                var marker = new google.maps.Marker(markeropts);
+                latlngbounds.extend(gll);
+                mapping._markers.push(marker);
+                var infowindow;
+                if (v.popuptext) { 
+                    infowindow = new google.maps.InfoWindow({ content: v.popuptext }); 
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.open(mapping.map, marker);
+                    });
+                }
+                if (v.popupactive) { 
+                    if (infowindow) { infowindow.open(mapping.map, marker); }
+                }
+            });
+            if (markers.length) {
+                mapping.map.fitBounds(latlngbounds);
+            }
         }
     },
 
@@ -54,7 +129,7 @@ const mapping = {
      *  does not trigger CSP and require 'unsafe-inline'
      */
     _get_script: function(url, onload) {
-        let s= document.createElement("script");
+        let s = document.createElement("script");
         s.onload = onload;
         s.src = url;
         document.head.appendChild(s);
@@ -78,26 +153,36 @@ const mapping = {
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
         mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
-            var map = L.map(divid).setView([ll[0], ll[1]], 15);
+            mapping.map = L.map(divid).setView([ll[0], ll[1]], 15);
             L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images/";
             L.tileLayer(asm.osmmaptiles, {
                 referrerPolicy: 'strict-origin-when-cross-origin', // causes referer header to be sent to osm
                 attribution: '<a target="_blank" href="http://osm.org/copyright">&copy; OpenStreetMap contributors</a> | ' + 
                     '<a target="_blank" href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a> | ' + 
                     '<a target="_blank" href="https://www.openstreetmap.org/fixthemap">Improve this map</a>'
-            }).addTo(map);
-            L.control.scale().addTo(map);
+            }).addTo(mapping.map);
+            L.control.scale().addTo(mapping.map);
+            /*
             $.each(markers, function(i, v) {
                 if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
                 ll = v.latlong.split(",");
-                var marker = L.marker([ll[0], ll[1]]).addTo(map);
+                var marker = L.marker([ll[0], ll[1]]).addTo(mapping.map);
+                mapping._markers.push(marker);
                 if (v.popuptext) { marker.bindPopup(v.popuptext); }
+                if (v.PINSTYLE) { marker._icon.classList.add(v.PINSTYLE); }
                 if (v.popupactive) { marker.openPopup(); }
             });
+            */
+            mapping.redraw_markers(markers);
             if (config.bool("ShowLatLong")) {
-                map.on("contextmenu", function (event) {
+                mapping.map.on("contextmenu", function (event) {
                     if ($(".asm-latlong").length == 0) { return; }
-                    var marker = L.marker(event.latlng).addTo(map);
+                    $.each(mapping._markers, function(i, v) {
+                        mapping.map.removeLayer(v);
+                    });
+                    mapping._markers = [];
+                    var marker = L.marker(event.latlng).addTo(mapping.map);
+                    mapping._markers.push(marker);
                     $(".latlong-lat").val(event.latlng.lat);
                     $(".latlong-long").val(event.latlng.lng);
                     $(".asm-latlong").latlong("save");
@@ -109,7 +194,7 @@ const mapping = {
         });
     },
 
-    google_loaded: false,
+    _google_loaded: false,
 
     _google_draw_map: function(divid, zoom, latlong, markers, latsel, longsel) {
         window._goomapcallback = function() {
@@ -118,38 +203,36 @@ const mapping = {
                 zoom: zoom,
                 center: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]))
             };
-            var map = new google.maps.Map(document.getElementById(divid), mapOptions);
+            mapping.map = new google.maps.Map(document.getElementById(divid), mapOptions);
+            /*
             $.each(markers, function(i, v) {
-                if (!v.latlong || v.latlong.indexOf("0,0") == 0) { return; }
-                ll = v.latlong.split(",");
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1])),
-                    map: map
+                let ll = v.latlong.split(",");
+                let gll = new google.maps.LatLng(parseFloat(ll[0]), parseFloat(ll[1]));
+                let marker = new google.maps.Marker({
+                    position: gll,
+                    map: mapping.map
                 });
-                var infowindow;
-                if (v.popuptext) { 
-                    infowindow = new google.maps.InfoWindow({ content: v.popuptext }); 
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.open(map, marker);
-                    });
-                }
-                if (v.popupactive) { 
-                    if (infowindow) { infowindow.open(map, marker); }
-                }
+                mapping._markers.push(marker);
             });
+            */
+            mapping.redraw_markers(markers);
             if (config.bool("ShowLatLong")) {
-                google.maps.event.addListener(map, 'click', function(event) {
+                google.maps.event.addListener(mapping.map, 'click', function(event) {
                     if ($(".asm-latlong").length == 0) { return; }
+                    $.each(mapping._markers, function(i, v) {
+                        v.setMap(null);
+                    });
                     var marker = new google.maps.Marker({
                         position: event.latLng,
-                        map: map
+                        map: mapping.map
                     });
+                    mapping._markers.push(marker);
                     $(".latlong-lat").val(event.latLng.lat());
                     $(".latlong-long").val(event.latLng.lng());
                     $(".asm-latlong").latlong("save");
                     var infowindow = new google.maps.InfoWindow({ content: event.latLng.lat() + ", " + event.latLng.lng() }); 
                     google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.open(map, marker);
+                        infowindow.open(mapping.map, marker);
                     });
                     validate.dirty(true);
                 });
@@ -159,11 +242,11 @@ const mapping = {
         if (asm.mapproviderkey) {
             key = "&key=" + asm.mapproviderkey;
         }
-        if (mapping.google_loaded) {
+        if (mapping._google_loaded) {
             window._goomapcallback();
         }
         else {
-            mapping._get_script("//maps.google.com/maps/api/js?v=3.x&sensor=false&async=2{key}&callback=_goomapcallback".replace("{key}", key), function() { mapping.google_loaded = true; });
+            mapping._get_script("//maps.google.com/maps/api/js?v=3.x&sensor=false&async=2{key}&callback=_goomapcallback".replace("{key}", key), function() { mapping._google_loaded = true; });
         }
     }
 

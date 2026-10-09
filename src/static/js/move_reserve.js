@@ -86,7 +86,7 @@ $(function() {
             $("#person").on("change", async function(event, rec) {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
-
+                
                 $("#ownerwarn").hide();
          
                 // Default giftaid if the person is registered

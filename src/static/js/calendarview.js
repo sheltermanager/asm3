@@ -15,6 +15,8 @@ $(function() {
             $("#calendar").fullCalendar("removeEvents");
             $("#calendar").fullCalendar("removeEventSource", calendarview.calendar_events);
             $("#calendar").fullCalendar("addEventSource", calendarview.calendar_events);
+            let path = 'calendarview?ev=' + ev;
+            common.route_push(path);
         },
 
         calendar_events: {
@@ -116,7 +118,7 @@ $(function() {
 
             // If there's an ev parameter, sync our checkboxes
             let ev = common.querystring_param("ev");
-            if (!ev) { ev = "dvmtbcrolp"; }
+            if (!ev) { ev = "dvmtbcrolpe"; }
             $("#toggles input").each(function() {
                 if (ev.indexOf( $(this).attr("data") ) != -1) {
                     $(this).prop("checked", true);

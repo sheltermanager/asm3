@@ -49,7 +49,7 @@ the animal from being adoptable.
 Why are my non-shelter and adopted animals appearing on the vaccination book?
 -----------------------------------------------------------------------------
 
-The option :menuselection:`Settings --> Options --> Defaults --> Include
+The option :menuselection:`Settings --> Options --> Medical --> Include
 off-shelter animals in medical books and calendars` controls whether or not
 off-shelter animals appear in the vaccination book, medical book, test book and
 are highlighted in alerts on the home page. By default, this option is off. 

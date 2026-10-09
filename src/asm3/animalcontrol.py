@@ -381,7 +381,12 @@ def calc_incident_code(dbo: Database, acid: int, incidentdate: datetime) -> str:
 
     unique = False
     code = ""
+
     while not unique:
+        # NOTE: This routine can cause an endless loop if the coding format is incapable
+        # of generating codes (eg: If it's blank).
+        # To defend against this, configuration.csave validates all CodingFormat elements to make
+        # sure they contain tokens that will be substituted for numbers.
 
         # Generate the codes
         code = substitute_tokens(codeformat, highestyear, highestmonth)
@@ -445,6 +450,10 @@ def get_active_traploans(dbo: Database) -> Results:
     return dbo.query(get_traploan_query(dbo) + \
         "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
+
+def get_recent_incidents(dbo: Database, floor: datetime):
+    """ Returns recent completed incidents later than floor """
+    return dbo.query(get_animalcontrol_query(dbo) + " WHERE ac.CompletedDate >= ? ", [floor])
 
 def get_returned_traploans(dbo: Database, offset: str = "m31") -> Results:
     """
@@ -520,7 +529,9 @@ def update_dispatch_geocode(dbo: Database, incidentid: int, latlon: str = "", ad
     # If someone has deleted the values, a latlon of ,,HASH is returned so
     # we allow the geocode to be regenerated in that case.
     if asm3.configuration.show_lat_long(dbo) and latlon is not None and latlon != "" and not latlon.startswith(",,"):
-        return latlon
+        # Has the address changed? If so do nothing
+        if latlon.find(asm3.geo.address_hash(address, town, county, postcode, country)) != -1:
+            return latlon
     # If a latlon has been passed and it contains a hash of the address elements,
     # then the address hasn't changed since the last geocode was done - do nothing
     if latlon is not None and latlon != "":

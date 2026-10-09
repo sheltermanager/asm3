@@ -603,6 +603,7 @@ $(function() {
                             subject: _("Adoption checkout for {0}").replace("{0}", row.ANIMALNAME),
                             animalid: row.ANIMALID,
                             personid: row.OWNERID,
+                            movementid: row.ID,
                             templates: controller.templatesemail,
                             logtypes: controller.logtypes,
                             url: paymentlink, 
@@ -785,7 +786,7 @@ $(function() {
 
             // Movement types 4 (escaped), 6 (stolen), 7 (released to wild)
             // don't need a person, but all other movements do
-            if ($("#person").val() == "") {
+            if ($("#person").val() == "0") {
                 if (mt != 4 && mt != 6 && mt != 7) {
                     tableform.dialog_error(_("This type of movement requires a person."));
                     validate.highlight("person");

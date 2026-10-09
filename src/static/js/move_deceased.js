@@ -45,6 +45,11 @@ $(function() {
                 validate.reset();
                 if (!validate.notzero([ "animal" ])) { return false; }
                 if (!validate.notblank([ "deceaseddate" ])) { return false; }
+                if ( $("#item").val() != "-1" && ($("#quantity").val() == "" || $("#quantity").val() == "0") ) {
+                    header.show_error(_("You must specify a quantity of the item you wish to deduct"));
+                    validate.highlight("quantity");
+                    return false;
+                }
                 return true;
             };
 

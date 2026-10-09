@@ -333,6 +333,10 @@ const common = {
         return v instanceof String || typeof(v) == "string";
     },
 
+    join_not_falsy: function(array, delimiter="<br />") {
+        return array.filter(v => v).join(delimiter);
+    },
+
     browser_is: {
         android: navigator.userAgent.match(/Android/i) != null,
         ios:     navigator.userAgent.match(/iPod|iPad|iPhone/i) != null,
@@ -557,6 +561,11 @@ const common = {
             if (path.indexOf(v) == 0) { isclient = false; return false; }
         });
         return isclient;
+    },
+
+    /** Replace the URL in the address bar, but bypass the path/route mechanism */
+    route_push: function(path) {
+        window.history.pushState({}, '', path);
     },
 
     /** Reload the current route */
@@ -933,6 +942,7 @@ const common = {
     /*Returns a sorted array of column names that are in tablename
       uses the global schema object. */
     get_table_columns(tablename) {
+        console.log(tablename);
         let a = [];
         // Updating codemirror from 5.11 to 5.65 changed the columns from a
         // dictionary to a list, so this is no longer needed.
@@ -1082,6 +1092,7 @@ const common = {
         $(".asm-animalchooser").animalchooser();
         $(".asm-animalchoosermulti").animalchoosermulti();
         $(".asm-personchooser").personchooser();
+        $(".asm-personchoosermulti").personchoosermulti();
         $(".asm-callout").callout();
         $(".asm-datebox").date();
         $(".asm-alphanumberbox").alphanumber();
@@ -1205,6 +1216,7 @@ const common = {
             "#emailbody": "richtextarea",
             "#owner": "personchooser",
             "#person": "personchooser",
+            "#people": "personchoosermulti",
             "#retailer": "personchooser",
             "#createpayment": "createpayment",
             "#dialog-": "dialog",
@@ -1543,11 +1555,14 @@ const format = {
         if (d instanceof Date) {
             d = format.date_iso(d);
         }
-        if (t.length <= 8) {
-            t += ":00";
+        if (t == "") {
+            t = "00:00:00";
         }
-        if (t.length <= 5) {
+        else if (t.length < 5) {
             t += ":00:00";
+        }
+        else if (t.length < 8) {
+            t += ":00";
         }
         return d.substring(0, d.indexOf("T")+1) + t;
     },

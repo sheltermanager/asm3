@@ -21,7 +21,7 @@
             sortable: false,                    // Should the list be sortable?
             highlight: false,                    // Use the highlight feature? 
             animate: false,                        // Animate the the adding/removing of items in the list?
-            addItemTarget: 'bottom',                // Where to place new selected items in list: top or bottom
+            addItemTarget: 'bottom',                // Where to place new selected items in list: top, bottom or anything else to leave in place
             hideWhenAdded: false,                    // Hide the option when added to the list? works only in FF
             debugMode: false,                    // Debug mode keeps original select visible 
 
@@ -36,6 +36,7 @@
             listSortableClass: 'asmListSortable',            // Another class given to the list when it is sortable
             listItemClass: 'asmListItem',                // Class for the <li> list items
             listItemLabelClass: 'asmListItemLabel',            // Class for the label text that appears in list items
+            noWrapLabel: false,                          
             removeClass: 'asmListItemRemove',            // Class given to the "remove" link
             highlightClass: 'asmHighlight'                // Class given to the highlight <span>
 
@@ -63,7 +64,8 @@
                 $select = $("<select></select>")
                     .addClass(options.selectClass)
                     .attr('name', options.selectClass + index)
-                    .attr('id', options.selectClass + index); 
+                    .attr('id', options.selectClass + index)
+                    .attr('placeholder', "Select"); 
 
                 $selectRemoved = $("<select></select>"); 
 
@@ -80,8 +82,12 @@
                 $select.change(selectChangeEvent)
                     .click(selectClickEvent); 
 
-                $original.change(originalChangeEvent)
-                    .wrap($container).before($select).before($ol);
+                if (!options.noWrapLabel) {
+                    $original.change(originalChangeEvent)
+                       .wrap($container).before($select).before($ol);
+                }
+                
+                $original.change(originalChangeEvent).before($select).before($ol); // To do - Check that removing the container is acceptable
 
                 if(options.sortable) makeSortable();
 
@@ -281,9 +287,11 @@
                 if(options.addItemTarget == 'top' && !buildingSelect) {
                     $ol.prepend($item); 
                     if(options.sortable) $original.prepend($O); 
-                } else {
+                } else if(options.addItemTarget == 'bottom' && !buildingSelect) {
                     $ol.append($item); 
                     if(options.sortable) $original.append($O); 
+                } else {
+                    $ol.append($item); 
                 }
 
                 addListItemShow($item); 

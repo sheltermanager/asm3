@@ -24,7 +24,7 @@ $(function() {
         '<button id="button-csv">' + _ ("CSV") + '</button>',
         '<button id="button-excel">' + _ ("Excel") + '</button>',
         '<button id="button-pdf-portrait">' + _("PDF (Portrait)") + '</button>',
-        '<button id="button-pdf-landscape">' + _("PDF (Landscape") + '</button>',
+        '<button id="button-pdf-landscape">' + _("PDF (Landscape)") + '</button>',
         '</div>'
     ].join("\n");
 

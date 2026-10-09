@@ -10833,8 +10833,8 @@ msgid "Owners Vet"
 msgstr "Owners Vet"
 
 #: report_toolbar.js
-msgid "PDF (Landscape"
-msgstr "PDF (Landscape"
+msgid "PDF (Landscape)"
+msgstr "PDF (Landscape)"
 
 #: report_toolbar.js
 msgid "PDF (Portrait)"

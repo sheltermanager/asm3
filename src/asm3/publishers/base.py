@@ -286,10 +286,12 @@ def get_animal_data(dbo: Database, pc: PublishCriteria = None, animalid: int = 0
         rows = [ r for r in sorted(rows, key=lambda k: k.ID) if check_bonding(r) ]
 
     # If animalid was set, only return that row or an empty set if it wasn't present
+    # or that animal isn't actually adoptable right now
     if animalid != 0:
         for r in rows:
             if r.ID == animalid:
-                return [ r ]
+                if is_animal_adoptable(dbo, r):
+                    return [ r ]
         return []
 
     # Ordering
@@ -802,7 +804,7 @@ class AbstractPublisher(threading.Thread):
         """
         Returns the URL for the preferred photo for animalid.
         """
-        return f"{SERVICE_URL}?account={self.dbo.name()}&method=animal_image&animalid={animalid}"
+        return f"{SERVICE_URL}?account={self.dbo.name()}&pub={self.publisherKey}&method=animal_image&animalid={animalid}"
 
     def getPhotoUrls(self, animalid: int) -> List[str]:
         """
@@ -815,7 +817,7 @@ class AbstractPublisher(threading.Thread):
             "ORDER BY WebsitePhoto DESC, ID", [animalid])
         for m in photos:
             ts = asm3.i18n.python2unix(m.DATE)
-            photo_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&method=media_image&mediaid={m.ID}&ts={ts}")
+            photo_urls.append(f"{SERVICE_URL}?account={self.dbo.name()}&pub={self.publisherKey}&method=media_image&mediaid={m.ID}&ts={ts}")
         return photo_urls
     
     def getVideoUrls(self, animalid: int) -> List[str]:

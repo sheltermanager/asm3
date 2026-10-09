@@ -43,7 +43,15 @@ $(function() {
                     tableform.dialog_close();
                 },
                 columns: [
-                    { field: "CONDITIONNAME", display: _("Condition") },
+                    { field: "CONDITIONNAME", display: _("Condition"),
+                        formatter: function(row) {
+                            let cdname = row.CONDITIONNAME, spacer = '<input type="checkbox" style="visibility: hidden" />';
+                            if (row.DESCRIPTION) {
+                                cdname += '<div class="asm-smallertext">' + spacer + row.DESCRIPTION + '</div>';
+                            }
+                            return tableform.table_render_edit_link(row.ID, cdname);
+                        }
+                    },
                     { field: "STARTDATETIME", display: _("Start"), 
                         formatter: function(row, v) {
                             return format.date(v) + " " + format.time(v, "%H:%M:%S", true);
@@ -80,6 +88,7 @@ $(function() {
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
                         row.CONDITIONNAME = common.get_field(controller.conditions, row.CONDITIONID, "CONDITIONNAME");
+                        row.DESCRIPTION = common.get_field(controller.conditions, row.CONDITIONID, "DESCRIPTION");
                         controller.rows.push(row);
                         tableform.table_update(table);
                         tableform.dialog_close();
@@ -105,7 +114,7 @@ $(function() {
             this.model();
             let s = "";
             s += tableform.dialog_render(this.dialog);
-            s += edit_header.animal_edit_header(controller.animal, "condition", controller.tabcounts);
+            s += edit_header.animal_edit_header(controller.animal, "conditions", controller.tabcounts);
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();

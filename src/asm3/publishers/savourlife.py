@@ -208,6 +208,10 @@ class SavourLifePublisher(AbstractPublisher):
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    # Update animalpublished for this animal with the error code so that it's visible in the UI
+                    # that we tried and what the error was.
+                    errormsg = str(r["response"])
+                    self.markAnimalPublished(an.ID, extra = errormsg)
                 else:
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -301,6 +305,10 @@ class SavourLifePublisher(AbstractPublisher):
 
                         if r["status"] != 200:
                             self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                            # Update animalpublished for this animal with the error code so that it's visible in the UI
+                            # that we tried and what the error was.
+                            errormsg = str(r["response"])
+                            self.markAnimalPublished(an.ID, extra = errormsg)
                         else:
                             if url == ENDPOINT_DELETE:
                                 # Clear the dogId since the listing has been deleted
@@ -371,10 +379,6 @@ class SavourLifePublisher(AbstractPublisher):
             "AND LOWER(TreatmentName) LIKE ? AND StartDate>? AND AnimalID=?", ("%heart%", "%worm%", sixmonths, an.ID)) > 0
         wormed = self.dbo.query_int("SELECT COUNT(*) FROM animalmedical WHERE LOWER(TreatmentName) LIKE ? " \
             "AND LOWER(TreatmentName) NOT LIKE ? AND StartDate>? AND AnimalID=?", ("%worm%", "%heart%", sixmonths, an.ID)) > 0
-        # PR want a null value to hide never-treated animals, so we
-        # turn False into a null.
-        if not hwtreated: hwtreated = None
-        if not wormed: wormed = None
 
         # Use the fosterer or retailer postcode, state and suburb if available
         location_postcode = postcode
@@ -383,6 +387,16 @@ class SavourLifePublisher(AbstractPublisher):
         if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE in (2, 8):
             fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                 "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
+            if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
+            if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
+            if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
+
+        # If this animal is a courtesy listing, use the owner address if available.
+        # The one linked to animal.OwnerID should work for either non-shelter or
+        # those with active movements.
+        if an.ISCOURTESY == 1:
+            fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM owner " \
+                "WHERE ID=?", [ an.OWNERID ]))
             if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN

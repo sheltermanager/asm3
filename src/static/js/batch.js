@@ -12,6 +12,7 @@ $(function() {
                 '<option value="genallpos">' + _("Recalculate ALL animal locations") + '</option>',
                 '<option value="genallvariable">' + _("Recalculate ALL animal ages/times") + '</option>',
                 '<option value="genallbreeds">' + _("Recalculate ALL animal breed names") + '</option>',
+                '<option value="genanos">' + _("Recalculate ALL animal days on shelter") + '</option>',
                 '<option value="genlitters">' + _("Recalculate active litter counts") + '</option>',
                 '<option value="gendiarylinkinfo">' + _("Regenerate diary link info for incomplete notes") + '</option>',
                 '<option value="genlookingfor">' + _("Regenerate 'Person looking for' report") + '</option>',
@@ -22,7 +23,9 @@ $(function() {
                 '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
                 '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',
                 '<option value="resetnnncodes">' + _("Reset NNN animal code counts for this year") + '</option>',
-                '<option value="sendfostererweekly">' + _("Send the weekly fosterer email now") + '</option>'
+                '<option value="sendfostererweekly">' + _("Send the weekly fosterer email now") + '</option>',
+                '<option value="translks">' + _("Apply translations to static lookup values") + '</option>',
+                '<option value="translookups">' + _("Apply translations to lookup values") + '</option>'
             ].join("\n");
         },
 

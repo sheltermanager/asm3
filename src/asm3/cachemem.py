@@ -88,7 +88,11 @@ def _memcache_available() -> bool:
 def _memcache_get(key: str) -> Any:
     global memcache_client
     if memcache_client is None: memcache_client = _get_mc()
-    return memcache_client.get(key)
+    try:
+        return memcache_client.get(key)
+    except Exception as err:
+        asm3.al.error("failed reading value from memcache (key=%s): %s" % (key, err), "cachemem.memcache_get")
+        return None
 
 def _memcache_put(key: str, value: str, ttl: int) -> Any:
     global memcache_client

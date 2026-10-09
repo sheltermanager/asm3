@@ -42,7 +42,7 @@ $(function() {
                     rowclasses: "tag-individual",  colclasses: "nowrap",
                     xmarkup: tableform.render_text({ justwidget: true, post_field: "forenames2", json_field: "OWNERFORENAMES2", classes: "tag-couple", maxlength: 50 }) },
                 { post_field: "surname", json_field: "OWNERSURNAME", type: "text", label: _("Last name"), maxlength: 100,
-                    labelclasses: "tag-individual", colclasses: "nowrap",
+                    labelclasses: "tag-individual", colclasses: "nowrap", validation: "notblank", 
                     xlabel: '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
                     xmarkup: tableform.render_text({ justwidget: true, post_field: "surname2", json_field: "OWNERSURNAME2", classes: "tag-couple", maxlength: 100 }) },
                 { post_field: "hometelephone", json_field: "HOMETELEPHONE", type: "phone", label: _("Home Phone"), rowclasses: "homeworkphone" },
@@ -67,12 +67,12 @@ $(function() {
                 { type: "nextcol" },
 
                 { post_field: "address", json_field: "OWNERADDRESS", type: "textarea", label: _("Address"), classes: "asm-textareafixed", rows: 5},
-                { post_field: "town", json_field: "OWNERTOWN", type: "autotext", label: _("City"), rowclasses: "towncounty", 
+                { post_field: "town", json_field: "OWNERTOWN", type: "autotext", label: _("City"), rowclasses: "town",
                     maxlength: 100, options: controller.towns, minlength: 4 },
                 common.iif(config.bool("USStateCodes"),
-                    { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "towncounty", 
+                    { post_field: "county", json_field: "OWNERCOUNTY", type: "select", label: _("State"), rowclasses: "county",
                         options: html.states_us_options(config.str("OrganisationCounty")) },
-                    { post_field: "county", json_field: "OWNERCOUNTY", type: "autotext", label: _("State"), rowclasses: "towncounty", 
+                    { post_field: "county", json_field: "OWNERCOUNTY", type: "autotext", label: _("State"), rowclasses: "county",
                         minlength: 2, options: controller.counties }),
                 { post_field: "postcode", json_field: "OWNERPOSTCODE", type: "text", label: _("Zipcode") },
                 { post_field: "country", json_field: "OWNERCOUNTRY", type: "text", label: _("Country") }, 
@@ -354,7 +354,8 @@ $(function() {
             $("#asm-details-accordion").asmaccordion("hideNoInput", 2);
 
             // CONFIG ===========================
-            $(".towncounty").toggle( !config.bool("HideTownCounty") );
+            $(".town").toggle( !config.bool("HideTown") );
+            $(".county").toggle( !config.bool("HideCounty") );
             $(".homeworkphone").toggle( !config.bool("HideHomeWorkPhone") );
             $("#countryrow").toggle( !config.bool("HideCountry") );
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
@@ -549,6 +550,15 @@ $(function() {
 
             // Load person flags
             html.person_flag_options(controller.person, controller.flags, $("#flags"));
+
+            // Make the role controls read only if user role not set
+            if (!common.has_permission("cor")) {
+                if (controller.person.VIEWROLEIDS) {
+                    $("#viewroles").selectmulti("disable");
+                } else {
+                    $("#viewrolesrow").hide();
+                }
+            }
 
             // Load homecheck history
             let h = [];

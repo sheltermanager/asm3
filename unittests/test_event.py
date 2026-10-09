@@ -1,0 +1,122 @@
+
+import unittest
+from unittests import base
+
+import asm3.additional
+import asm3.event
+
+import datetime
+
+class TestEvent(unittest.TestCase):
+   
+    nid = 0
+    eaid = 0
+    afid = 0
+
+    def setUp(self):
+        data = {
+            "startdate": "01/01/2023", 
+            "enddate": "01/01/2023",
+            "eventname": "Testio",
+            "ownerid": "1",
+            "address": "123 Test",
+            "town": "Testton",
+            "county": "Testshire",
+            "postcode": "TS1 1PQ",
+            "country": ""
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.nid = asm3.event.insert_event_from_form(base.get_dbo(), post, "test")
+        data = {
+            "eventid":  str(self.nid),
+            "animalid": "1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.eaid = asm3.event.insert_event_animal(base.get_dbo(), "test", post)
+        afpost = asm3.utils.PostedData({
+            "name": "eventanimaltest",
+            "label": "Event Animal Test",
+            "tooltip": "",
+            "lookupvalues": "",
+            "mandatory": "off",
+            "type": "1",
+            "link": str(asm3.additional.EVENT_ANIMAL),
+            "displayindex": "1"
+        }, "en")
+        self.afid = asm3.additional.insert_field_from_form(base.get_dbo(), "test", afpost)
+
+    def tearDown(self):
+        if self.afid:
+            asm3.additional.delete_field(base.get_dbo(), "test", self.afid)
+        asm3.event.delete_event_animal(base.get_dbo(), "test", self.eaid)
+        asm3.event.delete_event(base.get_dbo(), "test", self.nid)
+
+    def test_update_event_from_form(self):
+        data = {
+            "id": str(self.nid),
+            "startdate": "01/01/2023", 
+            "enddate": "01/01/2023",
+            "address": "256 Test",
+            "recordversion": "-1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.event.update_event_from_form(base.get_dbo(), post, "test")
+
+    def test_get_animals_by_event(self):
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "all")
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "arrived")
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "noshow")
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "neednewfoster")
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "dontneednewfoster")
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "adopted")
+        asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "notadopted")
+
+    def test_get_event(self):
+        self.assertIsNotNone(asm3.event.get_event(base.get_dbo(), self.nid))
+
+    def test_get_events_by_animal(self):
+        asm3.event.get_events_by_animal(base.get_dbo(), 1)
+
+    def test_get_events_by_date(self):
+        self.assertNotEqual(0, len(asm3.event.get_events_by_date(base.get_dbo(), datetime.datetime(2023, 1, 1, 0, 0, 0))))
+
+    def test_get_event_find_advanced(self):
+        self.assertNotEqual(0, len(asm3.event.get_event_find_advanced(base.get_dbo(), { "name": "Testio" })))
+
+    def test_update_event_animal(self):
+        data = {
+            "eventanimalid": str(self.eaid),
+            "animal":        "1",
+            "arrivaldate":   "01/01/2023",
+            "arrivaltime":   "00:00:00",
+            "comments":      ""
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.event.update_event_animal(base.get_dbo(), "test", post)
+
+    def test_update_event_animal_arrived(self):
+        asm3.event.update_event_animal_arrived(base.get_dbo(), "test", self.eaid)
+
+    def test_end_active_foster(self):
+        asm3.event.end_active_foster(base.get_dbo(), "test", self.eaid)
+
+    def test_event_animal_additional_fields(self):
+        dbo = base.get_dbo()
+        data = {
+            "eventanimalid": str(self.eaid),
+            "animal":        "1",
+            "arrivaldate":   "01/01/2023",
+            "arrivaltime":   "00:00:00",
+            "comments":      "",
+            "a.0.%s" % self.afid: "test value"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        asm3.event.update_event_animal(dbo, "test", post)
+        af = asm3.additional.get_additional_fields(dbo, self.eaid, "eventanimal")
+        self.assertEqual("test value", af[0].VALUE)
+        eaid = self.eaid
+        asm3.event.delete_event_animal(dbo, "test", eaid)
+        self.eaid = 0
+        self.assertEqual(0, dbo.query_int("SELECT COUNT(*) FROM additional WHERE LinkID=? AND AdditionalFieldID=?", [eaid, self.afid]))
+
+

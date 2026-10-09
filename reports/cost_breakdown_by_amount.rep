@@ -2,7 +2,7 @@ Cost Breakdown by Amount
 ###
 Financial
 ###
-34601/Any rev03
+34601/Any rev04
 ###
 Animals costs between two dates in descending order of size.
 ###
@@ -53,7 +53,7 @@ animal.ID = a.ID
 AND DateOfTest >= '$@from$' AND DateOfTest <= '$@to$') AS test,
 
 (SELECT
-SUM(animalmedical.Cost)
+SUM(animalmedical.CostPerTreatment)
 FROM animal
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
 INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID

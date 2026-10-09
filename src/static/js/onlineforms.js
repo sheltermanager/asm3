@@ -19,6 +19,7 @@ $(function() {
             { ID: 2, NAME: _("Create animal") },
             { ID: 10, NAME: _("Create animal and person (link via brought in)") },
             { ID: 11, NAME: _("Create animal and person (non-shelter with owner)") },
+            { ID: 12, NAME: _("Create animal log") },
             { ID: 3, NAME: _("Create person") },
             { ID: 4, NAME: _("Create lost animal") },
             { ID: 5, NAME: _("Create found animal") },
@@ -63,6 +64,10 @@ $(function() {
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
+                    { json_field: "EMAILSUBMISSIONLIMITDAYS", post_field: "emailsubmissionlimitdays", label: _("Email submission limit (days)"),
+                        type: "number", min: 0, max: 30, validation: "notblank", defaultval: "0",
+                        callout: _("Do not allow multiple submissions of this form from the same email address within this number of days (0 removes any limit)")
+                    },
                     { json_field: "RETAINFOR", post_field: "retainfor", label: _("Retain for"),
                         type: "select",
                         callout: _("Retain processed form submissions on the media tab for a number of years"),
@@ -96,7 +101,11 @@ $(function() {
                         callout: _("The confirmation email message to send to the form submitter.") }, 
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "htmleditor", height: "100px", width: "600px" },
                     { json_field: "HEADER", post_field: "header", label: _("Header"), type: "htmleditor", height: "100px", width: "600px" },
-                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" }
+                    { json_field: "FOOTER", post_field: "footer", label: _("Footer"), type: "htmleditor", height: "100px", width: "600px" },
+                    { json_field: "RENDERER", post_field: "renderer", label: _("Renderer"), type: "select", defaultval: "1", 
+                        options: '<option value="0">' + _("Legacy") + '</option><option value="1">' + _("Bootstrap") + '</option>', 
+                        callout: _("The form renderer to use. Some renderers require specific styles to be set in the header. If you have issues use the Header/Footer button to revert to the default")
+                    }
                 ]
             };
 
@@ -166,7 +175,7 @@ $(function() {
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {
                         return common.replace_all(row.EMAILADDRESS, ",", "<br/>");
                     }},
-                    { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) { return row.SETOWNERFLAGS.split("|").join(", "); }},
+                    { field: "SETOWNERFLAGS", display: _("Person Flags"), formatter: function(row) { return html.substitute_person_flag_names(row.SETOWNERFLAGS); } },
                     { field: "NUMBEROFFIELDS", display: _("Number of fields") },
                     { field: "DESCRIPTION", display: _("Description"), formatter: function(row) { return html.truncate(row.DESCRIPTION); } }
                 ]

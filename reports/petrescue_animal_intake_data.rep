@@ -1,0 +1,64 @@
+PetRescue Animal Intake Data
+###
+Figures
+###
+34801/Any rev01
+###
+Intake figures for PetRescue
+###
+en_AU
+###
+SELECT
+a.AnimalName, s.SpeciesName, a.BreedName, atp.AnimalType, a.DateOfBirth, 
+a.DateBroughtIn, bo.OwnerTown AS Suburb, bo.OwnerPostcode AS PostCode, 
+et.EntryTypeName AS EntryType, e.ReasonName AS EntryReason, 
+a.HealthProblems 
+FROM animal a
+INNER JOIN species s ON a.SpeciesID = s.ID
+INNER JOIN animaltype atp ON a.AnimalTypeID = atp.ID
+LEFT OUTER JOIN owner bo ON a.BroughtInByOwnerID = bo.ID
+INNER JOIN lksentrytype et ON a.EntryTypeID = et.ID 
+INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
+WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$ 23:59:59'
+AND NonShelterAnimal = 0 
+ORDER BY a.DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<thead>
+<tr>
+<th>ANIMALNAME</th>
+<th>SPECIESNAME</th>
+<th>BREEDNAME</th>
+<th>ANIMALTYPE</th>
+<th>DATEOFBIRTH</th>
+<th>DATEBROUGHTIN</th>
+<th>SUBURB</th>
+<th>POSTCODE</th>
+<th>ENTRYTYPE</th>
+<th>ENTRYREASON</th>
+<th>HEALTHPROBLEMS</th>
+</thead>
+<tbody>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$DATEOFBIRTH</td>
+<td>$DATEBROUGHTIN</td>
+<td>$SUBURB</td>
+<td>$POSTCODE</td>
+<td>$ENTRYTYPE</td>
+<td>$ENTRYREASON</td>
+<td>$HEALTHPROBLEMS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.ANIMALNAME}</h2>
+FOOTER$$

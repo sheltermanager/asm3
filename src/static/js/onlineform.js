@@ -27,6 +27,7 @@ $(function() {
         { "ID": 8, "NAME": _("Species") },
         { "ID": 9, "NAME": _("Raw Markup") },
         { "ID": 17, "NAME": _("Image") },
+        { "ID": 24, "NAME": _("PDF") },
         { "ID": 13, "NAME": _("Signature") },
         { "ID": 15, "NAME": _("GDPR Contact Opt-In") }
     ];
