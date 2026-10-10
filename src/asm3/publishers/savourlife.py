@@ -443,7 +443,7 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementKidsUnder5":    self.good_with_under5(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartQuotes(medical_issues),
-            "InterstateAdoptionAvaliable": interstate, # NOTE: This attribute is deliberately spelled wrong due to mispelling at SL side
+            "InterstateAdoptionAvaliable": interstate, # NOTE: This attribute is deliberately spelled wrong due to misspelling at SL side
             "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
             "IndoorOnly":               indoor_only,

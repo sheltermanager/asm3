@@ -202,7 +202,7 @@ class PetLinkPublisher(AbstractPublisher):
                                 (an.SHELTERCODE, an.ANIMALNAME, an.IDENTICHIPNUMBER))
                             continue
 
-                        # If the message is one of PetLink's permanent failure conditons, 
+                        # If the message is one of PetLink's permanent failure conditions, 
                         # mark the chip failed so that we stop trying.
                         # Any other error message we treat as transient and do nothing 
                         # (which means we'll attempt to register the chip the next time this publisher is run).

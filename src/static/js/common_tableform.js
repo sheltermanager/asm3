@@ -510,7 +510,7 @@ const tableform = {
 
         // Bind the CTRL+A key
         Mousetrap.bind("ctrl+a", function() {
-            // allow the event to propogate if we don't have visible table to select from or the dialog is open
+            // allow the event to propagate if we don't have visible table to select from or the dialog is open
             if ($("#tableform input[type='checkbox']").length == 0) { return; } 
             if ($("#dialog-tableform").hasClass("ui-dialog-content") && $("#dialog-tableform").dialog("isOpen")) { return; }
             select_all();

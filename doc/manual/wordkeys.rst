@@ -629,7 +629,7 @@ VaccinationGiven
 VaccinationExpires
     The date the vaccination expires if known
 VaccinationBatch
-    The batch number from the vaccination adminstered
+    The batch number from the vaccination administered
 VaccinationManufacturer
     The manufacturer of the vaccine
 VaccinationRabiesTag
@@ -1640,9 +1640,9 @@ there are.  Records are output in ascending order of date.
 AnimalVaccinations
    Inserts a table containing all the animal's vaccinations into the document
 DueAnimalVaccinations
-   Inserts a table containing all due vacinations for this animal into the document
+   Inserts a table containing all due vaccinations for this animal into the document
 GivenAnimalVaccinations
-   Inserts a table containing all given vacinations for this animal into the document
+   Inserts a table containing all given vaccinations for this animal into the document
 AnimalTests
    Inserts a table containing all of the animal's tests into the document
 AnimalMedicals

@@ -27,4 +27,4 @@ docker-compose down -v
 
 ## Future
 
-- Create a base docker image to replace `ubuntu:latest` with all dependenies pre-installed
+- Create a base docker image to replace `ubuntu:latest` with all dependencies pre-installed

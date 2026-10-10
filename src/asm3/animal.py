@@ -1518,7 +1518,7 @@ def get_animals_long_term(dbo: Database, lf: LocationFilter = None) -> Results:
 def get_animals_owned_by(dbo: Database, personid: int) -> Results:
     """
     Returns all animals who are owned by personid
-    1. Animals that have an open adoption, foster, transter, reclaim or retailer movement to this person (nonshelter=0)
+    1. Animals that have an open adoption, foster, transfer, reclaim or retailer movement to this person (nonshelter=0)
     2. Animals where originalownerid = personid (nonshelter=1)
     """
     sa = dbo.query(get_animal_brief_query(dbo) + " WHERE a.NonShelterAnimal = 0 AND a.ActiveMovementType IN (1,2,3,5,8) AND a.DeceasedDate Is Null " \
@@ -4142,7 +4142,7 @@ def update_animallocation(dbo: Database, animalid: int, username: str):
             # No row found representing the death, so create one
             insert_animallocation(dbo, username, animalid, animalname, sheltercode, fromid, fromunit, 0, '*', isdeath=1, date=deceaseddate)
     else:
-        # This animal is alive, make sure that there are no rows in animallocations refering to death
+        # This animal is alive, make sure that there are no rows in animallocations referring to death
         for locationrow in animallocations:
             if locationrow.ISDEATH:
                 # Row found representing death, removing it

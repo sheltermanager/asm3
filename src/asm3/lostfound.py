@@ -338,7 +338,7 @@ def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool
 
 def words(str1: str, str2: str, maxpoints: int):
     """
-    Evalutes words in string 1 for appearances in string 2
+    Evaluates words in string 1 for appearances in string 2
     Returns the number of points for 1 to 2 as a percentage of maxpoints
     """
     if str1 is None: str1 = ""
