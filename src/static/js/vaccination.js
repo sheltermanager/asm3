@@ -7,6 +7,8 @@ $(function() {
     const vaccination = {
 
         lastanimal: null, 
+        lastanimals: null,
+        lastanimalsrows: null,
         lastvet: null, 
 
         model: function() {
@@ -350,6 +352,8 @@ $(function() {
                     return validate.notblank([ "animals" ]);
                 },
                 onadd: async function() {
+                    vaccination.lastanimals = $("#animals").animalchoosermulti("value");
+                    vaccination.lastanimalsrows = $("#animals").animalchoosermulti("get_rows");
                     try {
                         await tableform.fields_post(dialog.fields, "mode=createbulk", "vaccination");
                         tableform.dialog_close();
@@ -363,7 +367,10 @@ $(function() {
                 onload: function() {
                     $("#animalrow").hide();
                     $("#animalsrow").show();
-                    $("#animals").animalchoosermulti("clear");
+                    if (vaccination.lastanimalsrows != null && vaccination.lastanimals != null) {
+                        $("#animals").animalchoosermulti("set_rows", vaccination.lastanimalsrows);
+                        $("#animals").animalchoosermulti("value", vaccination.lastanimals);
+                    }
                     $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#type").select("value", config.str("AFDefaultVaccinationType"));
                     vaccination.enable_default_cost = true;
@@ -492,6 +499,11 @@ $(function() {
             // Same for the vet
             $("#administeringvet").on("change loaded", function(event, rec) { vaccination.lastvet = rec; });
             $("#givenvet").on("change loaded", function(event, rec) { vaccination.lastvet = rec; });
+
+            $("#animals").on("bulk_clear", function(event, rec) {
+                vaccination.lastanimals = null;
+                vaccination.lastanimalsrows = null
+            });
 
             if (controller.newvacc == 1) {
                 this.new_vacc();
