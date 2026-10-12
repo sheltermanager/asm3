@@ -21,6 +21,7 @@ import asm3.publishers.petfinder
 import asm3.publishers.petlink
 import asm3.publishers.petrescue
 import asm3.publishers.petslocateduk
+import asm3.publishers.petszel
 import asm3.publishers.pettracuk
 import asm3.publishers.rescuegroups
 import asm3.publishers.sacmetrics
@@ -340,6 +341,14 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.petslocateduk.PetsLocatedUKPublisher(base.get_dbo(), pc).processAnimal(a))
+
+    # petszel
+    def test_petszel(self):
+        animals = base.get_dbo().query(asm3.animal.get_animal_query(base.get_dbo()))
+        for a in animals:
+            if a.ACTIVEMOVEMENTTYPE == 1:
+                print(asm3.publishers.petszel.PetszelPublisher(base.get_dbo()).processAnimal(a))
+        # self.assertIsNotNone(asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # pettracuk
     def test_pettracuk(self):
