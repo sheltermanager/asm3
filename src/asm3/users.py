@@ -157,6 +157,10 @@ CHANGE_REPORT                   = "hcr"
 DELETE_REPORT                   = "dcr"
 EXPORT_REPORT                   = "excr"
 
+ADD_REPORT_IMAGE                = "ccri"
+DELETE_REPORT_IMAGE             = "dcri"
+RENAME_REPORT_IMAGE             = "rcri"
+
 ADD_DIARY                       = "adn"
 VIEW_DIARY                      = "vdn"
 EDIT_ALL_DIARY_NOTES            = "eadn"
