@@ -945,7 +945,7 @@ class ASMValidationError(web.HTTPError):
         self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
-        data = "<h1>Validation Error</h1><p>%s</p>" % msg
+        data = "<h1>Validation Error</h1><p>%s</p>" % strip_html_tags(msg)
         if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
@@ -961,7 +961,7 @@ class ASMPermissionError(web.HTTPError):
         self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
-        data = "<h1>Permission Error</h1><p>%s</p>" % msg
+        data = "<h1>Permission Error</h1><p>%s</p>" % strip_html_tags(msg)
         if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
@@ -974,7 +974,7 @@ class ASMError(web.HTTPError):
         self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
-        data = "<h1>Error</h1><p>%s</p>" % msg
+        data = "<h1>Error</h1><p>%s</p>" % strip_html_tags(msg)
         if "headers" not in web.ctx: web.ctx.headers = []
         web.HTTPError.__init__(self, status, headers, data)
 
