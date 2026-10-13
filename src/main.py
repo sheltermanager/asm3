@@ -2998,20 +2998,18 @@ class calendar_events(ASMEndpoint):
                     "bgcol": bgcol })
         if "e" in ev and self.checkb(asm3.users.VIEW_EVENT):
             fgcol, bgcol = asm3.lookups.CALENDAR_EVENT_COLOURSCHEMES["event"]
-            now = start
-            while now <= end:
-                eventsdata = asm3.event.get_events_by_date(dbo, now)
-                for e in eventsdata:
-                    events.append({ 
-                        "title": e.EVENTNAME, 
-                        "allDay": True, 
-                        "start": now, 
-                        "tooltip": e.EVENTDESCRIPTION, 
-                        "icon": "event",
-                        "link": "event?id=%s" % e.ID,
-                        "fgcol": fgcol,
-                        "bgcol": bgcol })
-                now = asm3.i18n.add_days(now, 1)
+            eventsdata = asm3.event.get_events_two_dates(dbo, start, end)
+            for e in eventsdata:
+                events.append({ 
+                    "title": e.EVENTNAME, 
+                    "allDay": False, 
+                    "start": e.STARTDATETIME, 
+                    "end": e.ENDDATETIME,
+                    "tooltip": e.EVENTDESCRIPTION, 
+                    "icon": "event",
+                    "link": "event?id=%s" % e.ID,
+                    "fgcol": fgcol,
+                    "bgcol": bgcol })
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "main.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)

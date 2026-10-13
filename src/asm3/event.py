@@ -86,6 +86,12 @@ def get_events_by_date(dbo: Database, date: datetime) -> Results:
     """
     return dbo.query(get_event_query(dbo) + "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) ORDER BY ev.StartDateTime", [date, date])
 
+def get_events_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
+    """
+    Returns all events that start between two dates
+    """
+    return dbo.query(get_event_query(dbo) + "WHERE ev.StartDateTime >= ? AND ev.StartDateTime <= ? ORDER BY ev.StartDateTime", [start, end])
+
 def get_events_html(dbo: Database, count: int = 10, template: str = "events"):
     """
     Return an HTML document of the most recent count events and using the given template.
