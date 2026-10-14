@@ -301,6 +301,10 @@ $(function() {
                 cr("hcr", _("Change Report")),
                 cr("excr", _("Export Report")),
                 cr("dcr", _("Delete Report")),
+                cl(_("Extra Images")),
+                cr("ccri", _("Add Extra Image")),
+                cr("dcri", _("Delete Extra Image")),
+                cr("rcri", _("Rename Extra Image")),
                 '</p>',
                 '</div>', // col
                 '</div>', // row

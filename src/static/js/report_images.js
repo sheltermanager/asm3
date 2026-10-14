@@ -49,7 +49,7 @@ $(function() {
             };
 
             const buttons = [
-                { id: "new", text: _("New"), icon: "new", enabled: "always", 
+                { id: "new", text: _("New"), icon: "new", enabled: "always", perm: "ccri", 
                     click: async function() { 
                         await tableform.dialog_show_add(dialog);
                         let fn = $("#filechooser").val().toLowerCase();
@@ -62,7 +62,7 @@ $(function() {
                         $("#form-tableform").submit();
                     } 
                 },
-                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dcri", 
                     click: async function() { 
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
@@ -71,7 +71,7 @@ $(function() {
                         common.route_reload();
                     } 
                 },
-                { id: "rename", text: _("Rename"), icon: "link", enabled: "one", 
+                { id: "rename", text: _("Rename"), icon: "link", enabled: "one", perm: "rcri", 
                     click: async function() { 
                         let oldname = tableform.table_ids(table).split(",")[0];
                         $("#newname").val(oldname);

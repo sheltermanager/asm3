@@ -8170,16 +8170,19 @@ class report_images(JSONEndpoint):
         return { "rows": images }
 
     def post_create(self, o):
+        self.check(asm3.users.ADD_REPORT_IMAGE)
         asm3.dbfs.upload_report_image(o.dbo, o.post.filename(), o.post.filedata())
         self.reload_config()
         self.redirect("report_images")
 
     def post_delete(self, o):
+        self.check(asm3.users.DELETE_REPORT_IMAGE)
         for i in o.post["ids"].split(","):
             if i != "": asm3.dbfs.delete_filepath(o.dbo, "/reports/" + i)
         self.reload_config()
 
     def post_rename(self, o):
+        self.check(asm3.users.RENAME_REPORT_IMAGE)
         asm3.dbfs.rename_file(o.dbo, "/reports", o.post["oldname"], o.post["newname"])
 
 class reports(JSONEndpoint):
