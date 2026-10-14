@@ -44,7 +44,7 @@ ACCOUNTSSOURCE
 ACCOUNTSDESTINATION
     The destination account of the accounting transaction, this must match an existing account code in your database.
 ACCOUNTSDESCRIPTION
-    A decription of the accounting transaction.                
+    A description of the accounting transaction.                
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
 ANIMALLITTER
@@ -149,7 +149,7 @@ ANIMALHASSPECIALNEEDS
 ANIMALENTRYDATE
     The date the animal entered the shelter (date brought in). Today's date will be used if this column is not present or the value is blank.
 ANIMALENTRYTIME
-    The time the animal entered the shelter. These should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.    
+    The time the animal entered the shelter. These should be in 24 hour clock format with either 4 or 6 digits if seconds are included, separated by colons.    
 ANIMALENTRYCATEGORY
     The animal's entry category, which should correspond to an entry category in your database.
 ANIMALENTRYTYPE
@@ -231,11 +231,11 @@ DONATIONGIFTAID
 INCIDENTDATE
     The date of the incident and call.
 INCIDENTTIME
-    The time of the incident. These should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.    
+    The time of the incident. These should be in 24 hour clock format with either 4 or 6 digits if seconds are included, separated by colons.    
 INCIDENTCOMPLETEDDATE
     The date the incident was completed.
 INCIDENTCOMPLETEDTIME
-    The time the incident was completed should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.  
+    The time the incident was completed should be in 24 hour clock format with either 4 or 6 digits if seconds are included, separated by colons.  
 INCIDENTCOMPLETEDTYPE
     The incident completion disposition.
 INCIDENTRESPONDEDDATE
@@ -251,7 +251,7 @@ DISPATCHACO
 DISPATCHDATE
     The date the officer was dispatched to the incident.   
 DISPATCHTIME
-    The time the officer was dispatched to the incident. Should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons. 
+    The time the officer was dispatched to the incident. Should be in 24 hour clock format with either 4 or 6 digits if seconds are included, separated by colons. 
 DISPATCHADDRESS
     The dispatch address for the incident.
 DISPATCHCITY
@@ -281,7 +281,7 @@ LICENSECOMMENTS
 LOGDATE
    The date of any log entry (only animal logs can be imported).
 LOGTIME
-   The time of any log entry. Should be in 24 hour clock format with either 4 or 6 digits if seconds are included, seperated by colons.  
+   The time of any log entry. Should be in 24 hour clock format with either 4 or 6 digits if seconds are included, separated by colons.  
 LOGTYPE
    The type of log entry.
 LOGCOMMENTS

@@ -47,7 +47,7 @@ class PublishCriteria(object):
     uploadAllImages = False
     uploadDirectly = False
     forceReupload = False
-    noImportFile = False # If a 3rd party has a seperate import disable upload
+    noImportFile = False # If a 3rd party has a separate import disable upload
     generateJavascriptDB = False
     thumbnails = False
     thumbnailSize = "70x70"

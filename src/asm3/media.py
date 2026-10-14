@@ -565,7 +565,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
 def attach_link_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
     """
     Attaches a link to a web resource from a form.
-    Returns the ID of the newly creatd media record.
+    Returns the ID of the newly created media record.
     """
     existingvid = dbo.query_int("SELECT COUNT(*) FROM media WHERE WebsiteVideo = 1 " \
         "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
@@ -903,7 +903,7 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
             imgdata = asm3.utils.base64decode(b64data)
             # Verify that the data is a valid image and contains fewer
             # white pixels than a set amount.
-            # The normal sized image is 10000 total pixes and the guide line is about 900px
+            # The normal sized image is 10000 total pixels and the guide line is about 900px
             # We require at least 300 pixels to have been drawn on to qualify as a signature
             # as this is one drawn line of less than about an inch on screen.
             whitepx, totalpx = image_pixel_count_white(imgdata)

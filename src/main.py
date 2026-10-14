@@ -229,7 +229,7 @@ def asm_500() -> Any:
         <pre>{session.dbo}</pre>
         <h3>Data</h3>
         <pre>{web.ctx.query} {web.data()}</pre>
-        <h3>Enivronment</h3>
+        <h3>Environment</h3>
         <pre>{env}</pre>
         </div>
         </body>

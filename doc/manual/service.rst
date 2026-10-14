@@ -380,7 +380,7 @@ available images. seq=1 returns the preferred image (and will be assumed if
 that parameter is omitted), seq=2 returns the second available image, etc. seq
 is a 1-based count and can be used with the "WebsiteImageCount" property
 included in animal records (which contains the number of images an animal has)
-to programatically grab all the images for a particular animal.
+to programmatically grab all the images for a particular animal.
 
 animal_thumbnail
 ----------------
@@ -709,7 +709,7 @@ your script. Eg::
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-Some positioning styles for the iframe have to be supplied programatically and
+Some positioning styles for the iframe have to be supplied programmatically and
 cannot be set by CSS (everything else can be), but there are a couple of
 javascript variables you can set for them instead. 
 

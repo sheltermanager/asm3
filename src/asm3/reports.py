@@ -356,7 +356,7 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
     COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@osfrom", "@osto", "@osatdate", "@thedate", "@dt" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
-    # Subtitute CONST tokens
+    # Substitute CONST tokens
     for name, value in asm3.utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", sql):
         sql = sql.replace("$%s$" % name, value) # replace all tokens with the constant value
         sql = sql.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
@@ -1389,7 +1389,7 @@ class Report:
         s = self.sql
         # Throw away any SQL comments
         s = strip_sql_comments(s)
-        # Subtitute CONST tokens (do this first so CONST can expand to other tokens)
+        # Substitute CONST tokens (do this first so CONST can expand to other tokens)
         for name, value in asm3.utils.regex_multi(r"\$CONST (.+?)\=(.+?)\$", s):
             s = s.replace("$%s$" % name, value) # replace all tokens with the constant value
             s = s.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration
@@ -1622,7 +1622,7 @@ class Report:
         """
         Executes a report
         'reportId' is the ID of the report to run, 'username' is the
-        name of the user running the reoprt, 'params' is a list
+        name of the user running the report, 'params' is a list
         of values in order to substitute tokens in the report SQL for.
         They should all be strings and will be literally replaced.
         Return value is the HTML output of the report.

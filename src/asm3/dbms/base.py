@@ -765,7 +765,7 @@ class Database(object):
                 cols.append(i[0].upper())
             row = s.fetchone()
             while row:
-                # Intialise a map for each row
+                # Initialise a map for each row
                 rowmap = ResultRow()
                 for i in range(0, len(row)):
                     v = self.encode_str_after_read(row[i])

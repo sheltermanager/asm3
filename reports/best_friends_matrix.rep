@@ -11,7 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
--- Requres four entry categories in your data: "Surrender", "Stray", "Transfer from Municipal Shelter" and "Transfer from Other Shelter"
+-- Requires four entry categories in your data: "Surrender", "Stray", "Transfer from Municipal Shelter" and "Transfer from Other Shelter"
 -- For the transfer TO municipal count to work, animals should be transferred to a person with "City" or "County" in the name
 
 SELECT 

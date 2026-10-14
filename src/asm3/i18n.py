@@ -200,7 +200,7 @@ def real_locale(locale: str = "en") -> str:
     # Italian locales
     if locale in ("it_CH",):
         locale = "it"
-    # Portguese locales
+    # Portuguese locales
     if locale in ("pt_MZ",):
         locale = "pt"
     # Spanish locales

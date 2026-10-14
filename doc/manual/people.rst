@@ -146,7 +146,7 @@ check the "Funding Source" box in that payment record.
 .. image:: images/funded_payment.png
 
 In new or existing payment records, the receipt number and persons name will 
-now be availble to select in the "Fund" field to link that payment to the 
+now be available to select in the "Fund" field to link that payment to the 
 funding source.  
 
 

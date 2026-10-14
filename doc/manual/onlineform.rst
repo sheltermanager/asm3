@@ -4,7 +4,7 @@ Online Forms
 ============
 
 ASM allows you to setup online forms that you can use to take information from
-members of the public through your website (if your ASM is publically
+members of the public through your website (if your ASM is publicly
 accessible, or you are using sheltermanager.com). 
 
 This is very useful for handling adoption and waiting list application forms,

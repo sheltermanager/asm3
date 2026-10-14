@@ -33,7 +33,7 @@ def substitute(sql):
     COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@osfrom", "@osto", "@osatdate", "@dt", "@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", "dummy")
-    # Subtitute CONST tokens
+    # Substitute CONST tokens
     for name, value in re.findall(r"\$CONST (.+?)\=(.+?)\$", sql):
         sql = sql.replace("$%s$" % name, value) # replace all tokens with the constant value
         sql = sql.replace("$CONST %s=%s$" % (name, value), "") # remove the constant declaration

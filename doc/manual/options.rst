@@ -633,7 +633,7 @@ documents from templates.
   the web browser as a binary file with the correct mime type for display in
   OpenOffice or download.
 
-* Printing word processor docuemnts uses hidden iframe and window.print:By
+* Printing word processor documents uses hidden iframe and window.print:By
   default when printing documents in the built-in wordprocessor, an iframe is
   used to display and print only the document. This works fine for desktop web
   browsers, but if you use mobile devices where the print command sends the URL
@@ -1029,7 +1029,7 @@ the preview column and deleted in one click using the "Delete Spam" button.
   happily post forms with blanks in mandatory fields. This option flags any 
   forms that contain blanks in mandatory fields as spam.
 
-* Spambot protection: Person name mixed case: Looks for unusal combinations of mixed
+* Spambot protection: Person name mixed case: Looks for unusual combinations of mixed
   and lower case letters in the applicants name fields and marks these as spam. It
   will also check for email addresses or URLs in name fields.
 
@@ -1052,7 +1052,7 @@ processors.
   the currency that you are using in your database as ASM does not perform
   any kind of currency exchange calculations.
 
-* Redirect to this URL after successful payment: When a customer succesfully
+* Redirect to this URL after successful payment: When a customer successfully
   completes a payment, this is the page they will be redirected to. If you do not 
   set a page, the payment processor will show their own payment successful page.
 

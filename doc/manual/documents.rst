@@ -101,7 +101,7 @@ The following tokens can also be used to add email addresses to the template::
 
 Note that the TO token will be ignored if you are using this template with a mail merge.
 
-More than one email address can be included by adding the address seperated by a comma::
+More than one email address can be included by adding the address separated by a comma::
 
   {{BCC example@email.com, example2@email.com}}
 

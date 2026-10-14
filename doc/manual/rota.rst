@@ -34,6 +34,6 @@ Items that span multiple days will appear on each day they apply to. Generally,
 it is time off variants rather than shifts that span multiple days.
 
 The staff rota screen also gives you the facility to clone the current week's
-rota to a future week. This is the expected mechanism for propogating the rota
+rota to a future week. This is the expected mechanism for propagating the rota
 each week. If a person flag filter has been selected, then only the matching
 rows in the rota will be cloned.

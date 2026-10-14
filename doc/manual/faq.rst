@@ -299,7 +299,7 @@ generate the figures for.
 
 .. note:: The report will only work correctly for one calendar month. Run the report multiple times for multiple months.
 
-.. note:: While this process can still be done manually, it has been superceded by the shelteranimalscount.org publisher, which will automatically update your figures every month without user intervention via their API.
+.. note:: While this process can still be done manually, it has been superseded by the shelteranimalscount.org publisher, which will automatically update your figures every month without user intervention via their API.
 
 How do I export my data from the system for import somewhere else?
 ------------------------------------------------------------------

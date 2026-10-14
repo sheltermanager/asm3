@@ -455,7 +455,7 @@ $(function() {
             if (row.ADMINISTERINGVETID && test.lastvet) { row.ADMINISTERINGVETNAME = test.lastvet.OWNERNAME; }
         },
 
-        /** Fetch the appropriate reschedule period for test type and add it to passed date. Return null if rescheduling isn't availble. */
+        /** Fetch the appropriate reschedule period for test type and add it to passed date. Return null if rescheduling isn't available. */
         calc_reschedule_date: function(date, testtype) {
             let reschedule = format.to_int(common.get_field(controller.testtypes, testtype, "RESCHEDULEDAYS"));
             if (!reschedule) { return null; }

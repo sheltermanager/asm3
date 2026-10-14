@@ -418,7 +418,7 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Determing whether an animal is vaccinated
+Determining whether an animal is vaccinated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ASM will determine if your animals are vaccinated, wormed or heartworm treated
@@ -506,7 +506,7 @@ Note that regardless of whether you have set the publishing option to
 "Include animals who don't have a picture", SavourLife will not accept listings
 without a photo, so we will not send animals who do not have a photo.
 
-Determing whether an animal is vaccinated
+Determining whether an animal is vaccinated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ASM will determined if your dogs are vaccinated, wormed or heartworm treated
