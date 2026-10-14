@@ -1,7 +1,6 @@
 import asm3.configuration
 import asm3.i18n
-import asm3.medical
-import asm3.utils
+import asm3.log
 
 from .base import AbstractPublisher
 from asm3.sitedefs import PETSZEL_URL
@@ -9,18 +8,52 @@ from asm3.typehints import Database, Dict, List, PublishCriteria, Results, Resul
 
 import sys
 
+# ID type keys used in the ExtraIDs column
+IDTYPE_PETSZEL = "petszel"
+
 class PetszelPublisher(AbstractPublisher):
     """
     Handles publishing to petszel.com
     """
-    def __init__(self, dbo: Database) -> None:
-        AbstractPublisher.__init__(self, dbo, False)
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
+        AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("petszel", "Petszel Publisher")
         self.dbo = dbo
 
-    def getData(self) -> Results:
+    def getData(self, lastpublished) -> Results:
+
+        weightlogtype = asm3.configuration.weight_change_log_type(self.dbo)
+
         a = self.dbo.query(
-            "SELECT m.ID, a.ShelterCode, a.AnimalName, s.SpeciesName, a.ExtraID, a.LastChangedDate FROM adoption m INNER JOIN animal a ON m.AnimalID = a.ID INNER JOIN species s ON a.SpeciesID = s.ID LEFT JOIN animalpublished p ON a.ID = p.AnimalID WHERE a.ExtraID" % ()
+            "SELECT " \
+            "a.ID, " \
+            "a.ActiveMovementType, " \
+            "a.ActiveMovementDate, " \
+            "a.ShelterCode, " \
+            "a.AnimalName, " \
+            "a.ExtraIDs, " \
+            "s.SpeciesName, " \
+            "a.LastChangedDate, " \
+            "o.OwnerCode, " \
+            "o.OwnerName, " \
+            "o.OwnerForeNames, " \
+            "o.OwnerSurname, " \
+            "o.OwnerAddress, " \
+            "o.OwnerTown, " \
+            "o.OwnerCounty, " \
+            "o.OwnerPostcode, " \
+            "o.EmailAddress, " \
+            "o.MobileTelephone, " \
+            "o.CreatedDate AS OwnerCreatedDate, " \
+            "o.LastChangedDate AS OwnerLastChangedDate, " \
+            "(SELECT Comments FROM log WHERE LogTypeID = ? AND LinkType = ? AND LinkID = a.ID AND Date < ? ORDER BY Date desc ) AS AdoptionWeight, " \
+            "(SELECT Date FROM log WHERE LogTypeID = ? AND LinkType = ? AND LinkID = a.ID AND Date < ? ORDER BY Date desc ) AS AdoptionWeightDate " \
+            "FROM adoption m " \
+            "INNER JOIN animal a ON m.AnimalID = a.ID " \
+            "INNER JOIN owner o ON m.OwnerID = o.ID " \
+            "INNER JOIN species s ON a.SpeciesID = s.ID " \
+            "WHERE a.DeceasedDate IS NULL AND m.MovementType = 1 AND m.ReturnDate IS NULL AND m.MovementDate > ?",
+            [weightlogtype, asm3.log.ANIMAL, self.dbo.sql_interval("m.MovementDate", 1, "+", "days"), weightlogtype, asm3.log.ANIMAL, self.dbo.sql_interval("m.MovementDate", 1, "+", "days"), lastpublished]
         )
         self.log("Got %d matching animals for publishing." % len(a))
         return a
@@ -35,18 +68,8 @@ class PetszelPublisher(AbstractPublisher):
         self.setStartPublishing()
 
         # animals = self.getMatchingAnimals(includeAdditionalFields=True)
-        animals = self.dbo.query(
-            "SELECT " \
-            "a.ShelterCode, " \
-            "a.AnimalName, " \
-            "s.SpeciesName, " \
-            "a.LastChangedDate, " \
-            "FROM adoption m " \
-            "INNER JOIN animal a ON m.AnimalID = a.ID " \
-            "INNER JOIN owner o ON m.OwnerID = o.ID " \
-            "INNER JOIN species s ON a.SpeciesID = s.ID " \
-            "WHERE m.MovementType = 1 AND m.ReturnDate IS NULL " \
-        )
+        lastpublished = asm3.publish.get_last_published(self.dbo, "petszel")
+        animals = self.getData(asm3.i18n.format_date(lastpublished))
         processed = []
 
         # Log that there were no animals, we still need to check
@@ -68,7 +91,13 @@ class PetszelPublisher(AbstractPublisher):
                     self.stopPublishing()
                     return
       
-                # data = self.processAnimal(an)
+                data = self.processAnimal(an)
+
+                r = {
+                    "status": 200,
+                    "headers": "Headers Placeholder",
+                    "response": "Success"
+                }
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
@@ -80,6 +109,7 @@ class PetszelPublisher(AbstractPublisher):
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
+                    asm3.animal.set_extra_id(self.dbo, "pub::petszel", an, IDTYPE_PETSZEL, str(self.dbo.today()))
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -91,6 +121,11 @@ class PetszelPublisher(AbstractPublisher):
 
     def processAnimal(self, an: ResultRow) -> Dict:
         """ Processes an animal record and returns a data dictionary to upload as JSON """
+
+        ofirstname = an.OWNERFORENAMES.split(" ")[0]
+        omiddlenames = " ".join(an.OWNERFORENAMES.split(" ")[0][1:])
+        address = self.splitAddress(an.OWNERADDRESS)
+
         p = {
             "animal": {
                 "animalId": an.SHELTERCODE,
@@ -106,64 +141,67 @@ class PetszelPublisher(AbstractPublisher):
                 "date": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone),
                 "participants": [
                     {
-                        "personId": "P100",
-                        "firstName": "Taylor",
-                        "middleName": "A",
-                        "lastName": "Lee",
+                        "personId": an.OWNERCODE,
+                        "firstName": ofirstname,
+                        "middleName": omiddlenames,
+                        "lastName": an.OWNERSURNAME,
                         "emails": [
                             {
-                                "emailAdress": "taylor@example.com",
+                                "emailAdress": an.EMAILADDRESS,
                                 "type": "Personal",
                                 "doNotEmail": False,
                                 "sourceReference": {
-                                    "sourceId": "EMAIL-1",
+                                    "sourceId": an.OWNERCODE,
                                     "sourceDisplayId": "Personal email",
-                                    "dateCreated": "2026-09-17T12:00:00Z",
-                                    "dateUpdated": "2026-09-17T12:00:00Z"
+                                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
                                 }
                             }
                         ],
                         "addresses": [
                             {
-                                "streetLine1": "123 Main St",
-                                "streetLine2": "Apt 4",
-                                "city": "Springfield",
-                                "stateProvince": "NY",
-                                "postalCode": "10001",
+                                "streetLine1": address["line1"],
+                                "streetLine2": address["line2"],
+                                "city": an.OWNERTOWN,
+                                "stateProvince": an.OWNERCOUNTY,
+                                "postalCode": an.OWNERPOSTCODE,
                                 "country": "US",
                                 "doNotMail": False,
                                 "sourceReference": {
-                                    "sourceId": "ADDR-1",
+                                    "sourceId": an.OWNERCODE,
                                     "sourceDisplayId": "Home address",
-                                    "dateCreated": "2026-09-17T12:00:00Z",
-                                    "dateUpdated": "2026-09-17T12:00:00Z"
+                                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
                                 }
                             }
                         ],
                         "phoneNumbers": [
                             {
-                                "number": "+15555550123",
+                                "number": an.MOBILETELEPHONE,
                                 "type": "Mobile",
                                 "doNotCall": False,
                                 "doNotText": False,
                                 "sourceReference": {
-                                    "sourceId": "PHONE-1",
+                                    "sourceId": an.OWNERCODE,
                                     "sourceDisplayId": "Mobile phone",
-                                    "dateCreated": "2026-09-17T12:00:00Z",
-                                    "dateUpdated": "2026-09-17T12:00:00Z"
+                                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
                                 }
                             }
                         ],
                         "sourceReference": {
-                            "sourceId": "P100",
-                            "sourceDisplayId": "Taylor Lee",
-                            "dateCreated": "2026-09-17T12:00:00Z",
-                            "dateUpdated": "2026-09-17T12:00:00Z"
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": an.OWNERNAME,
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
                         }
                     }
                 ],
             }
         }
+        if an.ADOPTIONWEIGHT:
+            p["animal"]["adoptedWeight"] = an.ADOPTIONWEIGHT,
+            p["animal"]["adoptedWeightDate"] = asm3.i18n.python2iso(an.ADOPTIONWEIGHTDATE, self.dbo.timezone),
         
         return p
 

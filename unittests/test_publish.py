@@ -93,7 +93,8 @@ class TestPublish(unittest.TestCase):
                 "dateofbirth": "01/01/2022",
                 "basecolour": "1",
                 "microchipped": "on",
-                "microchipnumber": "977123123456789"
+                "microchipnumber": "977123123456789",
+                "weight": 6.66
             }
         ]
 
@@ -162,10 +163,12 @@ class TestPublish(unittest.TestCase):
         asm3.movement.delete_movement(base.get_dbo(), "test", self.mid)
         for aid, sheltercode in self.animals:
             asm3.animal.delete_animal(base.get_dbo(), "test", aid)
+            # base.get_dbo().query()
         asm3.person.delete_person(base.get_dbo(), "test", self.pnid)
         asm3.person.delete_person(base.get_dbo(), "test", self.rnid)
         for mediaid in self.mediaids:
             asm3.media.delete_media(base.get_dbo(), "test", mediaid)
+        print(len(base.get_dbo().query("SELECT * FROM log")))
 
     # base
     def test_get_adoption_status(self):
@@ -344,10 +347,10 @@ class TestPublish(unittest.TestCase):
 
     # petszel
     def test_petszel(self):
-        animals = base.get_dbo().query(asm3.animal.get_animal_query(base.get_dbo()))
+        pc = asm3.publishers.base.PublishCriteria()
+        animals = asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).getData("2026-01-01")
         for a in animals:
-            if a.ACTIVEMOVEMENTTYPE == 1:
-                print(asm3.publishers.petszel.PetszelPublisher(base.get_dbo()).processAnimal(a))
+            print(asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a))
         # self.assertIsNotNone(asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # pettracuk
