@@ -143,6 +143,18 @@ $(function() {
             [ _("Site matches current user"), "site", "SiteID=$SITE$" ]
         ];
 
+        const QB_LICENCE_CRITERIA = [
+            [ _("Active"), "active", "IssueDate >= '$CURRENT_DATE$' AND '$CURRENT_DATE$' <= ExpiryDate" ],
+            [ _("Expires between two dates"), "licenceexpirestwo", "ExpiryDate >= '$ASK DATE {0}$' AND ExpiryDate <= '$ASK DATE {1}$'"
+                .replace("{0}", _("Issued between"))
+                .replace("{1}", _("and")) ],
+            [ _("Issued between two dates"), "licenceissuedtwo", "IssueDate >= '$ASK DATE {0}$' AND IssueDate <= '$ASK DATE {1}$'"
+                .replace("{0}", _("Issued between"))
+                .replace("{1}", _("and")) ],
+            [ _("License Type"), "licencetype", "LicenceTypeID = $ASK LICENSETYPE$" ],
+            [ _("Species"), "licencespecies", "SpeciesID = $ASK SPECIES$" ]
+        ];
+
         const QB_MEDICAL_CRITERIA = [ 
             [ _("Ask the user for a treatment"), "asktreatment", "TreatmentName LIKE '%$ASK STRING {0}$%'"
                 .replace("{0}", _("Enter a treatment name")) ],
@@ -257,6 +269,7 @@ $(function() {
                 '<select id="qbtype" data="qbtype" class="qb asm-selectbox">',
                 '<option value="animal">' + _("Animal") + '</option>',
                 '<option value="animalcontrol">' + _("Incident") + '</option>',
+                '<option value="ownerlicence">' + _("License") + '</option>',
                 '<option value="animalmedicalcombined">' + _("Medical") + '</option>',
                 '<option value="ownerdonation">' + _("Payment") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
@@ -428,6 +441,7 @@ $(function() {
             // Build the criteria lists
             reports_querybuilder.qb_animal_criteria = Array.from(QB_ANIMAL_CRITERIA);
             reports_querybuilder.qb_incident_criteria = Array.from(QB_INCIDENT_CRITERIA);
+            reports_querybuilder.qb_licence_criteria = Array.from(QB_LICENCE_CRITERIA);
             reports_querybuilder.qb_medical_criteria = Array.from(QB_MEDICAL_CRITERIA);
             reports_querybuilder.qb_payment_criteria = Array.from(QB_PAYMENT_CRITERIA);
             reports_querybuilder.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
@@ -756,6 +770,15 @@ $(function() {
                 $("#qbsort").change();
                 $("#qbcriteria").change();
                 reports_querybuilder.qb_active_criteria = reports_querybuilder.qb_payment_criteria;
+            }
+            else if (type == "ownerlicence") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_ownerlicence").concat(get_additional(type))));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_ownerlicence").concat(get_additional(type))));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports_querybuilder.qb_licence_criteria)));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                $("#qbcriteria").change();
+                reports_querybuilder.qb_active_criteria = reports_querybuilder.qb_licence_criteria;
             }
             else if (type == "ownerlookingfor") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_ownerlookingfor")));

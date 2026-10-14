@@ -90,6 +90,15 @@ $(function() {
                         '</select>' +
                         '</td></tr>');
                 }
+                else if (rtype == "LICENSETYPE") {
+                    h.push('<tr>' + 
+                        '<td>' + _("License Type") + '</td>' +
+                        '<td>' +
+                        '<select class="asm-selectbox" id="report-' + name + '" data-post="' + name + '">' + 
+                        html.list_to_options(controller.licencetypes, "ID", "LICENCETYPENAME") +
+                        '</select>' +
+                        '</td></tr>');
+                }
                 else if (rtype == "LITTER") {
                     h.push('<tr>' + 
                         '<td>' + _("Litter") + '</td>' +
