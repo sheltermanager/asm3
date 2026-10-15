@@ -620,12 +620,13 @@ $.fn.personchooser = asm_widget({
                     try { validate.dirty(true); } catch(exp) { }
                     dialog.dialog("close");
                     t.trigger("change", [ rec ]);
+                    common.inject_target();
                     return false;
                 });
                 dialog.find("table").trigger("update");
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
-                common.inject_target(); 
+                common.inject_target();
             },
             error: function(jqxhr, textstatus, response) {
                 dialog.dialog("close");
