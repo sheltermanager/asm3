@@ -1136,7 +1136,7 @@ const common = {
         var recpages = [ "animal", "incident", "person", "waitinglist", "lostanimal", "foundanimal" ];
         var href, anchor, targetname, r, url = common.current_url();
         if (config.bool("RecordNewBrowserTab")) {
-            $("a").each(function(i, a) {
+            $("a").each(function() {
                 // We're only interested in links that have an href and no target
                 if ($(this).attr("href") && !$(this).attr("target")) {
                     href = String($(this).attr("href"));
