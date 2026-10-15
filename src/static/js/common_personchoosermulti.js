@@ -380,7 +380,6 @@ $.fn.personchoosermulti = asm_widget({
                 dialog.find("table").trigger("update");
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
-                console.log("Injecting");
                 common.inject_target();
             },
             error: function(jqxhr, textstatus, response) {

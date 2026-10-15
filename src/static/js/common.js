@@ -1165,8 +1165,6 @@ const common = {
                             }
                             targetname += href.substring(href.lastIndexOf("?")+1);
                             anchor.attr("target", targetname);
-                        } else {
-                            console.log("Skipping " + href);
                         }
                     });
                 }
