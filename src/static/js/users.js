@@ -76,7 +76,6 @@ $(function() {
             const table = {
                 rows: controller.rows,
                 idcolumn: "ID",
-                showfilter: false, 
                 edit: async function(row) {
                     if (row.USERNAME == asm.useraccount) { return false; }
                     await tableform.dialog_show_edit(dialog, row);
