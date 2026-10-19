@@ -528,6 +528,7 @@ const tableform = {
         table.filter_toggle = false;
         $(".tablesorter-filter-row").toggle(table.filter_toggle);
         $(".tablesorter-filter").prop("placeholder", _("Filter"));
+        $(".tablesorter-filter").prop("autocomplete", "off"); // tell browsers not to autofill filters
 
         // As filters are updated, update the visible row count
         $(".tablesorter-filter").keyup(function() { tableform.table_update_count(table); });
