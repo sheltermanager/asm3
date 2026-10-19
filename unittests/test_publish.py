@@ -94,7 +94,9 @@ class TestPublish(unittest.TestCase):
                 "basecolour": "1",
                 "microchipped": "on",
                 "microchipnumber": "977123123456789",
-                "weight": 6.66
+                "weight": 6.66,
+                "neutered": "on",
+                "size": 2
             }
         ]
 

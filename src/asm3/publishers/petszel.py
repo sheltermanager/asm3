@@ -1,4 +1,5 @@
 import asm3.configuration
+import asm3.dbfs
 import asm3.i18n
 import asm3.log
 
@@ -20,6 +21,13 @@ class PetszelPublisher(AbstractPublisher):
         self.initLog("petszel", "Petszel Publisher")
         self.dbo = dbo
 
+    def getAnimalMedia(self, animalid) -> Results:
+        m = self.dbo.query(
+            "SELECT m.ID, m.MediaName, m.MediaMimeType, m.DBFSID FROM media m WHERE m.LinkTypeID = ? AND m.LinkID = ? AND m.ExcludeFromPublish = 0 AND m.MediaType = ?",
+            [asm3.media.ANIMAL, animalid, asm3.media.MEDIATYPE_FILE]
+        )
+        return m
+
     def getData(self, lastpublished) -> Results:
 
         weightlogtype = asm3.configuration.weight_change_log_type(self.dbo)
@@ -31,6 +39,10 @@ class PetszelPublisher(AbstractPublisher):
             "a.ActiveMovementDate, " \
             "a.ShelterCode, " \
             "a.AnimalName, " \
+            "a.DateOfBirth, " \
+            "g.Sex, " \
+            "z.Size, " \
+            "a.Neutered, " \
             "a.ExtraIDs, " \
             "s.SpeciesName, " \
             "a.LastChangedDate, " \
@@ -50,6 +62,8 @@ class PetszelPublisher(AbstractPublisher):
             "(SELECT Date FROM log WHERE LogTypeID = ? AND LinkType = ? AND LinkID = a.ID AND Date < ? ORDER BY Date desc ) AS AdoptionWeightDate " \
             "FROM adoption m " \
             "INNER JOIN animal a ON m.AnimalID = a.ID " \
+            "INNER JOIN lksex g ON a.Sex = g.ID " \
+            "INNER JOIN lksize z ON a.Size = z.ID " \
             "INNER JOIN owner o ON m.OwnerID = o.ID " \
             "INNER JOIN species s ON a.SpeciesID = s.ID " \
             "WHERE a.DeceasedDate IS NULL AND m.MovementType = 1 AND m.ReturnDate IS NULL AND m.MovementDate > ?",
@@ -130,7 +144,11 @@ class PetszelPublisher(AbstractPublisher):
             "animal": {
                 "animalId": an.SHELTERCODE,
                 "animalName": an.ANIMALNAME.title(),
+                "dateOfBirth": asm3.i18n.python2iso(an.DATEOFBIRTH, self.dbo.timezone),
+                "adoptionDate": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone),
                 "animalType": an.SPECIESNAME,
+                "sex": an.SEX,
+                "sizeGroup": an.SIZE,
                 "sourceReference": {
                     "sourceId": an.SHELTERCODE,
                     "dateUpdated": asm3.i18n.python2iso(an.LASTCHANGEDDATE, self.dbo.timezone)
@@ -202,7 +220,20 @@ class PetszelPublisher(AbstractPublisher):
         if an.ADOPTIONWEIGHT:
             p["animal"]["adoptedWeight"] = an.ADOPTIONWEIGHT,
             p["animal"]["adoptedWeightDate"] = asm3.i18n.python2iso(an.ADOPTIONWEIGHTDATE, self.dbo.timezone),
-        
+        if an.NEUTERED:
+            if an.SEX == "Male":
+                p["animal"]["altered"] = "Neutered"
+            elif an.SEX == "Female":
+                p["animal"]["altered"] = "Spayed"
+        animalmedia = self.getAnimalMedia(an.ID)
+        print("Animal Media")
+        for m in animalmedia:
+            print(m.MEDIANAME + " " + m.MEDIAMIMETYPE)
+            mediabytes = asm3.dbfs.get_string_id(self.dbo, m.DBFSID)
+            # mediabytes = mediabytestring.encode("utf-8")
+            imagedimensions = asm3.media.image_dimensions(mediabytes)
+            print(str(imagedimensions))
+
         return p
 
 

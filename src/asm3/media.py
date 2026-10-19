@@ -1133,7 +1133,15 @@ def watermark_media(dbo: Database, username: str, mid: int) -> None:
     imagedata = watermark_with_transparency(dbo, imagedata, a.ANIMALNAME)
     # Update it
     update_file_content(dbo, username, mid, imagedata)
-    asm3.audit.edit(dbo, username, "media", mid, "", "media id %d watermarked" % (mid))    
+    asm3.audit.edit(dbo, username, "media", mid, "", "media id %d watermarked" % (mid))
+
+def image_dimensions(imagedata: bytes) -> Tuple[int, int]:
+    """
+    Returns a tuple containing the width and height of the image respectively
+    """
+    file_data = asm3.utils.bytesio(imagedata)
+    im = Image.open(file_data)
+    return im.size
 
 def image_pixel_count_colours(imagedata: bytes) -> Tuple[int, Dict]:
     """
