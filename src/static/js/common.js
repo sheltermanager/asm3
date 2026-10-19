@@ -1142,13 +1142,16 @@ const common = {
                     href = String($(this).attr("href"));
                     anchor = $(this);
                     $.each(recpages, function(i, v) {
-                        // If the URL target begins with one of our recpages, it's a candidate
-                        // for adding a target attribute for a new tab.
+                        // If the URL target begins with one of our recpages and contains a question mark, 
+                        // it's a candidate for adding a target attribute for a new tab. 
                         if (href.indexOf(v) == 0 && href.indexOf("?") != -1) {
-                            // If this is not a find page and the current url we're looking at 
-                            // begins with this base page, don't do anything - we don't want 
-                            // it to open in a new tab as it's a satellite tab
-                            if (url.indexOf("/" + v + "_find") == -1 && url.indexOf("/" + v) != -1) {
+                            let currentargs = document.location.href.split("?").slice(-1);
+                            if (url.indexOf("/" + v + "_find") != -1) {
+                                // Source page is a find screen - skip
+                                return;
+                            }
+                            if (url.indexOf("/" + v) != -1 && href.indexOf("/" + v) != -1 && href.indexOf(currentargs) != -1) {
+                                // Target is a satellite tab of source tab - skip
                                 return;
                             }
                             // Create targetname from URL, throwing away any
