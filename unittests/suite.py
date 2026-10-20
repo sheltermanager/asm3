@@ -30,6 +30,7 @@ import unittests.test_movement
 import unittests.test_onlineform
 import unittests.test_paymentprocessor
 import unittests.test_person
+import unittests.test_petnecto
 import unittests.test_publish
 import unittests.test_reports
 import unittests.test_search
