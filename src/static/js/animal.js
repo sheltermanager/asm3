@@ -428,6 +428,7 @@ $(function() {
                 else if (p == "meetapet") { t = "Published to meetapet.com"; }
                 else if (p == "helpinglostpets") { t = "Published to helpinglostpets.com"; }
                 else if (p == "savourlife") { t = "Published to savour-life.com.au"; }
+                else if (p == "petnecto") { t = "Published to petnecto.com"; }
                 else if (p == "petrescue") { t = "Published to petrescue.com.au"; }
                 else if (p == "petslocated") { t = "Published to petslocated.com"; }
                 else if (p == "maddiesfund") { t = "Published to Maddie's Pet Assistant"; }

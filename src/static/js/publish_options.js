@@ -350,6 +350,17 @@ $(function() {
                                 type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") 
                             }
                         ]}, 
+                    { id: "tab-petnecto", title: "Petnecto", classes: 'haspetnecto', 
+                        info: _("Get a token at") + ' <a target="_blank" href="https://petnecto.com/shelters/join">petnecto.com</a>. ' + 
+                            _("Petnecto is sent each animal's name, species, breed, sex, age, size, colour, description and photo links. No owner, adopter or contact details are sent."), 
+                        fields: [
+                            { id: "enabledpn", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pnshelterid", post_field: "PetnectoShelterID", label: _("Petnecto shelter ID"), type: "text", 
+                                callout: _("Petnecto gives you a shelter ID (it starts with sh_) and a token (it starts with pnp_) when you sign up.") }, 
+                            { id: "pntoken", post_field: "PetnectoToken", label: _("Petnecto token"), type: "text", 
+                                callout: _("The token is for this shelter only. It is not your ASM login or an ASM API key. You can ask Petnecto to cancel it at any time.") }
+                        ]
+                    }, 
                     { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', 
                         info: 'Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>', 
                         fields: [
@@ -681,6 +692,7 @@ $(function() {
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
             if (!controller.haspetcademy) { $(".haspetcademy").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
+            if (!controller.haspetnecto) { $(".haspetnecto").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
             if (!controller.hassac) { $(".hassac").hide(); }
