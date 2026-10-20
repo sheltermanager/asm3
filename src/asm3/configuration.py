@@ -1507,6 +1507,12 @@ def petcolovelost_password(dbo: Database) -> str:
 def petcolovelost_shelterid(dbo: Database) -> str:
     return cstring(dbo, "PetCoLoveLostShelterID")
 
+def petnecto_shelter_id(dbo: Database) -> str:
+    return cstring(dbo, "PetnectoShelterID")
+
+def petnecto_token(dbo: Database) -> str:
+    return cstring(dbo, "PetnectoToken")
+
 def petrescue_adoptable_in(dbo: Database) -> str:
     return cstring(dbo, "PetRescueAdoptableIn")
 
