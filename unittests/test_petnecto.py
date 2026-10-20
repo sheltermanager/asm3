@@ -273,10 +273,30 @@ class TestPetnecto(unittest.TestCase):
         saved = self.dbo.query_string("SELECT LogData FROM publishlog WHERE Name = 'petnecto' ORDER BY ID DESC")
         self.assertNotIn(TOKEN, saved)
 
-    def test_rate_limited_stops_the_run(self):
-        fake = FakePetnecto(lambda m, u, b: (429, { "ok": False, "error": "slow_down" }, { "retry-after": "60" }))
-        p = self.run_publisher(fake)
+    def test_rate_limited_waits_once_then_stops_the_run(self):
+        fake = FakePetnecto(lambda m, u, b: (429, { "ok": False, "error": "slow_down" }, { "retry-after": "3" }))
+        with mock.patch("asm3.publishers.petnecto.time.sleep") as sleep:
+            p = self.run_publisher(fake)
+        self.assertEqual(2, len(fake.calls), "one wait, one more try, then the run stops")
+        self.assertEqual(3, sleep.call_count)
+        self.assertIn("slow down", "\n".join(p.logBuffer))
+
+    def test_rate_limited_once_carries_on(self):
+        state = { "n": 0 }
+        def handler(m, u, b):
+            state["n"] += 1
+            return (429, { "ok": False, "error": "slow_down" }, { "retry-after": "1" }) if state["n"] == 1 else (201, { "ok": True, "result": "created" }, {})
+        with mock.patch("asm3.publishers.petnecto.time.sleep"):
+            p = self.run_publisher(FakePetnecto(handler))
+        self.assertEqual(0, p.alerts)
+        self.assertEqual(len(p.getAnimals()), p.successes)
+
+    def test_a_long_retry_after_is_not_waited_for(self):
+        fake = FakePetnecto(lambda m, u, b: (429, { "ok": False, "error": "slow_down" }, { "retry-after": "600" }))
+        with mock.patch("asm3.publishers.petnecto.time.sleep") as sleep:
+            p = self.run_publisher(fake)
         self.assertEqual(1, len(fake.calls))
+        self.assertEqual(0, sleep.call_count)
         self.assertIn("slow down", "\n".join(p.logBuffer))
 
     def test_unreachable_stops_after_three_failures(self):
