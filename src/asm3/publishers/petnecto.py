@@ -10,6 +10,7 @@ from asm3.typehints import Any, Database, Dict, List, PublishCriteria, ResultRow
 import re
 import requests
 import sys
+import time
 import urllib.parse
 
 # Only these fields are ever sent to Petnecto. None of them is personal data: no owner, adopter,
@@ -30,6 +31,7 @@ MAX_PHOTOS = 8
 MAX_DESCRIPTION = 4000
 TIMEOUT = (5, 30) # connect, read: seconds. A stuck server must not hold the publisher forever
 MAX_CONSECUTIVE_FAILURES = 3 # network failures in a row before we give up for this run
+MAX_RETRY_WAIT = 60 # seconds: the longest we wait when Petnecto says 429 slow down, once per request
 CANCEL_AFTER_DAYS = 182 # same window petrescue.py uses for listings we may have to take down
 
 def redact(msg: Any, token: str) -> str:
@@ -175,6 +177,20 @@ class PetnectoPublisher(AbstractPublisher):
             j = {}
         return r.status_code, j, r.headers.get("retry-after", "")
 
+    def sendPatiently(self, method: str, url: str, data: Dict) -> Tuple[int, Dict, str]:
+        """
+        send(), but when Petnecto answers 429 with a short Retry-After we wait that long (checking for a cancel every second) and send once more.
+        A longer wait, or a second 429, is returned to the caller, which stops the run: the rest is sent next time.
+        """
+        status, j, retryafter = self.send(method, url, data)
+        if status == 429 and retryafter.strip().isdigit() and 0 < int(retryafter) <= MAX_RETRY_WAIT:
+            self.log("Petnecto asked us to wait %s seconds, waiting" % retryafter)
+            for _ in range(int(retryafter)):
+                if self.shouldStopPublishing(): break
+                time.sleep(1)
+            status, j, retryafter = self.send(method, url, data)
+        return status, j, retryafter
+
     def describeFailure(self, status: int, j: Dict) -> str:
         """ A short message for the log and the animal's publishing history, from the status and Petnecto's error code. """
         err = redact(j.get("error", ""), self.token)[:60]
@@ -260,7 +276,7 @@ class PetnectoPublisher(AbstractPublisher):
 
                 data = self.processAnimal(an)
                 self.log("Sending POST to %s to create/update %s" % (url, data["shelter_code"]))
-                status, j, retryafter = self.send("POST", url, data)
+                status, j, retryafter = self.sendPatiently("POST", url, data)
 
                 if status in (200, 201):
                     self.log("HTTP %d: %s" % (status, redact(j.get("result", ""), self.token)))
@@ -342,7 +358,8 @@ class PetnectoPublisher(AbstractPublisher):
                 code = self.cleanCode(an.SHELTERCODE)
                 purl = "%s/%s" % (url, urllib.parse.quote(code, safe=""))
                 self.log("Sending PATCH to %s to set status %s" % (purl, status))
-                st, j, retryafter = self.send("PATCH", purl, { "status": status })
+                st, j, retryafter = self.sendPatiently("PATCH", purl, { "status": status })
+                self.log("HTTP %d: %s" % (st, redact(j.get("result", j.get("error", "")), self.token)))
                 if st == 200 or st == 404: # 404: Petnecto never received it (an earlier send failed), so there is nothing to take down
                     self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
                     # Keep the status we sent in Extra so that it is not sent again next time.
