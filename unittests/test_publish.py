@@ -149,6 +149,14 @@ class TestPublish(unittest.TestCase):
             self.animals.append((animalid, sheltercode))
         self.nid = self.animals[0][0] 
 
+        # Create a condition
+        data = {
+            "lookup": "lkcondition",
+            "lookupname": "Resting Bitch Face"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.cid = asm3.lookups.upsert_lookup_from_form(base.get_dbo(), "test", post)
+
         data = {
             "datelost": base.today_display(),
             "datereported": base.today_display(),
@@ -256,7 +264,6 @@ class TestPublish(unittest.TestCase):
         asm3.movement.delete_movement(base.get_dbo(), "test", self.cmid)
         for aid, sheltercode in self.animals:
             asm3.animal.delete_animal(base.get_dbo(), "test", aid)
-            # base.get_dbo().query()
         asm3.person.delete_person(base.get_dbo(), "test", self.pnid)
         asm3.person.delete_person(base.get_dbo(), "test", self.rnid)
         asm3.person.delete_person(base.get_dbo(), "test", self.vnid)
@@ -264,6 +271,7 @@ class TestPublish(unittest.TestCase):
         for mediaid in self.mediaids:
             asm3.media.delete_media(base.get_dbo(), "test", mediaid)
         asm3.lookups.delete_lookup(base.get_dbo(), "test", "vaccinationtype", self.vtid)
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "animalcondition", self.cid)
         # print(len(base.get_dbo().query("SELECT * FROM log")))
 
     # base

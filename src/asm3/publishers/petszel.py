@@ -43,6 +43,21 @@ class PetszelPublisher(AbstractPublisher):
         )
         return m
 
+    def getAnimalConditions(self, animalid) -> Results:
+            m = self.dbo.query(
+                "SELECT " \
+                "c.ID, " \
+                "l.ConditionName, " \
+                "c.CreatedDate, " \
+                "c.LastChangedDate " \
+                "FROM animalcondition c " \
+                "INNER JOIN lkcondition l ON c.ConditionID = l.ID " \
+                "WHERE " \
+                "c.AnimalID = ?",
+                [animalid,]
+            )
+            return m
+
     def getData(self, lastpublished) -> Results:
 
         weightlogtype = asm3.configuration.weight_change_log_type(self.dbo)
