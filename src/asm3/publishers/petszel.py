@@ -2,6 +2,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.i18n
 import asm3.log
+import asm3.lookups
 
 from .base import AbstractPublisher
 from asm3.sitedefs import PETSZEL_URL
@@ -23,7 +24,21 @@ class PetszelPublisher(AbstractPublisher):
 
     def getAnimalMedia(self, animalid) -> Results:
         m = self.dbo.query(
-            "SELECT m.ID, m.MediaName, m.MediaMimeType, m.DBFSID FROM media m WHERE m.LinkTypeID = ? AND m.LinkID = ? AND m.ExcludeFromPublish = 0 AND m.MediaType = ?",
+            "SELECT " \
+            "m.ID, " \
+            "m.MediaName, " \
+            "m.MediaNotes, " \
+            "m.MediaMimeType, " \
+            "m.DBFSID, " \
+            "m.CreatedDate, " \
+            "m.LastChangedDate " \
+            "FROM media m " \
+            "WHERE " \
+            "m.LinkTypeID = ? " \
+            "AND m.LinkID = ? " \
+            "AND m.ExcludeFromPublish = 0 " \
+            "AND m.MediaType = ? " \
+            "AND m.MediaMimeType = 'image/jpeg'",
             [asm3.media.ANIMAL, animalid, asm3.media.MEDIATYPE_FILE]
         )
         return m
@@ -39,29 +54,40 @@ class PetszelPublisher(AbstractPublisher):
             "a.ActiveMovementDate, " \
             "a.ShelterCode, " \
             "a.AnimalName, " \
+            "c.BaseColour, " \
+            "a.BreedName, " \
             "a.DateOfBirth, " \
+            "a.IdentichipNumber, " \
+            "a.Identichip2Number, " \
+            "a.IdentichipDate, " \
             "g.Sex, " \
             "z.Size, " \
             "a.Neutered, " \
             "a.ExtraIDs, " \
             "s.SpeciesName, " \
             "a.LastChangedDate, " \
+            "o.OwnerType, " \
             "o.OwnerCode, " \
             "o.OwnerName, " \
             "o.OwnerForeNames, " \
+            "o.OwnerForeNames2, " \
             "o.OwnerSurname, " \
+            "o.OwnerSurname2, " \
             "o.OwnerAddress, " \
             "o.OwnerTown, " \
             "o.OwnerCounty, " \
             "o.OwnerPostcode, " \
             "o.EmailAddress, " \
+            "o.EmailAddress2, " \
             "o.MobileTelephone, " \
+            "o.MobileTelephone2, " \
             "o.CreatedDate AS OwnerCreatedDate, " \
             "o.LastChangedDate AS OwnerLastChangedDate, " \
             "(SELECT Comments FROM log WHERE LogTypeID = ? AND LinkType = ? AND LinkID = a.ID AND Date < ? ORDER BY Date desc ) AS AdoptionWeight, " \
             "(SELECT Date FROM log WHERE LogTypeID = ? AND LinkType = ? AND LinkID = a.ID AND Date < ? ORDER BY Date desc ) AS AdoptionWeightDate " \
             "FROM adoption m " \
             "INNER JOIN animal a ON m.AnimalID = a.ID " \
+            "INNER JOIN basecolour c ON a.BaseColourID = c.ID " \
             "INNER JOIN lksex g ON a.Sex = g.ID " \
             "INNER JOIN lksize z ON a.Size = z.ID " \
             "INNER JOIN owner o ON m.OwnerID = o.ID " \
@@ -71,6 +97,29 @@ class PetszelPublisher(AbstractPublisher):
         )
         self.log("Got %d matching animals for publishing." % len(a))
         return a
+
+    def getVaccinations(self, animalid):
+        v = self.dbo.query(
+            "SELECT " \
+            "v.ID, " \
+            "t.VaccinationType, " \
+            "v.DateOfVaccination, " \
+            "v.DateExpires, " \
+            "v.BatchExpiryDate, " \
+            "v.BatchNumber, " \
+            "v.Comments, " \
+            "o.OwnerName AS VetName, " \
+            "v.Manufacturer, " \
+            "v.CreatedDate, " \
+            "v.LastChangedDate " \
+            "FROM animalvaccination v " \
+            "INNER JOIN vaccinationtype t ON v.VaccinationID = t.ID " \
+            "LEFT JOIN owner o ON v.AdministeringVetID = o.ID " \
+            "WHERE " \
+            "v.AnimalID = ? ",
+            [animalid,]
+        )
+        return v
 
     def run(self) -> None:
         
@@ -137,8 +186,140 @@ class PetszelPublisher(AbstractPublisher):
         """ Processes an animal record and returns a data dictionary to upload as JSON """
 
         ofirstname = an.OWNERFORENAMES.split(" ")[0]
-        omiddlenames = " ".join(an.OWNERFORENAMES.split(" ")[0][1:])
+        omiddlenames = ""
+        if " " in an.OWNERFORENAMES:
+            omiddlenames = " ".join(an.OWNERFORENAMES.split(" ")[0][1:])
+        
         address = self.splitAddress(an.OWNERADDRESS)
+
+        # ofirstname = an.OWNERFORENAMES.split(" ")[0]
+        # omiddlenames = ""
+        # if " " in an.OWNERFORENAMES:
+        #     omiddlenames = " ".join(an.OWNERFORENAMES.split(" ")[0][1:])
+        
+        participants = [
+            {
+                "personId": an.OWNERCODE,
+                "firstName": ofirstname,
+                "middleName": omiddlenames,
+                "lastName": an.OWNERSURNAME,
+                "emails": [
+                    {
+                        "emailAdress": an.EMAILADDRESS,
+                        "type": "Personal",
+                        "doNotEmail": False,
+                        "sourceReference": {
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Personal email",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                ],
+                "addresses": [
+                    {
+                        "streetLine1": address["line1"],
+                        "streetLine2": address["line2"],
+                        "city": an.OWNERTOWN,
+                        "stateProvince": an.OWNERCOUNTY,
+                        "postalCode": an.OWNERPOSTCODE,
+                        "country": "US",
+                        "doNotMail": False,
+                        "sourceReference": {
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Home address",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                ],
+                "phoneNumbers": [
+                    {
+                        "number": an.MOBILETELEPHONE,
+                        "type": "Mobile",
+                        "doNotCall": False,
+                        "doNotText": False,
+                        "sourceReference": {
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Mobile phone",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                ],
+                "sourceReference": {
+                    "sourceId": an.OWNERCODE,
+                    "sourceDisplayId": an.OWNERNAME,
+                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                }
+            }
+        ]
+
+        if an.OWNERTYPE == 3: # Owner is a couple
+            ofirstname = an.OWNERFORENAMES2.split(" ")[0]
+            omiddlenames = ""
+            if " " in an.OWNERFORENAMES2:
+                omiddlenames = " ".join(an.OWNERFORENAMES2.split(" ")[0][1:])
+
+            participants.append(
+                {
+                    "personId": an.OWNERCODE,
+                    "firstName": ofirstname,
+                    "middleName": omiddlenames,
+                    "lastName": an.OWNERSURNAME2,
+                    "emails": [
+                        {
+                            "emailAdress": an.EMAILADDRESS2,
+                            "type": "Personal",
+                            "doNotEmail": False,
+                            "sourceReference": {
+                                "sourceId": an.OWNERCODE,
+                                "sourceDisplayId": "Personal email",
+                                "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                                "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                            }
+                        }
+                    ],
+                    "addresses": [
+                        {
+                            "streetLine1": address["line1"],
+                            "streetLine2": address["line2"],
+                            "city": an.OWNERTOWN,
+                            "stateProvince": an.OWNERCOUNTY,
+                            "postalCode": an.OWNERPOSTCODE,
+                            "country": "US",
+                            "doNotMail": False,
+                            "sourceReference": {
+                                "sourceId": an.OWNERCODE,
+                                "sourceDisplayId": "Home address",
+                                "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                                "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                            }
+                        }
+                    ],
+                    "phoneNumbers": [
+                        {
+                            "number": an.MOBILETELEPHONE2,
+                            "type": "Mobile",
+                            "doNotCall": False,
+                            "doNotText": False,
+                            "sourceReference": {
+                                "sourceId": an.OWNERCODE,
+                                "sourceDisplayId": "Mobile phone",
+                                "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                                "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                            }
+                        }
+                    ],
+                    "sourceReference": {
+                        "sourceId": an.OWNERCODE,
+                        "sourceDisplayId": an.OWNERNAME,
+                        "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                        "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                    }
+                }
+            )
 
         p = {
             "animal": {
@@ -149,6 +330,8 @@ class PetszelPublisher(AbstractPublisher):
                 "animalType": an.SPECIESNAME,
                 "sex": an.SEX,
                 "sizeGroup": an.SIZE,
+                "breeds": [an.BREEDNAME],
+                "colors": [an.BASECOLOUR],
                 "sourceReference": {
                     "sourceId": an.SHELTERCODE,
                     "dateUpdated": asm3.i18n.python2iso(an.LASTCHANGEDDATE, self.dbo.timezone)
@@ -157,83 +340,97 @@ class PetszelPublisher(AbstractPublisher):
             "event": {
                 "type": "Adoption",
                 "date": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone),
-                "participants": [
-                    {
-                        "personId": an.OWNERCODE,
-                        "firstName": ofirstname,
-                        "middleName": omiddlenames,
-                        "lastName": an.OWNERSURNAME,
-                        "emails": [
-                            {
-                                "emailAdress": an.EMAILADDRESS,
-                                "type": "Personal",
-                                "doNotEmail": False,
-                                "sourceReference": {
-                                    "sourceId": an.OWNERCODE,
-                                    "sourceDisplayId": "Personal email",
-                                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                                }
-                            }
-                        ],
-                        "addresses": [
-                            {
-                                "streetLine1": address["line1"],
-                                "streetLine2": address["line2"],
-                                "city": an.OWNERTOWN,
-                                "stateProvince": an.OWNERCOUNTY,
-                                "postalCode": an.OWNERPOSTCODE,
-                                "country": "US",
-                                "doNotMail": False,
-                                "sourceReference": {
-                                    "sourceId": an.OWNERCODE,
-                                    "sourceDisplayId": "Home address",
-                                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                                }
-                            }
-                        ],
-                        "phoneNumbers": [
-                            {
-                                "number": an.MOBILETELEPHONE,
-                                "type": "Mobile",
-                                "doNotCall": False,
-                                "doNotText": False,
-                                "sourceReference": {
-                                    "sourceId": an.OWNERCODE,
-                                    "sourceDisplayId": "Mobile phone",
-                                    "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                                    "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                                }
-                            }
-                        ],
-                        "sourceReference": {
-                            "sourceId": an.OWNERCODE,
-                            "sourceDisplayId": an.OWNERNAME,
-                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                        }
-                    }
-                ],
+                "participants": participants
             }
         }
         if an.ADOPTIONWEIGHT:
-            p["animal"]["adoptedWeight"] = an.ADOPTIONWEIGHT,
-            p["animal"]["adoptedWeightDate"] = asm3.i18n.python2iso(an.ADOPTIONWEIGHTDATE, self.dbo.timezone),
+            p["animal"]["adoptedWeight"] = an.ADOPTIONWEIGHT
+            p["animal"]["adoptedWeightDate"] = asm3.i18n.python2iso(an.ADOPTIONWEIGHTDATE, self.dbo.timezone)
         if an.NEUTERED:
             if an.SEX == "Male":
                 p["animal"]["altered"] = "Neutered"
             elif an.SEX == "Female":
                 p["animal"]["altered"] = "Spayed"
+        if an.IDENTICHIPNUMBER:
+            chipno = an.IDENTICHIPNUMBER
+            if an.IDENTICHIP2NUMBER:
+                chipno += " " + an.IDENTICHIP2NUMBER
+            chipco = asm3.lookups.get_microchip_manufacturer(self.dbo.locale, an.IDENTICHIPNUMBER)
+            p["animal"]["microchip"] = {
+                "microchipNumber": chipno,
+                "issuer": chipco,
+                "implantedDate": asm3.i18n.python2iso(an.IDENTICHIPDATE, self.dbo.timezone),
+                "sourceReference": {
+                    "sourceId": an.SHELTERCODE,
+                    "sourceDisplayId": "Microchip"
+                }
+            }
+        
         animalmedia = self.getAnimalMedia(an.ID)
-        print("Animal Media")
-        for m in animalmedia:
-            print(m.MEDIANAME + " " + m.MEDIAMIMETYPE)
-            mediabytes = asm3.dbfs.get_string_id(self.dbo, m.DBFSID)
-            # mediabytes = mediabytestring.encode("utf-8")
-            imagedimensions = asm3.media.image_dimensions(mediabytes)
-            print(str(imagedimensions))
+        if len(animalmedia):
+            photos = []
+            for m in animalmedia:
+                mediabytes = asm3.dbfs.get_string_id(self.dbo, m.DBFSID)
+                imagewidth, imageheight = asm3.media.image_dimensions(mediabytes)
+                photos.append(
+                    {
+                        "photoId": str(m.ID),
+                        "contentBase64": asm3.utils.base64encode(mediabytes),
+                        "photoName": m.MEDIANAME,
+                        "photoType": "image/jpeg",
+                        "isPublic": True,
+                        "description": m.MEDIANOTES,
+                        "height": imageheight,
+                        "width": imagewidth,
+                        "sourceReference": {
+                            "sourceId": str(m.ID),
+                            "sourceDisplayId": m.MEDIANAME,
+                            "dateCreated": asm3.i18n.python2iso(m.CREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(m.LASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                )
+            p["photos"] = photos
 
-        return p
+            animalvaccinations = self.getVaccinations(an.ID)
+            if len(animalvaccinations):
+                vaccinations = []
+                for v in animalvaccinations:
+                    vaccineduration = 0
+                    if v.DATEOFVACCINATION and v.DATEEXPIRES:
+                        vaccineduration = (v.DATEEXPIRES - v.DATEOFVACCINATION).days
+                    vaccination = {
+                            "vaccineName": v.VACCINATIONTYPE,
+                            "status": "Administered",
+                            # "type": "Core",
+                            # "subType": "One year",
+                            "vaccinationDate": asm3.i18n.python2iso(v.DATEOFVACCINATION, self.dbo.timezone),
+                            "reVaccinationDate": asm3.i18n.python2iso(v.DATEEXPIRES, self.dbo.timezone),
+                            "expirationDate": asm3.i18n.python2iso(v.BATCHEXPIRYDATE, self.dbo.timezone),
+                            # "providerLicenseNumber": "VET-123",
+                            "manufacturerName": v.MANUFACTURER,
+                            # "brandName": "Example Vaccine",
+                            "lotNumber": v.BATCHNUMBER,
+                            "lotExpiration": asm3.i18n.python2iso(v.BATCHEXPIRYDATE, self.dbo.timezone),
+                            # "administeredBodyPart": "Right hind leg",
+                            # "administeredRoute": "Subcutaneous",
+                            # "tagNumber": "TAG-123",
+                            # "tagExpiration": "2027-08-01T12:00:00Z",
+                            "description": v.COMMENTS,
+                            "sourceReference": {
+                                "sourceId": str(v.ID),
+                                "sourceDisplayId": v.VACCINATIONTYPE,
+                                "dateCreated": asm3.i18n.python2iso(v.CREATEDDATE, self.dbo.timezone),
+                                "dateUpdated": asm3.i18n.python2iso(v.LASTCHANGEDDATE, self.dbo.timezone)
+                            }
+                    }
+                    if vaccineduration:
+                        vaccination["duration"] = vaccineduration
+                    if v.VETNAME:
+                        vaccination["providerName"] = v.VETNAME
+                    vaccinations.append(vaccination)
+                p["vaccines"] = vaccinations
+
+        return asm3.utils.json(p, True)
 
 
