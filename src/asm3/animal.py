@@ -3805,85 +3805,87 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
     Batch updates multiple animal records from the bulk form.
     Returns number of animals affected.
     """
-    if len(post.integer_list("animals")) == 0: return 0
+    anl = post.integer_list("animals")
+    anin = dbo.sql_in_ilist(anl)
+    if len(anl) == 0: return 0
     aud = []
     if post["litterid"] != "":
-        dbo.execute("UPDATE animal SET AcceptanceNumber = %s WHERE ID IN (%s)" % (dbo.sql_value(post["litterid"]), post["animals"]))
+        dbo.execute("UPDATE animal SET AcceptanceNumber = %s WHERE ID IN (%s)" % (dbo.sql_value(post["litterid"]), anin))
         aud.append("LitterID = %s" % post["litterid"])
     if post.integer("animaltype") != -1:
-        dbo.execute("UPDATE animal SET AnimalTypeID = %d WHERE ID IN (%s)" % (post.integer("animaltype"), post["animals"]))
+        dbo.execute("UPDATE animal SET AnimalTypeID = %d WHERE ID IN (%s)" % (post.integer("animaltype"), anin))
         aud.append("AnimalTypeID = %s" % post["animaltype"])
     if post.integer("location") != -1 and post["unit"] != "-1":
         for animalid in post.integer_list("animals"):
             update_location_unit(dbo, username, animalid, post.integer("location"), post["unit"])
     elif post.integer("location") != -1:
-        dbo.execute("UPDATE animal SET ShelterLocation = %d WHERE ID IN (%s)" % (post.integer("location"), post["animals"]))
+        dbo.execute("UPDATE animal SET ShelterLocation = %d WHERE ID IN (%s)" % (post.integer("location"), anin))
         aud.append("ShelterLocation = %s" % post["location"])
     elif post["unit"] != "-1":
-        dbo.execute("UPDATE animal SET ShelterLocationUnit = %s WHERE ID IN (%s)" % (dbo.sql_value(post["unit"]), post["animals"]))
+        dbo.execute("UPDATE animal SET ShelterLocationUnit = %s WHERE ID IN (%s)" % (dbo.sql_value(post["unit"]), anin))
         aud.append("ShelterLocationUnit = %s" % post["unit"])
     if post.integer("entryreason") != -1:
-        dbo.execute("UPDATE animal SET EntryReasonID = %d WHERE ID IN (%s)" % (post.integer("entryreason"), post["animals"]))
+        dbo.execute("UPDATE animal SET EntryReasonID = %d WHERE ID IN (%s)" % (post.integer("entryreason"), anin))
         aud.append("EntryReasonID = %s" % post["entryreason"])
     if post.integer("fee") > 0:
-        dbo.execute("UPDATE animal SET Fee = %d WHERE ID IN (%s)" % (post.integer("fee"), post["animals"]))
+        dbo.execute("UPDATE animal SET Fee = %d WHERE ID IN (%s)" % (post.integer("fee"), anin))
         aud.append("Fee = %s" % post["fee"])
     if post.integer("boardingcost") > 0:
-        dbo.execute("UPDATE animal SET DailyBoardingCost = %d WHERE ID IN (%s)" % (post.integer("boardingcost"), post["animals"]))
+        dbo.execute("UPDATE animal SET DailyBoardingCost = %d WHERE ID IN (%s)" % (post.integer("boardingcost"), anin))
         aud.append("DailyBoardingCost = %s" % post["boardingcost"])
     if post.integer("notforadoption") != -1:
-        dbo.execute("UPDATE animal SET IsNotAvailableForAdoption = %d WHERE ID IN (%s)" % (post.integer("notforadoption"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsNotAvailableForAdoption = %d WHERE ID IN (%s)" % (post.integer("notforadoption"), anin))
         aud.append("IsNotAvailableForAdoption = %s" % post["notforadoption"])
     if post.integer("notforregistration") != -1:
-        dbo.execute("UPDATE animal SET IsNotForRegistration = %d WHERE ID IN (%s)" % (post.integer("notforregistration"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsNotForRegistration = %d WHERE ID IN (%s)" % (post.integer("notforregistration"), anin))
         aud.append("IsNotForRegistration = %s" % post["notforregistration"])
     if post["holduntil"] != "":
-        dbo.execute("UPDATE animal SET IsHold = 1, HoldUntilDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("holduntil")), post["animals"]))
+        dbo.execute("UPDATE animal SET IsHold = 1, HoldUntilDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("holduntil")), anin))
         aud.append("HoldUntilDate = %s" % post["holduntil"])
     if post.integer("goodwithcats") != -1:
-        dbo.execute("UPDATE animal SET IsGoodWithCats = %d WHERE ID IN (%s)" % (post.integer("goodwithcats"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsGoodWithCats = %d WHERE ID IN (%s)" % (post.integer("goodwithcats"), anin))
         aud.append("IsGoodWithCats = %s" % post["goodwithcats"])
     if post.integer("goodwithdogs") != -1:
-        dbo.execute("UPDATE animal SET IsGoodWithDogs = %d WHERE ID IN (%s)" % (post.integer("goodwithdogs"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsGoodWithDogs = %d WHERE ID IN (%s)" % (post.integer("goodwithdogs"), anin))
         aud.append("IsGoodWithDogs = %s" % post["goodwithdogs"])
     if post.integer("goodwithkids") != -1:
-        dbo.execute("UPDATE animal SET IsGoodWithChildren = %d WHERE ID IN (%s)" % (post.integer("goodwithkids"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsGoodWithChildren = %d WHERE ID IN (%s)" % (post.integer("goodwithkids"), anin))
         aud.append("IsGoodWithChildren = %s" % post["goodwithkids"])
     if post.integer("goodwithelderly") != -1:
-        dbo.execute("UPDATE animal SET IsGoodWithElderly = %d WHERE ID IN (%s)" % (post.integer("goodwithelderly"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsGoodWithElderly = %d WHERE ID IN (%s)" % (post.integer("goodwithelderly"), anin))
         aud.append("IsGoodWithElderly = %s" % post["goodwithelderly"])
     if post.integer("goodonlead") != -1:
-        dbo.execute("UPDATE animal SET IsGoodOnLead = %d WHERE ID IN (%s)" % (post.integer("goodonlead"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsGoodOnLead = %d WHERE ID IN (%s)" % (post.integer("goodonlead"), anin))
         aud.append("IsGoodOnLead = %s" % post["goodonlead"])
     if post.integer("goodtraveller") != -1:
-        dbo.execute("UPDATE animal SET IsGoodTraveller = %d WHERE ID IN (%s)" % (post.integer("goodtraveller"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsGoodTraveller = %d WHERE ID IN (%s)" % (post.integer("goodtraveller"), anin))
         aud.append("IsGoodTraveller = %s" % post["goodtraveller"])
     if post.integer("housetrained") != -1:
-        dbo.execute("UPDATE animal SET IsHouseTrained = %d WHERE ID IN (%s)" % (post.integer("housetrained"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsHouseTrained = %d WHERE ID IN (%s)" % (post.integer("housetrained"), anin))
         aud.append("IsHouseTrained = %s" % post["housetrained"])
     if post.integer("cratetrained") != -1:
-        dbo.execute("UPDATE animal SET IsCrateTrained = %d WHERE ID IN (%s)" % (post.integer("cratetrained"), post["animals"]))
+        dbo.execute("UPDATE animal SET IsCrateTrained = %d WHERE ID IN (%s)" % (post.integer("cratetrained"), anin))
         aud.append("IsCrateTrained = %s" % post["cratetrained"])
     if post.integer("energylevel") != -1:
-        dbo.execute("UPDATE animal SET EnergyLevel = %d WHERE ID IN (%s)" % (post.integer("energylevel"), post["animals"]))
+        dbo.execute("UPDATE animal SET EnergyLevel = %d WHERE ID IN (%s)" % (post.integer("energylevel"), anin))
         aud.append("EnergyLevel = %s" % post["energylevel"])
     if post["neutereddate"] != "":
-        dbo.execute("UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("neutereddate")), post["animals"]))
+        dbo.execute("UPDATE animal SET Neutered = 1, NeuteredDate = %s WHERE ID IN (%s)" % (dbo.sql_date(post.date("neutereddate")), anin))
         aud.append("NeuteredDate = %s" % post["neutereddate"])
     if post["neuteringvet"] != "" and post["neuteringvet"] != "0":
-        dbo.execute("UPDATE animal SET NeuteredByVetID = %d WHERE ID IN (%s)" % (post.integer("neuteringvet"), post["animals"]))
+        dbo.execute("UPDATE animal SET NeuteredByVetID = %d WHERE ID IN (%s)" % (post.integer("neuteringvet"), anin))
         aud.append("NeuteredByVetID = %s" % post["neuteringvet"])
     if post["currentvet"] != "" and post["currentvet"] != "0":
-        dbo.execute("UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), post["animals"]))
+        dbo.execute("UPDATE animal SET CurrentVetID = %d WHERE ID IN (%s)" % (post.integer("currentvet"), anin))
         aud.append("CurrentVetID = %s" % post["currentvet"])
     if post["ownersvet"] != "" and post["ownersvet"] != "0":
-        dbo.execute("UPDATE animal SET OwnersVetID = %d WHERE ID IN (%s)" % (post.integer("ownersvet"), post["animals"]))
+        dbo.execute("UPDATE animal SET OwnersVetID = %d WHERE ID IN (%s)" % (post.integer("ownersvet"), anin))
         aud.append("OwnersVetID = %s" % post["ownersvet"])
     if post["coordinator"] != "" and post["coordinator"] != "0":
-        dbo.execute("UPDATE animal SET AdoptionCoordinatorID = %d WHERE ID IN (%s)" % (post.integer("coordinator"), post["animals"]))
+        dbo.execute("UPDATE animal SET AdoptionCoordinatorID = %d WHERE ID IN (%s)" % (post.integer("coordinator"), anin))
         aud.append("AdoptionCoordinatorID = %s" % post["coordinator"])
     if post["addflag"] != "":
-        animals = dbo.query("SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
+        animals = dbo.query("SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % anin)
         for a in animals:
             if not a.additionalflags: a.additionalflags = ""
             if a.additionalflags.find("%s|" % post["addflag"]) == -1:
@@ -3891,7 +3893,7 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
                 dbo.update("animal", a["ID"], { "AdditionalFlags": newflags })
                 aud.append("AdditionalFlags %s --> %s" % (a.additionalflags, newflags))
     if post["removeflag"] != "":
-        animals = dbo.query("SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
+        animals = dbo.query("SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % anin)
         for a in animals:
             if not a.additionalflags: a.additionalflags = ""
             fs = "%s|" % post["removeflag"]
@@ -3934,11 +3936,11 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
             asm3.additional.save_values_for_link(dbo, post, username, animalid, "animal", setdefaults=False, removeallforlink=False, skipblanks=True)
     
     # Record the user as making the last change to this record and create audit records for the changes
-    dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["animals"]))
+    dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), anin))
     if len(aud) > 0:
         for animalid in post.integer_list("animals"):
             asm3.audit.edit(dbo, username, "animal", animalid, "", ", ".join(aud))
-    return len(post.integer_list("animals"))
+    return len(anl)
 
 def update_animal_roles(dbo: Database, aid: int, viewroles: List[int], editroles: List[int]) -> None:
     """

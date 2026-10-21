@@ -1089,6 +1089,10 @@ class Database(object):
         if len(ins) == 0: ins.append("-999") # insert a dummy value that will never match anything so the clause is always valid
         return "%s" % ",".join(ins)
 
+    def sql_in_ilist(self, l: List[int]) -> str:
+        """ Writes a SQL IN clause from a list of integers """
+        return ",".join([ str(x) for x in l if asm3.utils.cint(x) > 0 ])
+
     def sql_interval(self, columnname: str, number: int, sign: str = "+", units: str = "months") -> str:
         """
         Used to add or a subtract a period to/from a date column 
