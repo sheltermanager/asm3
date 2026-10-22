@@ -129,6 +129,18 @@ class TestPublish(unittest.TestCase):
                 "weight": 6.66,
                 "neutered": "on",
                 "size": 2
+            },
+            {
+                "animalname": "Couplio",
+                "estimatedage": "1",
+                "animaltype": "1",
+                "entryreason": "1",
+                "breed1": "1",
+                "breed2": "1", 
+                "species": "1",
+                "comments": "bio",
+                "dateofbirth": "01/01/2022",
+                "basecolour": "1"
             }
         ]
 
@@ -152,10 +164,25 @@ class TestPublish(unittest.TestCase):
         # Create a condition
         data = {
             "lookup": "lkcondition",
-            "lookupname": "Resting Bitch Face"
+            "lookupname": "Resting Bitch Face",
+            "conditiontype": "1"
+
         }
         post = asm3.utils.PostedData(data, "en")
         self.cid = asm3.lookups.upsert_lookup_from_form(base.get_dbo(), "test", post)
+
+        # Apply condition to Chipio
+        data = {
+            "animalid": int(self.animals[2][0]),
+            "conditionid": self.cid,
+            "startdate": "01/01/2023",
+            "starttime": "00:00:00",
+            "enddate": "03/03/2023",
+            "endtime": "00:00:00",
+            "comments": "Created for unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.acid = asm3.animal.insert_animalcondition_from_form(base.get_dbo(), "test", post)
 
         data = {
             "datelost": base.today_display(),
@@ -201,9 +228,9 @@ class TestPublish(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         self.mid = asm3.movement.insert_movement_from_form(base.get_dbo(), "test", post)
 
-        # Create an adoption movement for Testio to the test couple
+        # Create an adoption movement for Couplio to the test couple
         data = {
-            "animal": int(self.animals[0][0]),
+            "animal": int(self.animals[3][0]),
             "person": self.cnid,
             "movementdate": base.today_display(),
             "type": "1"
@@ -271,7 +298,8 @@ class TestPublish(unittest.TestCase):
         for mediaid in self.mediaids:
             asm3.media.delete_media(base.get_dbo(), "test", mediaid)
         asm3.lookups.delete_lookup(base.get_dbo(), "test", "vaccinationtype", self.vtid)
-        asm3.lookups.delete_lookup(base.get_dbo(), "test", "animalcondition", self.cid)
+        asm3.animal.delete_animalcondition(base.get_dbo(), "test", self.acid)
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "lkcondition", self.cid)
         # print(len(base.get_dbo().query("SELECT * FROM log")))
 
     # base
@@ -455,9 +483,6 @@ class TestPublish(unittest.TestCase):
         animals = asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).getData("2026-01-01")
         for a in animals:
             print(asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a))
-
-        # Make self.rnid a couple
-
 
         # self.assertIsNotNone(asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a))
 

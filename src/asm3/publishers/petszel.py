@@ -48,10 +48,14 @@ class PetszelPublisher(AbstractPublisher):
                 "SELECT " \
                 "c.ID, " \
                 "l.ConditionName, " \
+                "t.ConditionTypeName, " \
+                "c.StartDatetime, " \
+                "c.EndDatetime, " \
                 "c.CreatedDate, " \
                 "c.LastChangedDate " \
                 "FROM animalcondition c " \
                 "INNER JOIN lkcondition l ON c.ConditionID = l.ID " \
+                "INNER JOIN lksconditiontype t ON l.ConditionTypeID = t.ID " \
                 "WHERE " \
                 "c.AnimalID = ?",
                 [animalid,]
@@ -380,7 +384,25 @@ class PetszelPublisher(AbstractPublisher):
                     "sourceDisplayId": "Microchip"
                 }
             }
-        
+        animalconditions = self.getAnimalConditions(an.ID)
+        if len(animalconditions):
+            conditions = []
+            for c in animalconditions:
+                conditions.append(
+                    {
+                        "conditionName": c.CONDITIONNAME,
+                        "conditionType": c.CONDITIONTYPENAME,
+                        "onsetDate": asm3.i18n.python2iso(c.STARTDATETIME, self.dbo.timezone),
+                        "resolutionDate": asm3.i18n.python2iso(c.ENDDATETIME, self.dbo.timezone),
+                        "sourceReference": {
+                            "sourceId": str(c.ID),
+                            "dateCreated": asm3.i18n.python2iso(c.CREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(c.LASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                )
+            p["conditions"] = conditions
+
         animalmedia = self.getAnimalMedia(an.ID)
         if len(animalmedia):
             photos = []
