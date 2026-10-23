@@ -160,10 +160,10 @@ def bare_header(title: str, theme: str = "asm", locale: str = LOCALE, config_db:
         '<title>%(title)s</title>\n' \
         '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n' \
         '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">\n' \
-        '<link rel="shortcut icon" href="static/images/logo/icon-16.png" />\n' \
-        '<link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32"/>\n' \
-        '<link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48"/>\n' \
-        '<link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128"/>\n' \
+        '<link rel="icon" href="custom_icon?size=16" />\n' \
+        '<link rel="icon" href="custom_icon?size=32" sizes="32x32"/>\n' \
+        '<link rel="icon" href="custom_icon?size=48" sizes="48x48"/>\n' \
+        '<link rel="icon" href="custom_icon?size=128" sizes="128x128"/>\n' \
         '%(scripts)s\n' \
         '</head>\n' \
         '<body style="background-color: %(bgcol)s">\n' \

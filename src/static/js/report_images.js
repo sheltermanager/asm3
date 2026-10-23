@@ -105,7 +105,7 @@ $(function() {
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Extra images"));
             s += html.info(_("This screen allows you to add extra images to your database, for use in reports and documents.") + "<br />" +
-                _("Upload splash.jpg and logo.jpg to override the login screen image and logo at the top left of ASM."));
+                _("Upload splash.jpg, logo.jpg and icon.jpg to override the login screen image, the logo at the top left and the icon of ASM."));
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
