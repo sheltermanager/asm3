@@ -125,6 +125,7 @@ class Database(object):
     timeout = DB_TIMEOUT
     connection = None
 
+    type_microtext = "VARCHAR(50)"
     type_shorttext = "VARCHAR(1024)"
     type_longtext = "TEXT"
     type_clob = "TEXT"
