@@ -161,7 +161,7 @@ $(function() {
                     129713, // Worm
                     129745  // Bell pepper
                 ],
-                emblemoptions = [],
+                emblemoptions = [ "<option></option>" ],
                 condoptions = '<option></option><option value="has">' + _("if animal has") + 
                     '</option><option value="not">' + _("if animal does not have") + '</option>';
             $.each(emblemglyphs, function(i, v) { emblemoptions.push('<option value="&#' + v + ';">&#' + v + ';</option>'); });
