@@ -170,7 +170,7 @@ $(function() {
                 return { post_field: "EmblemsCustomValue" + i, type: "select", options: emblemoptions.join(""),
                     xmarkup: ' <select data="EmblemsCustomCond' + i + '" class="asm-selectbox">' + condoptions + '</select>' + 
                         ' <select data="EmblemsCustomFlag' + i + '" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                }
+                };
             };
             return [
                 html.content_header(_("System Options")),
