@@ -8310,7 +8310,8 @@ class service(ASMEndpoint):
             self.content_type(contenttype)
             self.cache_control(client_ttl, cache_ttl) 
             self.header("Access-Control-Allow-Origin", "*") # CORS
-            contentlength = len(response)
+            contentlength = 0
+            if isinstance(response, bytes): contentlength = len(response)
             if isinstance(response, str): contentlength = len(asm3.utils.str2bytes(response)) # return byte length for unicode strings
             self.header("Content-Length", str(contentlength))
             return response
