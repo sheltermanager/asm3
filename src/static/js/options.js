@@ -166,7 +166,12 @@ $(function() {
                     '</option><option value="not">' + _("if animal does not have") + '</option>';
             $.each(emblemglyphs, function(i, v) { emblemoptions.push('<option value="&#' + v + ';">&#' + v + ';</option>'); });
             for (let i = 0; i < emblemvalues.length; i=i+1) { emblemoptions.push('<option>' + emblemvalues[i] + '</option>'); }
-
+            const custom_emblem = function(i) {
+                return { post_field: "EmblemsCustomValue" + i, type: "select", options: emblemoptions.join(""),
+                    xmarkup: ' <select data="EmblemsCustomCond' + i + '" class="asm-selectbox">' + condoptions + '</select>' + 
+                        ' <select data="EmblemsCustomFlag' + i + '" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
+                }
+            };
             return [
                 html.content_header(_("System Options")),
                 tableform.buttons_render([
@@ -433,66 +438,12 @@ $(function() {
                         { id: "showunneutered", post_field: "EmblemUnneutered", label: html.icon("unneutered") + " " + _("Unaltered"), type: "check" },
                         { type: "nextcol" },
                         { type: "raw", markup: html.info(_("You can assign a custom emblem to your additional animal flags")) },
-                        { post_field: "EmblemsCustomValue1", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond1" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag1" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue2", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond2" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag2" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue3", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond3" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag3" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue4", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond4" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag4" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue5", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond5" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag5" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue6", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond6" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag6" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue7", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond7" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag7" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue8", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond8" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag8" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue9", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond9" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag9" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue10", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond10" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag10" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue11", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond11" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag11" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue12", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond12" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag12" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue13", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond13" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag13" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue14", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond14" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag14" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue15", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond15" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag15" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue16", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond16" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag16" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue17", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond17" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag17" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue18", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond18" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag18" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue19", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond19" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag19" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        },
-                        { post_field: "EmblemsCustomValue20", type: "select", options: emblemoptions.join(""),
-                            xmarkup: ' <select data="EmblemsCustomCond20" class="asm-selectbox">' + condoptions + '</select>' + ' <select data="EmblemsCustomFlag20" class="asm-selectbox"><option></option>' + html.list_to_options(controller.animalflags, "FLAG", "FLAG") + '</select>'
-                        }
+                        custom_emblem(1), custom_emblem(2), custom_emblem(3), custom_emblem(4), custom_emblem(5),
+                        custom_emblem(6), custom_emblem(7), custom_emblem(8), custom_emblem(9), custom_emblem(10),
+                        custom_emblem(11), custom_emblem(12), custom_emblem(13), custom_emblem(14), custom_emblem(15),
+                        custom_emblem(16), custom_emblem(17), custom_emblem(18), custom_emblem(19), custom_emblem(20),
+                        custom_emblem(21), custom_emblem(22), custom_emblem(23), custom_emblem(24), custom_emblem(25),
+                        custom_emblem(26), custom_emblem(27), custom_emblem(28), custom_emblem(29), custom_emblem(30),
                     ]},
                     { id: "tab-boarding", title: _("Boarding"), fields: [
                         { id: "boardingpaytype", post_field: "BoardingPaymentType", label: _("Boarding payment type"), type: "select", options: html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"), 
