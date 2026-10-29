@@ -2,7 +2,7 @@
 from .base import Database
 
 class DatabaseHSQLDB(Database):
-    type_microtext = "VARCHAR(50)"
+    type_microtext = "VARCHAR(1024)"
     type_shorttext = "VARCHAR(1024)"
     type_longtext = "VARCHAR(2000000)"
     type_clob = "VARCHAR(2000000)"

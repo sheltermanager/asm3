@@ -11,7 +11,7 @@ except:
     pass
 
 class DatabasePostgreSQL(Database):
-    type_microtext = "VARCHAR(50)"
+    type_microtext = "VARCHAR(1024)"
     type_shorttext = "VARCHAR(1024)"
     type_longtext = "TEXT"
     type_clob = "TEXT"
