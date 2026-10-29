@@ -172,16 +172,30 @@ class PetszelPublisher(AbstractPublisher):
                 if self.shouldStopPublishing(): 
                     self.stopPublishing()
                     return
-      
-                data = self.processAnimal(an)
 
-                r = {
-                    "status": 200,
-                    "headers": "Headers Placeholder",
-                    "response": "Success"
+                payload = {
+                    "userName": asm3.configuration.petszel_client_id(self.dbo),
+                    "password": asm3.configuration.petszel_client_secret(self.dbo)
+                }
+                headers = {
+                    'Content-Type': 'application/json'
+                }
+                r = asm3.utils.post_json(f"{PETSZEL_URL}/Authorize", asm3.utils.json(payload), headers)
+                if r["status"] == 200:
+                    token = asm3.utils.json_parse(r["response"])["token"]
+                else:
+                    return
+
+                payload = self.processAnimal(an)
+                headers = {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
 
-                if r["status"] != 200:
+                r = asm3.utils.post_json(f"{PETSZEL_URL}/api/v1/ingestion/animal-lifecycle", asm3.utils.json(payload), headers)
+
+                if r["status"] != 202:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     # Update animalpublished for this animal with the error code so that it's visible in the UI
                     # that we tried and what the error was.
@@ -210,11 +224,39 @@ class PetszelPublisher(AbstractPublisher):
             omiddlenames = " ".join(an.OWNERFORENAMES.split(" ")[0][1:])
         
         address = self.splitAddress(an.OWNERADDRESS)
-
-        # ofirstname = an.OWNERFORENAMES.split(" ")[0]
-        # omiddlenames = ""
-        # if " " in an.OWNERFORENAMES:
-        #     omiddlenames = " ".join(an.OWNERFORENAMES.split(" ")[0][1:])
+        emails = []
+        if an.EMAILADDRESS:
+            emails.append(
+                {
+                    "emailAddress": an.EMAILADDRESS,
+                    "type": "Personal",
+                    "doNotEmail": False,
+                    "sourceReference": {
+                        "sourceSystem": "ASM",
+                        "sourceId": an.OWNERCODE,
+                        "sourceDisplayId": "Personal email",
+                        "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                        "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                    }
+                }
+            )
+        phonenumbers = []
+        if an.MOBILETELEPHONE:
+            phonenumbers.append(
+                {
+                    "number": an.MOBILETELEPHONE,
+                    "type": "Mobile",
+                    "doNotCall": False,
+                    "doNotText": False,
+                    "sourceReference": {
+                        "sourceSystem": "ASM",
+                        "sourceId": an.OWNERCODE,
+                        "sourceDisplayId": "Mobile phone",
+                        "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                        "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                    }
+                }
+            )
         
         participants = [
             {
@@ -222,19 +264,7 @@ class PetszelPublisher(AbstractPublisher):
                 "firstName": ofirstname,
                 "middleName": omiddlenames,
                 "lastName": an.OWNERSURNAME,
-                "emails": [
-                    {
-                        "emailAdress": an.EMAILADDRESS,
-                        "type": "Personal",
-                        "doNotEmail": False,
-                        "sourceReference": {
-                            "sourceId": an.OWNERCODE,
-                            "sourceDisplayId": "Personal email",
-                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                        }
-                    }
-                ],
+                "emails": emails,
                 "addresses": [
                     {
                         "streetLine1": address["line1"],
@@ -245,6 +275,7 @@ class PetszelPublisher(AbstractPublisher):
                         "country": "US",
                         "doNotMail": False,
                         "sourceReference": {
+                            "sourceSystem": "ASM",
                             "sourceId": an.OWNERCODE,
                             "sourceDisplayId": "Home address",
                             "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
@@ -252,21 +283,9 @@ class PetszelPublisher(AbstractPublisher):
                         }
                     }
                 ],
-                "phoneNumbers": [
-                    {
-                        "number": an.MOBILETELEPHONE,
-                        "type": "Mobile",
-                        "doNotCall": False,
-                        "doNotText": False,
-                        "sourceReference": {
-                            "sourceId": an.OWNERCODE,
-                            "sourceDisplayId": "Mobile phone",
-                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                        }
-                    }
-                ],
+                "phoneNumbers": phonenumbers,
                 "sourceReference": {
+                    "sourceSystem": "ASM",
                     "sourceId": an.OWNERCODE,
                     "sourceDisplayId": an.OWNERNAME,
                     "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
@@ -280,6 +299,39 @@ class PetszelPublisher(AbstractPublisher):
             omiddlenames = ""
             if " " in an.OWNERFORENAMES2:
                 omiddlenames = " ".join(an.OWNERFORENAMES2.split(" ")[0][1:])
+            emails = []
+            if an.EMAILADDRESS2:
+                emails.append(
+                    {
+                        "emailAddress": an.EMAILADDRESS2,
+                        "type": "Personal",
+                        "doNotEmail": False,
+                        "sourceReference": {
+                            "sourceSystem": "ASM",
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Personal email",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                )
+            phonenumbers = []
+            if an.MOBILETELEPHONE2:
+                phonenumbers.append(
+                    {
+                        "number": an.MOBILETELEPHONE2,
+                        "type": "Mobile",
+                        "doNotCall": False,
+                        "doNotText": False,
+                        "sourceReference": {
+                            "sourceSystem": "ASM",
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Mobile phone",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                )
 
             participants.append(
                 {
@@ -287,19 +339,7 @@ class PetszelPublisher(AbstractPublisher):
                     "firstName": ofirstname,
                     "middleName": omiddlenames,
                     "lastName": an.OWNERSURNAME2,
-                    "emails": [
-                        {
-                            "emailAdress": an.EMAILADDRESS2,
-                            "type": "Personal",
-                            "doNotEmail": False,
-                            "sourceReference": {
-                                "sourceId": an.OWNERCODE,
-                                "sourceDisplayId": "Personal email",
-                                "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                                "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                            }
-                        }
-                    ],
+                    "emails": emails,
                     "addresses": [
                         {
                             "streetLine1": address["line1"],
@@ -310,6 +350,7 @@ class PetszelPublisher(AbstractPublisher):
                             "country": "US",
                             "doNotMail": False,
                             "sourceReference": {
+                                "sourceSystem": "ASM",
                                 "sourceId": an.OWNERCODE,
                                 "sourceDisplayId": "Home address",
                                 "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
@@ -317,21 +358,9 @@ class PetszelPublisher(AbstractPublisher):
                             }
                         }
                     ],
-                    "phoneNumbers": [
-                        {
-                            "number": an.MOBILETELEPHONE2,
-                            "type": "Mobile",
-                            "doNotCall": False,
-                            "doNotText": False,
-                            "sourceReference": {
-                                "sourceId": an.OWNERCODE,
-                                "sourceDisplayId": "Mobile phone",
-                                "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
-                                "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
-                            }
-                        }
-                    ],
+                    "phoneNumbers": phonenumbers,
                     "sourceReference": {
+                        "sourceSystem": "ASM",
                         "sourceId": an.OWNERCODE,
                         "sourceDisplayId": an.OWNERNAME,
                         "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
@@ -341,26 +370,31 @@ class PetszelPublisher(AbstractPublisher):
             )
 
         p = {
-            "animal": {
-                "animalId": an.SHELTERCODE,
-                "animalName": an.ANIMALNAME.title(),
-                "dateOfBirth": asm3.i18n.python2iso(an.DATEOFBIRTH, self.dbo.timezone),
-                "adoptionDate": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone),
-                "animalType": an.SPECIESNAME,
-                "sex": an.SEX,
-                "sizeGroup": an.SIZE,
-                "breeds": [an.BREEDNAME],
-                "colors": [an.BASECOLOUR],
-                "sourceReference": {
-                    "sourceId": an.SHELTERCODE,
-                    "dateUpdated": asm3.i18n.python2iso(an.LASTCHANGEDDATE, self.dbo.timezone)
+            "animal": 
+                { "animal": {
+                    "animalId": an.SHELTERCODE,
+                    "name": an.ANIMALNAME.title(),
+                    "dateOfBirth": asm3.i18n.python2iso(an.DATEOFBIRTH, self.dbo.timezone),
+                    "adoptionDate": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone),
+                    "animalType": an.SPECIESNAME,
+                    "sex": an.SEX,
+                    "sizeGroup": an.SIZE,
+                    "breeds": [an.BREEDNAME],
+                    "colors": [an.BASECOLOUR],
+                    "sourceReference": {
+                        "sourceSystem": "ASM",
+                        "sourceId": an.SHELTERCODE,
+                        "dateUpdated": asm3.i18n.python2iso(an.LASTCHANGEDDATE, self.dbo.timezone)
+                    }
                 }
             },
-            "event": {
-                "type": "Adoption",
-                "date": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone),
-                "participants": participants
-            }
+            "lifecycleEvent": {
+                "eventType": "Adoption",
+                "eventDirection": "Outcome",
+                "occurredAt": asm3.i18n.python2iso(an.ACTIVEMOVEMENTDATE, self.dbo.timezone)
+            },
+            "participants": participants
+            
         }
         if an.ADOPTIONWEIGHT:
             p["animal"]["adoptedWeight"] = an.ADOPTIONWEIGHT
@@ -380,6 +414,7 @@ class PetszelPublisher(AbstractPublisher):
                 "issuer": chipco,
                 "implantedDate": asm3.i18n.python2iso(an.IDENTICHIPDATE, self.dbo.timezone),
                 "sourceReference": {
+                    "sourceSystem": "ASM",
                     "sourceId": an.SHELTERCODE,
                     "sourceDisplayId": "Microchip"
                 }
@@ -395,6 +430,7 @@ class PetszelPublisher(AbstractPublisher):
                         "onsetDate": asm3.i18n.python2iso(c.STARTDATETIME, self.dbo.timezone),
                         "resolutionDate": asm3.i18n.python2iso(c.ENDDATETIME, self.dbo.timezone),
                         "sourceReference": {
+                            "sourceSystem": "ASM",
                             "sourceId": str(c.ID),
                             "dateCreated": asm3.i18n.python2iso(c.CREATEDDATE, self.dbo.timezone),
                             "dateUpdated": asm3.i18n.python2iso(c.LASTCHANGEDDATE, self.dbo.timezone)
@@ -420,6 +456,7 @@ class PetszelPublisher(AbstractPublisher):
                         "height": imageheight,
                         "width": imagewidth,
                         "sourceReference": {
+                            "sourceSystem": "ASM",
                             "sourceId": str(m.ID),
                             "sourceDisplayId": m.MEDIANAME,
                             "dateCreated": asm3.i18n.python2iso(m.CREATEDDATE, self.dbo.timezone),
@@ -455,6 +492,7 @@ class PetszelPublisher(AbstractPublisher):
                             # "tagExpiration": "2027-08-01T12:00:00Z",
                             "description": v.COMMENTS,
                             "sourceReference": {
+                                "sourceSystem": "ASM",
                                 "sourceId": str(v.ID),
                                 "sourceDisplayId": v.VACCINATIONTYPE,
                                 "dateCreated": asm3.i18n.python2iso(v.CREATEDDATE, self.dbo.timezone),
@@ -468,6 +506,7 @@ class PetszelPublisher(AbstractPublisher):
                     vaccinations.append(vaccination)
                 p["vaccines"] = vaccinations
 
-        return asm3.utils.json(p, True)
+        # return asm3.utils.json(p, True)
+        return p
 
 
