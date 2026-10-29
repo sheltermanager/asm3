@@ -230,10 +230,10 @@ def tinymce_header(title: str, js: str, jswindowprint: bool = True, pdfenabled: 
         <title>%(title)s</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
-        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
-        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
-        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
+        <link rel="icon" href="custom_icon?size=16" />
+        <link rel="icon" href="custom_icon?size=32" sizes="32x32"/>
+        <link rel="icon" href="custom_icon?size=48" sizes="48x48"/>
+        <link rel="icon" href="custom_icon?size=128" sizes="128x128"/>
         %(jquery)s
         %(css)s
         <script type="text/javascript">
