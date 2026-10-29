@@ -9,6 +9,9 @@ except:
     pass
 
 class DatabaseMySQL(Database):
+
+    
+    type_microtext = "VARCHAR(50)" # This is to deliberately keep row length under MySQL's 8Kb limit
     type_shorttext = "VARCHAR(255)" # This is a fudge due to indexing problems above 767 chars on multi-byte sets
     type_longtext = "LONGTEXT"
     type_clob = "LONGTEXT"
