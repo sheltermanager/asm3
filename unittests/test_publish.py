@@ -483,9 +483,8 @@ class TestPublish(unittest.TestCase):
         animals = asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).getData("2026-01-01")
         for a in animals:
             pa = asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a)
-            print(asm3.utils.json(pa, True))
-
-        # self.assertIsNotNone(asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a))
+            # print(asm3.utils.json(pa, True))
+            self.assertIsNotNone(pa)
 
     # pettracuk
     def test_pettracuk(self):

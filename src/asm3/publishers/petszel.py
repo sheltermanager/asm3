@@ -205,7 +205,8 @@ class PetszelPublisher(AbstractPublisher):
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
                     processed.append(an)
-                    asm3.animal.set_extra_id(self.dbo, "pub::petszel", an, IDTYPE_PETSZEL, str(self.dbo.today()))
+                    correlationid = asm3.utils.json_parse(r["response"])["correlationId"]
+                    asm3.animal.set_extra_id(self.dbo, "pub::petszel", an, IDTYPE_PETSZEL, correlationid)
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
