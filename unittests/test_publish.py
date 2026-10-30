@@ -4,6 +4,9 @@ from unittests import base
 
 import asm3.animal
 import asm3.configuration
+import asm3.i18n
+import asm3.lookups
+import asm3.medical
 import asm3.publishers
 import asm3.publishers.html
 import asm3.publishers.adoptapet
@@ -21,12 +24,14 @@ import asm3.publishers.petfinder
 import asm3.publishers.petlink
 import asm3.publishers.petrescue
 import asm3.publishers.petslocateduk
+import asm3.publishers.petszel
 import asm3.publishers.pettracuk
 import asm3.publishers.rescuegroups
 import asm3.publishers.sacmetrics
 import asm3.publishers.savourlife
 import asm3.publishers.smarttag
 import asm3.utils
+
 
 class TestPublish(unittest.TestCase):
  
@@ -49,10 +54,38 @@ class TestPublish(unittest.TestCase):
             "mobiletelephone": "07734 567890",
             "emailaddress": "dirk@diggler.com"
         }
+        vetdata = {
+            "surname": "Maskeranus Veterinary Care",
+            "ownertype": "1",
+            "address": "5 Acacia Avenue",
+            "postcode": "S66 0DD",
+            "mobiletelephone": "01234 567890",
+            "emailaddress": "reception@anusvets.com"
+        }
+        coupledata = {
+            "title": "Ms",
+            "forenames": "Tess",
+            "surname": "Ting",
+            "ownertype": "3",
+            "address": "12345 Short Street",
+            "postcode": "SW5 3QQ",
+            "mobiletelephone": "07734 567890",
+            "emailaddress": "tess@ting.com",
+            "title2": "Mr",
+            "forenames2": "Kevin",
+            "surname2": "Bovril",
+            "mobiletelephone2": "07734 098765",
+            "emailaddress2": "k.bovril@digglermail.com",
+
+        }
         post = asm3.utils.PostedData(sparsepersondata, "en")
         self.pnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
         post = asm3.utils.PostedData(richpersondata, "en")
         self.rnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+        post = asm3.utils.PostedData(vetdata, "en")
+        self.vnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
+        post = asm3.utils.PostedData(coupledata, "en")
+        self.cnid = asm3.person.insert_person_from_form(base.get_dbo(), post, "test", geocode=False)
         animaldata = [
             {
                 "animalname": "Testio",
@@ -92,7 +125,22 @@ class TestPublish(unittest.TestCase):
                 "dateofbirth": "01/01/2022",
                 "basecolour": "1",
                 "microchipped": "on",
-                "microchipnumber": "977123123456789"
+                "microchipnumber": "977123123456789",
+                "weight": 6.66,
+                "neutered": "on",
+                "size": 2
+            },
+            {
+                "animalname": "Couplio",
+                "estimatedage": "1",
+                "animaltype": "1",
+                "entryreason": "1",
+                "breed1": "1",
+                "breed2": "1", 
+                "species": "1",
+                "comments": "bio",
+                "dateofbirth": "01/01/2022",
+                "basecolour": "1"
             }
         ]
 
@@ -112,6 +160,29 @@ class TestPublish(unittest.TestCase):
             self.mediaids.append(asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_ATTACHFILE, post))
             self.animals.append((animalid, sheltercode))
         self.nid = self.animals[0][0] 
+
+        # Create a condition
+        data = {
+            "lookup": "lkcondition",
+            "lookupname": "Resting Bitch Face",
+            "conditiontype": "1"
+
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.cid = asm3.lookups.upsert_lookup_from_form(base.get_dbo(), "test", post)
+
+        # Apply condition to Chipio
+        data = {
+            "animalid": int(self.animals[2][0]),
+            "conditionid": self.cid,
+            "startdate": "01/01/2023",
+            "starttime": "00:00:00",
+            "enddate": "03/03/2023",
+            "endtime": "00:00:00",
+            "comments": "Created for unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.acid = asm3.animal.insert_animalcondition_from_form(base.get_dbo(), "test", post)
 
         data = {
             "datelost": base.today_display(),
@@ -146,6 +217,8 @@ class TestPublish(unittest.TestCase):
         faid = asm3.lostfound.insert_foundanimal_from_form(base.get_dbo(), post, "test")
         post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(imagedata) }, "en")
         self.mediaids.append(asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.FOUNDANIMAL, faid, asm3.media.MEDIASOURCE_ATTACHFILE, post))
+
+        # Create an adoption movement for Chipio to rich test person
         data = {
             "animal": int(self.animals[2][0]),
             "person": self.rnid,
@@ -155,16 +228,79 @@ class TestPublish(unittest.TestCase):
         post = asm3.utils.PostedData(data, "en")
         self.mid = asm3.movement.insert_movement_from_form(base.get_dbo(), "test", post)
 
+        # Create an adoption movement for Couplio to the test couple
+        data = {
+            "animal": int(self.animals[3][0]),
+            "person": self.cnid,
+            "movementdate": base.today_display(),
+            "type": "1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.cmid = asm3.movement.insert_movement_from_form(base.get_dbo(), "test", post)
+
+        # Create a vaccination type
+        self.vtid = asm3.lookups.insert_lookup(base.get_dbo(), "test", "vaccinationtype", "Testigen", "Vaccination type created for unit test")
+
+        # Create a vaccination history for Chipio
+        today = base.get_dbo().today()
+
+        givendate = asm3.i18n.add_years(today, -1.0)
+        requireddate = givendate
+        expiresdate = today
+        batchexpirydate = asm3.i18n.add_years(today, 1.0)
+        data = {
+            "animal": int(self.animals[2][0]),
+            "type": self.vtid,
+            "administeringvet": self.vnid,
+            "by": "test",
+            "given": asm3.i18n.python2display(base.get_dbo().locale, givendate),
+            "required": asm3.i18n.python2display(base.get_dbo().locale, requireddate),
+            "expires": asm3.i18n.python2display(base.get_dbo().locale, expiresdate),
+            "batchexpiry": asm3.i18n.python2display(base.get_dbo().locale, batchexpirydate),
+            "batchnumber": "123456",
+            "manufacturer": "Adam's Vaccines",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.v1id = asm3.medical.insert_vaccination_from_form(base.get_dbo(), "test", post)
+
+        givendate = today
+        requireddate = givendate
+        expiresdate = asm3.i18n.add_years(today, 1.0)
+        batchexpirydate = asm3.i18n.add_years(today, 3.0)
+        data = {
+            "animal": int(self.animals[2][0]),
+            "type": self.vtid,
+            "administeringvet": self.vnid,
+            "by": "test",
+            "given": asm3.i18n.python2display(base.get_dbo().locale, givendate),
+            "required": asm3.i18n.python2display(base.get_dbo().locale, requireddate),
+            "expires": asm3.i18n.python2display(base.get_dbo().locale, expiresdate),
+            "batchexpiry": asm3.i18n.python2display(base.get_dbo().locale, batchexpirydate),
+            "batchnumber": "654321",
+            "manufacturer": "Adam's Vaccines",
+            "comments": "Created by unit test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.v2id = asm3.medical.insert_vaccination_from_form(base.get_dbo(), "test", post)
+
         asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered includenonmicrochip excludeunder=1")
 
     def tearDown(self):
         asm3.movement.delete_movement(base.get_dbo(), "test", self.mid)
+        asm3.movement.delete_movement(base.get_dbo(), "test", self.cmid)
         for aid, sheltercode in self.animals:
             asm3.animal.delete_animal(base.get_dbo(), "test", aid)
         asm3.person.delete_person(base.get_dbo(), "test", self.pnid)
         asm3.person.delete_person(base.get_dbo(), "test", self.rnid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.vnid)
+        asm3.person.delete_person(base.get_dbo(), "test", self.cnid)
         for mediaid in self.mediaids:
             asm3.media.delete_media(base.get_dbo(), "test", mediaid)
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "vaccinationtype", self.vtid)
+        asm3.animal.delete_animalcondition(base.get_dbo(), "test", self.acid)
+        asm3.lookups.delete_lookup(base.get_dbo(), "test", "lkcondition", self.cid)
+        # print(len(base.get_dbo().query("SELECT * FROM log")))
 
     # base
     def test_get_adoption_status(self):
@@ -340,6 +476,15 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.petslocateduk.PetsLocatedUKPublisher(base.get_dbo(), pc).processAnimal(a))
+
+    # petszel
+    def test_petszel(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        animals = asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).getData("2026-01-01")
+        for a in animals:
+            pa = asm3.publishers.petszel.PetszelPublisher(base.get_dbo(), pc).processAnimal(a)
+            # print(asm3.utils.json(pa, True))
+            self.assertIsNotNone(pa)
 
     # pettracuk
     def test_pettracuk(self):

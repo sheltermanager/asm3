@@ -1546,6 +1546,12 @@ def petrescue_vic_picnumber(dbo: Database) -> str:
 def petrescue_use_coordinator(dbo: Database) -> bool:
     return cint(dbo, "PetRescueUseCoordinator")
 
+def petszel_client_id(dbo: Database) -> str:
+    return cstring(dbo, "PetszelClientID")
+
+def petszel_client_secret(dbo: Database) -> str:
+    return cstring(dbo, "PetszelClientSecret")
+
 def pdf_converter(dbo: Database) -> int:
     return cstring(dbo, "PDFConverter", DEFAULTS["PDFConverter"])
 

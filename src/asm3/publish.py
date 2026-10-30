@@ -24,6 +24,7 @@ import asm3.publishers.petfinder
 import asm3.publishers.petlink
 import asm3.publishers.petrescue
 import asm3.publishers.petslocateduk
+import asm3.publishers.petszel
 import asm3.publishers.pettracuk
 import asm3.publishers.rescuegroups
 import asm3.publishers.sacmetrics
@@ -71,6 +72,12 @@ PUBLISHER_LIST["pf"] = {
     "class":    asm3.publishers.petfinder.PetFinderPublisher,
     "locales":  "en en_CA fr_CA en_MX es_MX",
     "sub24hour": True
+}
+PUBLISHER_LIST["pz"] = {
+    "label":    "Publish to Petszel.com",
+    "class":    asm3.publishers.petszel.PetszelPublisher,
+    "locales":  "en",
+    "sub24hour": False
 }
 PUBLISHER_LIST["pr"] = {
     "label":    "Publish to PetRescue.com.au",
