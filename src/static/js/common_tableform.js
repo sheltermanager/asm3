@@ -272,7 +272,7 @@ const tableform = {
                     t.push('<button id="tableform-select-all">' + _("Select all") + '</button>');
                     t.push('<button id="tableform-toggle-filter">' + _("Filter") + '</button>');
                     t.push('<span id="tableform-row-count">' + table.rows.length + '</span>');
-                    t.push(' <span>' + v.display + '</span></th>');
+                    t.push(' <span class="column-label" >' + v.display + '</span></th>');
                 }
                 else {
                     t.push("<th>" + v.display + "</th>");

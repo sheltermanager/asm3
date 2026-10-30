@@ -271,8 +271,8 @@ $.fn.table = asm_widget({
             // value when reflowed.
             let hd = tbl.find("thead th");
             for (let i=0; i < hd.length; i++) {
-                // Look for a span.columntext value in the th. If it's not found, just use the whole th.
-                let columntext = $(hd[i]).find("span").text();
+                // Look for a span.column-label value in the th. If it's not found, just use the whole th.
+                let columntext = $(hd[i]).find("span.column-label").text();
                 if (!columntext) { columntext = hd[i].innerText; } 
                 if (columntext) { columntext += ":"; } else { columntext = " "; } // show text:, but if it was blank make it a space for layout
                 tbl.find("tbody td:nth-child(" + (i+1) + ")").attr("data-title", columntext);
