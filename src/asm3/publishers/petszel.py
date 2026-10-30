@@ -64,6 +64,7 @@ class PetszelPublisher(AbstractPublisher):
 
     def getData(self, lastpublished) -> Results:
 
+        cutoff = asm3.i18n.subtract_days(asm3.i18n.now(self.dbo.timezone), 180) # Adoptions before this date will be ignored
         weightlogtype = asm3.configuration.weight_change_log_type(self.dbo)
 
         a = self.dbo.query(
@@ -98,8 +99,11 @@ class PetszelPublisher(AbstractPublisher):
             "o.OwnerPostcode, " \
             "o.EmailAddress, " \
             "o.EmailAddress2, " \
+            "o.HomeTelephone, " \
             "o.MobileTelephone, " \
             "o.MobileTelephone2, " \
+            "o.WorkTelephone, " \
+            "o.WorkTelephone2, " \
             "o.CreatedDate AS OwnerCreatedDate, " \
             "o.LastChangedDate AS OwnerLastChangedDate, " \
             "(SELECT Comments FROM log WHERE LogTypeID = ? AND LinkType = ? AND LinkID = a.ID AND Date < ? ORDER BY Date desc ) AS AdoptionWeight, " \
@@ -111,8 +115,10 @@ class PetszelPublisher(AbstractPublisher):
             "INNER JOIN lksize z ON a.Size = z.ID " \
             "INNER JOIN owner o ON m.OwnerID = o.ID " \
             "INNER JOIN species s ON a.SpeciesID = s.ID " \
-            "WHERE a.DeceasedDate IS NULL AND m.MovementType = 1 AND m.ReturnDate IS NULL AND m.MovementDate > ?",
-            [weightlogtype, asm3.log.ANIMAL, self.dbo.sql_interval("m.MovementDate", 1, "+", "days"), weightlogtype, asm3.log.ANIMAL, self.dbo.sql_interval("m.MovementDate", 1, "+", "days"), lastpublished]
+            "WHERE a.DeceasedDate IS NULL AND m.MovementType = 1 AND m.ReturnDate IS NULL " \
+            "AND m.MovementDate > ? " \
+            "AND NOT EXISTS(SELECT AnimalID FROM animalpublished WHERE AnimalID = a.ID AND PublishedTo = 'petszel' AND SentDate > m.MovementDate)",
+            [weightlogtype, asm3.log.ANIMAL, self.dbo.sql_interval("m.MovementDate", 1, "+", "days"), weightlogtype, asm3.log.ANIMAL, self.dbo.sql_interval("m.MovementDate", 1, "+", "days"), cutoff]
         )
         self.log("Got %d matching animals for publishing." % len(a))
         return a
@@ -158,8 +164,6 @@ class PetszelPublisher(AbstractPublisher):
         # previously sent listings
         if len(animals) == 0:
             self.log("No animals found to publish.")
-
-        # headers = { "Authorization": "Token token=%s" % token, "Accept": "*/*" }
 
         anCount = 0
         for an in animals:
@@ -242,6 +246,41 @@ class PetszelPublisher(AbstractPublisher):
                 }
             )
         phonenumbers = []
+
+        if an.HOMETELEPHONE:
+            phonenumbers.append(
+                {
+                    "number": an.HOMETELEPHONE,
+                    "type": "Home",
+                    "doNotCall": False,
+                    "doNotText": True,
+                    "sourceReference": {
+                        "sourceSystem": "ASM",
+                        "sourceId": an.OWNERCODE,
+                        "sourceDisplayId": "Home phone",
+                        "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                        "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                    }
+                }
+            )
+
+        if an.WORKTELEPHONE:
+            phonenumbers.append(
+                {
+                    "number": an.WORKTELEPHONE,
+                    "type": "Work",
+                    "doNotCall": False,
+                    "doNotText": True,
+                    "sourceReference": {
+                        "sourceSystem": "ASM",
+                        "sourceId": an.OWNERCODE,
+                        "sourceDisplayId": "Work phone",
+                        "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                        "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                    }
+                }
+            )
+
         if an.MOBILETELEPHONE:
             phonenumbers.append(
                 {
@@ -317,6 +356,40 @@ class PetszelPublisher(AbstractPublisher):
                     }
                 )
             phonenumbers = []
+            if an.HOMETELEPHONE:
+                phonenumbers.append(
+                    {
+                        "number": an.HOMETELEPHONE,
+                        "type": "Home",
+                        "doNotCall": False,
+                        "doNotText": True,
+                        "sourceReference": {
+                            "sourceSystem": "ASM",
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Home phone",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                )
+    
+            if an.WORKTELEPHONE2:
+                phonenumbers.append(
+                    {
+                        "number": an.WORKTELEPHONE2,
+                        "type": "Work",
+                        "doNotCall": False,
+                        "doNotText": True,
+                        "sourceReference": {
+                            "sourceSystem": "ASM",
+                            "sourceId": an.OWNERCODE,
+                            "sourceDisplayId": "Work phone",
+                            "dateCreated": asm3.i18n.python2iso(an.OWNERCREATEDDATE, self.dbo.timezone),
+                            "dateUpdated": asm3.i18n.python2iso(an.OWNERLASTCHANGEDDATE, self.dbo.timezone)
+                        }
+                    }
+                )
+            
             if an.MOBILETELEPHONE2:
                 phonenumbers.append(
                     {
@@ -477,20 +550,12 @@ class PetszelPublisher(AbstractPublisher):
                     vaccination = {
                             "vaccineName": v.VACCINATIONTYPE,
                             "status": "Administered",
-                            # "type": "Core",
-                            # "subType": "One year",
                             "vaccinationDate": asm3.i18n.python2iso(v.DATEOFVACCINATION, self.dbo.timezone),
                             "reVaccinationDate": asm3.i18n.python2iso(v.DATEEXPIRES, self.dbo.timezone),
                             "expirationDate": asm3.i18n.python2iso(v.BATCHEXPIRYDATE, self.dbo.timezone),
-                            # "providerLicenseNumber": "VET-123",
                             "manufacturerName": v.MANUFACTURER,
-                            # "brandName": "Example Vaccine",
                             "lotNumber": v.BATCHNUMBER,
                             "lotExpiration": asm3.i18n.python2iso(v.BATCHEXPIRYDATE, self.dbo.timezone),
-                            # "administeredBodyPart": "Right hind leg",
-                            # "administeredRoute": "Subcutaneous",
-                            # "tagNumber": "TAG-123",
-                            # "tagExpiration": "2027-08-01T12:00:00Z",
                             "description": v.COMMENTS,
                             "sourceReference": {
                                 "sourceSystem": "ASM",
@@ -506,8 +571,7 @@ class PetszelPublisher(AbstractPublisher):
                         vaccination["providerName"] = v.VETNAME
                     vaccinations.append(vaccination)
                 p["vaccines"] = vaccinations
-
-        # return asm3.utils.json(p, True)
+        
         return p
 
 
