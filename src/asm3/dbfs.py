@@ -354,25 +354,64 @@ def get_string_id(dbo: Database, dbfsid: int, path: str = "") -> bytes:
 
 def rename_file(dbo: Database, path: str, oldname: str, newname: str) -> None:
     """
-    Renames a file in the dbfs.
+    Renames a file in the dbfs. Looks the item up by its dbfsid and
+    delegates to rename_file_id so a newname containing path elements
+    can move the file as well as rename it.
     """
-    dbo.execute("UPDATE dbfs SET Name = ? WHERE Name = ? AND Path = ?", (newname, oldname, path))
+    dbfsid = dbo.query_int("SELECT ID FROM dbfs WHERE Name = ? AND Path = ?", (oldname, path))
+    if dbfsid == 0:
+        return
+    rename_file_id(dbo, dbfsid, newname)
 
 def rename_document_repository(dbo: Database, path: str, oldname: str, newname: str) -> None:
     """
     Renames a file in the document repository. Refuses paths outside
     /document_repository so the endpoint cannot be used to rename other
-    dbfs files (eg: /reports images).
+    dbfs files (eg: /reports images). The new location must also stay
+    inside /document_repository.
     """
     if path != "/document_repository" and not path.startswith("/document_repository/"):
         raise asm3.utils.ASMValidationError("rename_document_repository: invalid path '%s'" % path)
+    if "/" in newname:
+        _, new_path = _split_newname(newname)
+        if new_path != "/document_repository" and not new_path.startswith("/document_repository/"):
+            raise asm3.utils.ASMValidationError("rename_document_repository: invalid new path '%s'" % new_path)
     rename_file(dbo, path, oldname, newname)
+
+def _split_newname(newname: str):
+    """
+    Splits a newname that may contain path elements into its final
+    (name, path). Relative path elements are resolved against the
+    document repository root and the directory is normalized.
+    """
+    newname = newname.strip()
+    if newname == "":
+        raise asm3.utils.ASMValidationError("_split_newname: empty name")
+    idx = newname.rfind("/")
+    name = newname[idx + 1:]
+    path_part = newname[:idx]
+    if name == "":
+        raise asm3.utils.ASMValidationError("_split_newname: missing file name in '%s'" % newname)
+    if path_part == "":
+        directory = "/"
+    elif path_part.startswith("/"):
+        directory = path_part
+    else:
+        directory = "/document_repository/%s" % path_part
+    return name, os.path.normpath(directory)
 
 def rename_file_id(dbo: Database, dbfsid: int, newname: str) -> None:
     """
-    Renames a file in the dbfs.
+    Renames a file in the dbfs. If newname contains path elements, the
+    Path is updated as well as the Name.
     """
-    dbo.execute("UPDATE dbfs SET Name = ? WHERE ID = ?", (newname, dbfsid))
+    if newname.strip() == "":
+        raise asm3.utils.ASMValidationError("rename_file_id: new name cannot be blank")
+    if "/" not in newname:
+        dbo.execute("UPDATE dbfs SET Name = ? WHERE ID = ?", (newname, dbfsid))
+        return
+    new_name, new_path = _split_newname(newname)
+    dbo.execute("UPDATE dbfs SET Name = ?, Path = ? WHERE ID = ?", (new_name, new_path, dbfsid))
 
 def put_file(dbo: Database, name: str, path: str, filepath: str) -> int:
     """
