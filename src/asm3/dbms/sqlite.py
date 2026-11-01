@@ -8,6 +8,7 @@ except:
     pass
 
 class DatabaseSQLite3(Database):
+    type_microtext = "VARCHAR(1024)"
     type_shorttext = "VARCHAR(1024)"
     type_longtext = "TEXT"
     type_clob = "TEXT"
