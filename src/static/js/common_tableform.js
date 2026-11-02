@@ -995,6 +995,12 @@ const tableform = {
         });
 
         var b = {}; 
+        if (dialog.extra_button) {
+            b[dialog.extra_button] = {
+                text: dialog.extra_button_text,
+                click: function() { dialog.extra_button_callback(row); }
+            };
+        }
         if (dialog.delete_button && dialog.delete_perm && common.has_permission(dialog.delete_perm)) {
             b[_("Delete")] = {
                 text: dialog.delete_button_text || _("Delete"),
