@@ -49,7 +49,7 @@ if that field contains a unique string to identify the record (for example,
 Driving Licence ID).
 
 The hidden checkbox will hide the field from users so it can no longer used. This 
-is usefull when you no longer want a field to be used but don't wish to delete the 
+is useful when you no longer want a field to be used but don't wish to delete the 
 field from the system, as deleting an additional field from the system also deletes
 all the data it held. 
 
@@ -224,7 +224,7 @@ who have a particular exit movement type, those who are marked non-shelter,
 those who the active user is fostering or coordinating adoptions for right 
 now and deceased animals.
 
-.. _Two-Factor Authentification:
+.. _Two-Factor Authentication:
 
 Two-Factor Authentication (2FA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

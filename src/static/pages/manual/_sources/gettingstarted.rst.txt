@@ -182,7 +182,7 @@ Preferences
 
 * Locale - Allows the user to choose a different language/currency.
 
-* Shelter view - Allows the user to set their own shelter view overiding the system
+* Shelter view - Allows the user to set their own shelter view overriding the system
   default view if one is set.
 
 * Default stock location - Allows the user to set their own default stock location.
@@ -207,8 +207,8 @@ Signature
 Security
 ^^^^^^^^
 
-* Two-Factor Authentification (2FA) - Users can enable 2FA here using the 
-  Google Authenticator app, see :ref:`Two-Factor Authentification`
+* Two-Factor Authentication (2FA) - Users can enable 2FA here using the 
+  Google Authenticator app, see :ref:`Two-Factor Authentication`
   
 
 

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -5,16 +7,15 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reports &mdash; ASM 52u documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=98b44b8a" />
 
   
-  
-        <script src="_static/jquery.js?v=8dae8fb0"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=53fbcef5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=958b65b0"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=53fbcef5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -33,9 +34,6 @@
           <a href="index.html" class="icon icon-home">
             ASM
           </a>
-              <div class="version">
-                52u
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -195,7 +193,7 @@ HTML for you in a simple table format. It is worthwhile running this and then
 modifying the HTML afterwards.</p>
 <p>The editor will highlight the syntax of both languages for you, and if you
 press <kbd class="kbd docutils literal notranslate">F11</kbd>, will allow you to edit in full screen mode. For SQL, you can use
-<kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">CTRL</kbd>+<kbd class="kbd docutils literal notranslate">SPACE</kbd></kbd> to get context-sensitive help with ASM’s tables and columns.</p>
+<kbd class="kbd docutils literal notranslate">CTRL</kbd>+<kbd class="kbd docutils literal notranslate">SPACE</kbd> to get context-sensitive help with ASM’s tables and columns.</p>
 <p>For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com</p>
 <section id="sql-keys">
@@ -216,7 +214,7 @@ for the current database. This saves you having to use NOW() or
 CURRENT_DATE() or various other SQL functions specific to one database.
 Note that the user’s timezone is applied to the date/time.</p></li>
 <li><p>$CURRENT_DATE_TIME$ - Substitutes the date and time now in an appropriate
-string SQL format for the current datbase. Note that the user’s timezone
+string SQL format for the current database. Note that the user’s timezone
 is applied to the date/time.</p></li>
 <li><p>$CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.</p></li>
 <li><p>$CURRENT_DATE+X$ - The same as CURRENT_DATE, but adds X days.</p></li>
@@ -550,8 +548,30 @@ person on file, with their address when the marker is clicked:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span> <span class="n">OwnerAddress</span> <span class="n">FROM</span> <span class="n">owner</span>
 </pre></div>
 </div>
+<p>If a column named “PinStyle” is included, it’s value will affect the style of pin used
+to represent that row. The currently available pin styles are:</p>
+<ul class="simple">
+<li><p>red</p></li>
+<li><p>pink</p></li>
+<li><p>orange</p></li>
+<li><p>yellow</p></li>
+<li><p>green</p></li>
+<li><p>blue</p></li>
+<li><p>purple</p></li>
+<li><p>grey</p></li>
+</ul>
+<p>For example, this SQL will produce a map that shows the location of every
+person on file, with their address when the marker is clicked, banned people
+are assigned red pins but non-banned people are assigned green pins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span> <span class="n">OwnerAddress</span><span class="p">,</span>
+<span class="n">CASE</span>
+<span class="n">WHEN</span> <span class="n">IsBanned</span> <span class="o">=</span> <span class="mi">1</span> <span class="n">THEN</span> <span class="s1">&#39;red&#39;</span>
+<span class="n">ELSE</span> <span class="s1">&#39;green&#39;</span>
+<span class="n">END</span> <span class="n">AS</span> <span class="s1">&#39;PinStyle&#39;</span> <span class="n">FROM</span> <span class="n">owner</span>
+</pre></div>
+</div>
 <p>If there are more than two columns in the query results, the report engine will
-concatenate together the values of each subsequent column.</p>
+concatenate together the values of each subsequent column (unless the column is named “PinStyle”, see above).</p>
 <p>This SQL will produce a map with every person on file, but includes a clickable
 link to the person record when the marker is clicked:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span>
