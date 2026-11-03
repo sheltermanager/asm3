@@ -32,11 +32,18 @@ $(function() {
             this.multiplier = 1;
             this.refund = false;
             this.numpadlocked = true;
+            this.lastkeypress = new Date();
         },
 
         render: function() {
             this.model();
             let s = [
+                '<audio id="asmposshortbeep"><source src="static/audio/shortbeep.mp3" type="audio/mpeg"></audio>',
+                '<audio id="asmposbeep"><source src="static/audio/beep.mp3" type="audio/mpeg"></audio>',
+                '<audio id="asmposnope"><source src="static/audio/nope.mp3" type="audio/mpeg"></audio>',
+                '<div id="posbarcodeinputoverlay">',
+                    '<input id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
+                '</div>',
                 '<div id="poscontainer" style="background-color: #eeeeee; width: 100vw; height: 100vh;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
                         '<div id="producttypes">',
@@ -97,7 +104,7 @@ $(function() {
                                 '<div id="balance" data-balance="0">0.00</div>',
                             '</div>',
                             '<table>',
-                            '<tr><th colspan="3" id="numpadscreen"></th><td id="posproductscan" class="posbutton">' + _("Scan") + '</td></tr>',
+                            '<tr><th colspan="4" id="numpadscreen"></th></tr>',
                             '<tr><td class="numeral">7</td><td class="numeral">8</td><td class="numeral">9</td><td id="deletekey">' + _("Del") + '</td></tr>',
                             '<tr><td class="numeral">4</td><td class="numeral">5</td><td class="numeral">6</td><td id="refundkey">-</td></tr>',
                             '<tr><td class="numeral">1</td><td class="numeral">2</td><td class="numeral">3</td><td id="multiplykey">*</td></tr>',
@@ -247,8 +254,10 @@ $(function() {
                     }
                 );
             });
+            console.log("Writing");
             let formdata = "mode=write&jsondata=" + JSON.stringify(receiptdetails);
             let receiptid = await common.ajax_post("pos", formdata);
+            console.log(receiptid);
             $("#posleftpanel").children().hide();
             $("#posprintreceiptbutton").show();
             $("#posmenupanel").show();
@@ -269,6 +278,10 @@ $(function() {
         },
 
         bind: function() {
+            $("#posbarcodeinput").focus();
+            document.getElementById("asmposbeep").volume = 0.2;
+            document.getElementById("asmposshortbeep").volume = 0.2;
+            document.getElementById("asmposnope").volume = 0.2;
             $(".producttype").click(function() {
                 if ( pos.activetaxrate == -1 ) {
                     $("#currentreceiptitemdescription").text($(this).text());
@@ -370,6 +383,7 @@ $(function() {
                     }
                     $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
                 }
+                document.getElementById("asmposshortbeep").play();
             });
             $("#deletekey").mousedown(function() {
                 if (pos.numpadlocked) { return false; }
@@ -625,11 +639,77 @@ $(function() {
                 newwindow.close();
             });
 
+            // $("#poscontainer").keypress(function() {
+            //     console.log("Key press");
+            // });
+
             $("#posproductscan").click(function() {
-                console.log("Scanning barcode");
-                barcode.scan().then(function(scanresult) {
-                    console.log(scanresult);
-                });
+                // barcode.scan().then(function(scanresult) {
+                //     console.log(scanresult);
+                // });
+                if (!pos.numpadlocked) {
+                    if ( $("#posbarcodeinputoverlay").css("z-index") == -1 ) {
+                        $("#posbarcodeinput").val("");
+                    }
+                    $("#posbarcodeinputoverlay").css("z-index", 9998);
+                    $("#posbarcodeinput").css("z-index", 9999);
+                }
+            });
+            
+            $("#infopanel").on("focusout", "#posproductsearch", function() {
+                $("#posbarcodeinput").focus();
+            });
+
+            $("#posbarcodeinput").focusout(function(e) {
+                if (e.originalEvent.relatedTarget && e.originalEvent.relatedTarget.id == "posproductsearch") {
+                    console.log(e.originalEvent.relatedTarget.id);
+                    return;
+                }
+                $("#posbarcodeinput").focus();
+            });
+
+            $("#posproductsearch").focusout(function(e) {
+                console.log("Lost focus");
+                // $("#posbarcodeinput").focus();
+            });
+
+            $("#posbarcodeinput").keypress(function(e) {
+                if (!pos.numpadlocked) {
+                    if ( $("#posbarcodeinputoverlay").css("z-index") == -1 ) {
+                        $("#posbarcodeinput").val("");
+                    }
+                    $("#posbarcodeinputoverlay").css("z-index", 9998);
+                    $("#posbarcodeinput").css("z-index", 9999);
+                    if (e.keyCode == 13) {
+                        console.log("Checking for barcode");
+                        $.each(controller.products, function(i, v) {
+                            if (v.BARCODE == $("#posbarcodeinput").val()) {
+                                console.log("Found barcode");
+                                $("#producttypes").find(".posbutton").first().click();
+                                let productid = v.ID;
+                                console.log(productid);
+                                // $(".productcontainer").find("[data-productid='" + productid + "']").click();
+                                $(".productcontainer[data-productid='" + productid + "']").click(); 
+                                $("#posbarcodeinput").val("");
+                                $("#posbarcodeinputoverlay").css("z-index", -1);
+                                $("#posbarcodeinput").css("z-index", -1);
+                                document.getElementById("asmposbeep").play();
+                                return false;
+                            }
+                            if (i == controller.products.length - 1) {
+                                console.log("Nope");
+                                document.getElementById("asmposnope").play();
+                                $("#posbarcodeinput").val("");
+                            }
+                        });
+                    }
+                }
+            });
+
+            $("#posbarcodeinputoverlay").click(function() {
+                $("#posbarcodeinput").val("");
+                $("#posbarcodeinputoverlay").css("z-index", -1);
+                $("#posbarcodeinput").css("z-index", -1);
             });
         },
 

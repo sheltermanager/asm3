@@ -1,3 +1,22 @@
+#posbarcodeinputoverlay {
+    position: absolute;
+    background-color: #000000aa;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+#posbarcodeinput {
+    position: static;
+    display: block;
+    margin: auto;
+    width: 80vw;
+    margin-top: calc(50vh - 56px);
+    font-size: 200%;
+    padding: 10px;
+    z-index: -1;
+}
+
 #poscontainer {
     display: flex;
     font-size: 150%;

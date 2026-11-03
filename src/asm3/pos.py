@@ -1,5 +1,6 @@
 
 from asm3.i18n import _, python2display
+import asm3.al
 import asm3.stock
 import asm3.configuration
 import json
@@ -37,7 +38,13 @@ def insert_receipt_from_form(dbo: Database, username: str, post: PostedData) -> 
             "comments": _("Created via POS")
         }
         stockusagepost = asm3.utils.PostedData(stockusagedata, "en")
-        asm3.stock.insert_productmovement_from_form(dbo, stockusagepost, username)
+        if receiptitem["productid"]:
+            try:
+                asm3.stock.insert_productmovement_from_form(dbo, stockusagepost, username)
+            except asm3.utils.ASMValidationError:
+                # asm3.al.error("Unable to create product movement", "pos.insert_receipt_from_form")
+                pass
+
         dbo.insert("salesreceiptdetail", {
             "SalesReceiptID":      salesreceiptid, 
             "ProductID":           receiptitem["productid"],
