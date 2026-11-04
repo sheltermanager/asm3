@@ -17,6 +17,10 @@
     z-index: -1;
 }
 
+#asm-menu-burger {
+    display: none !important;
+}
+
 #poscontainer {
     display: flex;
     font-size: 150%;

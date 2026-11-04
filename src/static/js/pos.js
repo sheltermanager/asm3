@@ -42,7 +42,7 @@ $(function() {
                 '<audio id="asmposbeep"><source src="static/audio/beep.mp3" type="audio/mpeg"></audio>',
                 '<audio id="asmposnope"><source src="static/audio/nope.mp3" type="audio/mpeg"></audio>',
                 '<div id="posbarcodeinputoverlay">',
-                    '<input id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
+                    '<input readonly id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
                 '</div>',
                 '<div id="poscontainer" style="background-color: #eeeeee; width: 100vw; height: 100vh;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
@@ -58,7 +58,7 @@ $(function() {
                             '<div id="posstartbutton" class="posbuttoncontainer posmenubutton">',
                                 '<div class="posbutton" style="background-color: green; color: white;">',
                                     '<div style="display: inline-block;">', 
-                                        '<div  class="posbuttoncontent">' + _("Start a Transaction") + '</div>',
+                                        '<div class="posbuttoncontent">' + _("Start a Transaction") + '</div>',
                                     '</div>',
                                 '</div>',
                             '</div>',
@@ -66,6 +66,13 @@ $(function() {
                                 '<div class="posbutton" style="background-color: white; color: black;">',
                                     '<div style="display: inline-block;">', 
                                         '<div  class="posbuttoncontent">' + _("Print Receipt") + '</div>',
+                                    '</div>',
+                                '</div>',
+                            '</div>',
+                            '<div id="posfullscreenon" class="posbuttoncontainer posmenubutton">',
+                                '<div class="posbutton" style="background-color: yellow; color: black;">',
+                                    '<div style="display: inline-block;">', 
+                                        '<div class="posbuttoncontent">' + _("Fullscreen On") + '</div>',
                                     '</div>',
                                 '</div>',
                             '</div>',
@@ -613,6 +620,12 @@ $(function() {
                 $("#infopanel").html("");
                 $("#infopanel").show();
                 pos.numpadlocked = false;
+                // document.querySelector("body").requestFullscreen();
+            });
+
+            $("#posfullscreenon").click(function() {
+                document.querySelector("body").requestFullscreen();
+                $("#posfullscreenon").hide();
             });
 
             $("#posprintreceiptbutton").click(function() {
@@ -702,6 +715,8 @@ $(function() {
                                 $("#posbarcodeinput").val("");
                             }
                         });
+                    } else {
+                        $("#posbarcodeinput").val($("#posbarcodeinput").val() + e.key);
                     }
                 }
             });
