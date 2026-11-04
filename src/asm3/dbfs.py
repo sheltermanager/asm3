@@ -343,7 +343,7 @@ def get_string_id(dbo: Database, dbfsid: int, path: str = "") -> bytes:
     Gets DBFS file contents as a bytes string.
     """
     if path != "":
-        r = dbo.query("SELECT URL FROM dbfs WHERE ID=? AND Path=?", [dbfsid, path])
+        r = dbo.query("SELECT URL FROM dbfs WHERE ID=? AND Path LIKE ?", [dbfsid, f"{path}%"])
     else:
         r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
     if len(r) == 0:
