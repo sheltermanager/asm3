@@ -55,8 +55,13 @@ $(function() {
             const dialog = {
                 add_title: _("Add report"),
                 edit_title: _("Edit report"),
-                edit_button_text: _("Update"), 
+                edit_button_text: _("Update"),
                 edit_perm: 'hcr',
+                extra_button: true,
+                extra_button_text: _("Test"),
+                extra_button_callback: function(row) {
+                    window.open("report?id=" + row.ID);
+                },
                 close_on_ok: false,
                 columns: 1,
                 width: 800,
