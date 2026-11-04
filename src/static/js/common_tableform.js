@@ -511,6 +511,8 @@ const tableform = {
         // Bind the CTRL+A key
         Mousetrap.bind("ctrl+a", function() {
             // allow the event to propagate if we don't have visible table to select from or the dialog is open
+            let focusedelement = $(':focus');
+            if (focusedelement.closest(".ui-dialog").length) { return; }
             if ($("#tableform input[type='checkbox']").length == 0) { return; } 
             if ($("#dialog-tableform").hasClass("ui-dialog-content") && $("#dialog-tableform").dialog("isOpen")) { return; }
             select_all();
