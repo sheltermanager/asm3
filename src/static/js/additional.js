@@ -30,7 +30,8 @@ $(function() {
                     { json_field: "SEARCHABLE", post_field: "searchable", label: _("Searchable"), type: "check" },
                     { json_field: "HIDDEN", post_field: "hidden", label: _("Hidden"), type: "check" },
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number", defaultval: "0" },
-                    { json_field: "DEFAULTVALUE", post_field: "defaultvalue", label: _("Default Value"), type: "text" },
+                    { json_field: "DEFAULTVALUE", post_field: "defaultvalue", label: _("Default Value"), type: "text",
+                        callout: _("The default value for this field on new records") }, 
                     { json_field: "LOOKUPVALUES", post_field: "lookupvalues", label: _("Lookup Values"), type: "textarea" }
                 ]
             };
