@@ -41,9 +41,9 @@ def insert_receipt_from_form(dbo: Database, username: str, post: PostedData) -> 
         if receiptitem["productid"]:
             try:
                 asm3.stock.insert_productmovement_from_form(dbo, stockusagepost, username)
-            except asm3.utils.ASMValidationError:
-                # asm3.al.error("Unable to create product movement", "pos.insert_receipt_from_form")
-                pass
+            except Exception as err:
+                asm3.al.warn("Error creating stock movement for %d (%s)" % (receiptitem["productid"], err), "insert_receipt_from_form", dbo)
+                asm3.utils.web_context().status = "200 OK" # ASMValidationError thrown by insert_reserve sets status to 500
 
         dbo.insert("salesreceiptdetail", {
             "SalesReceiptID":      salesreceiptid, 

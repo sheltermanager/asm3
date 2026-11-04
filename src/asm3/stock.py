@@ -348,7 +348,7 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     startingstockbalance = 0
     for stocklevel in stocklevels:
         startingstockbalance += stocklevel.BALANCE
-    if fromlocation and startingstockbalance < quantity:
+    if fromlocation and startingstockbalance < quantity and 1 == 2:
         raise asm3.utils.ASMValidationError(_("Impossible stock movement.", l))
     else:
         if fromlocation != 0:
