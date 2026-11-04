@@ -166,6 +166,19 @@ $(function() {
                     h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
+                else if (r.RESULTTYPE == "PRODUCT") {
+                    if (controller.results.length == 1) {
+                        common.route("product?id=" + r.ID);
+                    }
+                    h.push('<p class="asm-search-result"><span class="asm-search-name">');
+                    h.push('<img align="right" src="' + html.thumbnail_src(r, 'productthumb') + '" class="asm-thumbnail thumbnailshadow" />');
+                    h.push(html.icon("stock", _("Product")));
+                    h.push('<a href="product?id=' + r.ID + '">' + r.PRODUCTNAME + '</a></span> ');
+                    h.push('<br/>');
+                    h.push(html.truncate(r.DESCRIPTION));
+                    h.push('<br style="clear: right;" />');
+                    h.push('</p>');
+                }
                 if (r.RESULTTYPE == "VOUCHER") {
                     if (controller.results.length == 1) {
                         common.route("person_vouchers?id=" + r.OWNERID);

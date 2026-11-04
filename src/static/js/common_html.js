@@ -9,7 +9,7 @@ const html = {
 
     /**
      * Returns a two-item list containing true if animal a is adoptable and the reason.
-     * Looks at current publishing options and uses the same logic as the backend publisher
+     * Looks at current publishing options and uses the same logic as the backend publthumbnail_srcisher
      */
     is_animal_adoptable: function(a) {
         var p = config.str("PublisherPresets"),
@@ -1573,6 +1573,14 @@ const html = {
                 idval = row.ID;
             }
         }
+        else if (mode == "productthumb") {
+            if (row.hasOwnProperty("MEDIAID")) {
+                idval = row.MEDIAID;
+            }
+            else if (row.hasOwnProperty("ID")) {
+                idval = row.ID;
+            }
+        }
         else if (mode == "waitinglistthumb") {
             if (row.hasOwnProperty("WAITINGLISTID")) {
                 idval = row.WAITINGLISTID;
@@ -1584,6 +1592,7 @@ const html = {
         else {
             idval = row.ID;
         }
+        if (mode == "productthumb") { mode = "media"; }
         uri = "image?db=" + asm.useraccount + "&mode=" + mode + "&id=" + idval;
         if (row.WEBSITEMEDIADATE) {
             uri += "&date=" + encodeURIComponent(row.WEBSITEMEDIADATE);

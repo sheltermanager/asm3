@@ -41,6 +41,26 @@ def get_product_name(dbo: Database, productid: int) -> str:
     """
     return dbo.query_string("SELECT ProductName FROM product WHERE ID = ?", [productid])
 
+def get_product_find_simple(dbo: Database, productkey: str, dummy: int = 0) -> Results:
+    l = dbo.locale
+    unittext = _("unit", l)
+    return dbo.query(
+        "SELECT product.*, pt.ProductTypeName, " \
+        "(SELECT SUM(Balance) FROM stocklevel WHERE ProductID = product.ID) AS Balance, " \
+        "CASE " \
+        f"WHEN product.UnitTypeID = 0 THEN '{unittext}' " \
+        "WHEN product.UnitTypeID = -1 THEN product.CustomUnit " \
+        "WHEN product.UnitTypeID > 0 THEN (SELECT UnitName FROM lksunittype WHERE ID=product.UnitTypeID) " \
+        "ELSE product.CustomUnit " \
+        "END AS Unit, " \
+        "CASE WHEN product.IsRetired=0 THEN 1 ELSE 0 END AS Active, " \
+        "media.ID AS MediaID, " \
+        "media.MediaName AS WebsiteMediaName " \
+        "FROM product " \
+        "LEFT OUTER JOIN lkproducttype pt ON pt.ID = product.ProductTypeID " \
+        f"LEFT OUTER JOIN media ON media.LinkID = product.ID AND media.LinkTypeID = {asm3.media.PRODUCT} " \
+        "WHERE UPPER(ProductName) LIKE UPPER(?) OR UPPER(Barcode) = UPPER(?)", [f'%{productkey}%', productkey])
+
 def get_active_products(dbo: Database) -> Results:
     """
     Returns all products that are not retired

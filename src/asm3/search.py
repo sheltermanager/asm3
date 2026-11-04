@@ -10,6 +10,7 @@ import asm3.financial
 import asm3.lostfound
 import asm3.person
 import asm3.publishers.base
+import asm3.stock
 import asm3.users
 import asm3.waitinglist
 from asm3.i18n import _, now
@@ -173,6 +174,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     fasort = ""
     vosort = ""
     losort = ""
+    productsort = ""
     sortdir = "a"
     sortname = ""
     # alphanumeric ascending
@@ -189,6 +191,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "OWNERNAME"
         vosort = "OWNERNAME"
         losort = "RECORDDETAIL"
+        productsort = "PRODUCTNAME"
         sortdir = "a"
         sortname = _("Alphabetically A-Z", l)
     # alphanumeric descending
@@ -205,6 +208,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "OWNERNAME"
         vosort = "OWNERNAME"
         losort = "RECORDDETAIL"
+        productsort = "PRODUCTNAME"
         sortdir = "d"
         sortname = _("Alphabetically Z-A", l)
     # last changed ascending
@@ -221,6 +225,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "LASTCHANGEDDATE"
         vosort = "DATEISSUED"
         losort = "LASTCHANGEDDATE"
+        productsort = "LASTCHANGEDDATE"
         sortdir = "a"
         sortname = _("Least recently changed", l)
     # last changed descending
@@ -237,6 +242,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "LASTCHANGEDDATE"
         vosort = "DATEISSUED"
         losort = "LASTCHANGEDDATE"
+        productsort = "LASTCHANGEDDATE"
         sortdir = "d"
         sortname = _("Most recently changed", l)
     # species ascending
@@ -253,6 +259,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "SPECIESNAME"
         vosort = "COMMENTS"
         losort = "RECORDDETAIL"
+        productsort = "PRODUCTNAME"
         sortdir = "a"
         sortname = _("Species A-Z", l)
     elif searchsort == 5:
@@ -268,6 +275,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "SPECIESNAME"
         vosort = "COMMENTS"
         losort = "RECORDDETAIL"
+        productsort = "PRODUCTNAME"
         sortdir = "d"
         sortname = _("Species Z-A", l)
     elif searchsort == 6:
@@ -283,6 +291,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         fasort = "RELEVANCE"
         vosort = "RELEVANCE"
         losort = "RELEVANCE"
+        productsort = "RELEVANCE"
         sortdir = "d"
         sortname = _("Most relevant", l)
 
@@ -565,6 +574,8 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         #    ar( asm3.log.get_log_find_simple(dbo, q, limit=100), "LOG", losort )
         if cp(asm3.users.VIEW_VOUCHER):
             ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort)
+        if cp(asm3.users.VIEW_STOCKLEVEL):
+            ar( asm3.stock.get_product_find_simple(dbo, q, limit), "PRODUCT", productsort)
 
         explain = _("Results for '{0}'.", l).format(q)
 
