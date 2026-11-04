@@ -325,6 +325,7 @@ $(function() {
         },
 
         move_product: async function() {
+            header.show_loading();
             let productid = tableform.table_selected_id(product.table);
             let activeproduct = tableform.table_selected_row(product.table);
             let fromid = $("#movementfrom").val().split("$")[1];

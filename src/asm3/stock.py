@@ -348,64 +348,61 @@ def insert_productmovement_from_form(dbo: Database, post: PostedData, username: 
     startingstockbalance = 0
     for stocklevel in stocklevels:
         startingstockbalance += stocklevel.BALANCE
-    if fromlocation and startingstockbalance < quantity and 1 == 2:
-        raise asm3.utils.ASMValidationError(_("Impossible stock movement.", l))
-    else:
-        if fromlocation != 0:
-            batchexhausted = False # batchexhausted = True when we have run out stock of the correct batch at the current location
-            for stocklevel in stocklevels:
-                if quantity == 0:
-                    break
-                if not stocklevel.BATCHMATCH:
-                    batchexhausted = True
-                if stocklevel.BALANCE != 0 and stocklevel.STOCKLOCATIONID == fromlocation and (stocklevel.BATCHNUMBER == post["batch"] or batchexhausted):
-                    if stocklevel.BALANCE < 0:
-                        remaining = stocklevel.BALANCE - quantity
-                        quantity = 0
-                    elif quantity >= stocklevel.BALANCE:
-                        remaining = 0
-                        quantity = quantity - stocklevel.BALANCE
-                    else:
-                        remaining = stocklevel.BALANCE - quantity
-                        quantity = 0
-                    slpost = {}
-                    slpost["stocklevelid"] = stocklevel.ID
-                    slpost["name"] = stocklevel.NAME
-                    slpost["description"] = stocklevel.DESCRIPTION
-                    slpost["location"] = stocklevel.STOCKLOCATIONID
-                    slpost["unitname"] = stocklevel.UNITNAME
-                    slpost["total"] = stocklevel.TOTAL
-                    slpost["balance"] = remaining
-                    slpost["low"] = stocklevel.LOW
-                    slpost["expiry"] = stocklevel.EXPIRY
-                    slpost["batchnumber"] = stocklevel.BATCHNUMBER
-                    slpost["cost"] = stocklevel.COST
-                    slpost["unitprice"] = stocklevel.UNITPRICE
-                    slpost["usagedate"] = python2display(dbo.locale, dbo.today())
-                    slpost["usagetype"] = usagetypeid
-                    slpost["expiry"] = stocklevel.EXPIRY
-                    slpost["comments"] = post["comments"]
-
-                    update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
-            
-            if quantity > 0:
+    if fromlocation != 0:
+        batchexhausted = False # batchexhausted = True when we have run out stock of the correct batch at the current location
+        for stocklevel in stocklevels:
+            if quantity == 0:
+                break
+            if not stocklevel.BATCHMATCH:
+                batchexhausted = True
+            if stocklevel.BALANCE != 0 and stocklevel.STOCKLOCATIONID == fromlocation and (stocklevel.BATCHNUMBER == post["batch"] or batchexhausted):
+                if stocklevel.BALANCE < 0:
+                    remaining = stocklevel.BALANCE - quantity
+                    quantity = 0
+                elif quantity >= stocklevel.BALANCE:
+                    remaining = 0
+                    quantity = quantity - stocklevel.BALANCE
+                else:
+                    remaining = stocklevel.BALANCE - quantity
+                    quantity = 0
                 slpost = {}
-                slpost["productlist"] = post.integer("productid")
-                slpost["name"] = post["productname"]
-                slpost["description"] = post["productdescription"]
-                slpost["location"] = fromlocation
-                slpost["unitname"] = post["movementunit"]
-                slpost["total"] = unitratio
-                slpost["balance"] = quantity * -1
-                slpost["low"] = 0
-                slpost["expiry"] = post["expiry"]
-                slpost["batchnumber"] = post["batch"]
-                slpost["cost"] = post.integer("costprice")
-                slpost["unitprice"] = post.integer("retailprice")
+                slpost["stocklevelid"] = stocklevel.ID
+                slpost["name"] = stocklevel.NAME
+                slpost["description"] = stocklevel.DESCRIPTION
+                slpost["location"] = stocklevel.STOCKLOCATIONID
+                slpost["unitname"] = stocklevel.UNITNAME
+                slpost["total"] = stocklevel.TOTAL
+                slpost["balance"] = remaining
+                slpost["low"] = stocklevel.LOW
+                slpost["expiry"] = stocklevel.EXPIRY
+                slpost["batchnumber"] = stocklevel.BATCHNUMBER
+                slpost["cost"] = stocklevel.COST
+                slpost["unitprice"] = stocklevel.UNITPRICE
                 slpost["usagedate"] = python2display(dbo.locale, dbo.today())
                 slpost["usagetype"] = usagetypeid
+                slpost["expiry"] = stocklevel.EXPIRY
                 slpost["comments"] = post["comments"]
-                insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+
+                update_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
+        
+        if quantity > 0:
+            slpost = {}
+            slpost["productlist"] = post.integer("productid")
+            slpost["name"] = post["productname"]
+            slpost["description"] = post["productdescription"]
+            slpost["location"] = fromlocation
+            slpost["unitname"] = post["movementunit"]
+            slpost["total"] = unitratio
+            slpost["balance"] = quantity * -1
+            slpost["low"] = 0
+            slpost["expiry"] = post["expiry"]
+            slpost["batchnumber"] = post["batch"]
+            slpost["cost"] = post.integer("costprice")
+            slpost["unitprice"] = post.integer("retailprice")
+            slpost["usagedate"] = python2display(dbo.locale, dbo.today())
+            slpost["usagetype"] = usagetypeid
+            slpost["comments"] = post["comments"]
+            insert_stocklevel_from_form(dbo, asm3.utils.PostedData(slpost, dbo.locale), username)
     
     quantity = post.integer("movementquantity")
 
