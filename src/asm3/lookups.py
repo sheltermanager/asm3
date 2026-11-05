@@ -1317,14 +1317,14 @@ def upsert_lookup_from_form(dbo: Database, username: str, post: PostedData) -> i
     lookup = post["lookup"]
     name = post["lookupname"]
     desc = post["lookupdesc"]
-    retired = post.integer("retired")
     t = LOOKUP_TABLES[lookup]
     namecol = t[1]
     desccol = t[3]
 
-    data = { "IsRetired": retired }
+    data = {}
 
     modifiers = t[4].split(" ")
+    if "ret" in modifiers: data["IsRetired"] = post.integer("retired")
     if "pubcol" in modifiers: data["AdoptAPetColour"] = post["apcolour"]
     if "pubbreed" in modifiers: data["PetFinderBreed"] = post["pfbreed"]
     if "species" in modifiers: data["SpeciesID"] = post.integer("species")
