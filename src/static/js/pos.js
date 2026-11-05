@@ -184,7 +184,14 @@ $(function() {
         },
 
         format_price: function(price) {
-            return (parseFloat(price) / 100.00).toFixed(2);
+            console.log("Formatting " + price);
+            let formattedprice = (parseFloat(price) / 100.00).toFixed(2);
+            if (parseInt(price) > 100000000) {
+                return ( parseInt(formattedprice.split(".")[0]) / 1000000 ) + "M." + formattedprice.split(".")[1];
+            } else if (parseInt(price) > 1000000) {
+                return ( parseInt(formattedprice.split(".")[0]) / 1000 ) + "K." + formattedprice.split(".")[1];
+            }
+            return formattedprice;
         },
 
         update_subtotal: function() {
@@ -222,6 +229,8 @@ $(function() {
         reset_focus: function() {
             $(".receiptitemquantity").css("border", "none");
             pos.numpadfocus = null;
+            $(this).removeClass("refund");
+            pos.refund = false;
         },
 
         complete_transaction: async function() {
@@ -350,9 +359,9 @@ $(function() {
                 } else {
                     let taxrate = pos.activetaxrate;
                     let refund = 1;
+                    if (pos.refund) { refund = -1; }
                     let price = parseInt($("#numpadscreen").text()) * refund;
                     let taxamount = parseInt(parseFloat(price)  * taxrate);
-                    if (pos.refund) { refund = -1; }
                     if ( config.bool("VATExclusive") ) {
                         price += taxamount;
                     }
@@ -360,7 +369,7 @@ $(function() {
                         [
                             '<div class="receiptitemcontainer">',
                                 '<div class="receiptitemdescription" data-productid="0" data-producttypeid="0">' + $(this).text().trim() + '<span class="removereceiptitem">X</span></div>',
-                                '<div class="receiptitemquantity" data-unitprice="' + price + '">1</div>',
+                                '<div class="receiptitemquantity" data-unitprice="' + price + '">' + (1 * refund) + '</div>',
                                 '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
                                 '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
                             '</div>'
@@ -621,6 +630,8 @@ $(function() {
                 $("#infopanel").html("");
                 $("#infopanel").show();
                 pos.numpadlocked = false;
+                $("#refundkey").removeClass("refund");
+                pos.refund = false;
                 // document.querySelector("body").requestFullscreen();
             });
 

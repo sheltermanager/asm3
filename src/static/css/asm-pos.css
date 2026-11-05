@@ -34,6 +34,7 @@
     bottom: 0;
     width: 100%;
     text-shadow: 1px 1px #00000099;
+    font-family: arial;
 }
 
 #numberpad td {
@@ -134,8 +135,12 @@
     padding: 5px;
 }
 
-#balancelabel {
-    flex: 100%;
+#balancelabel, #balance {
+    flex: 50%;
+}
+
+#balance {
+    text-align: right;
 }
 
 #currentreceiptitemcontainer div, .receiptitemcontainer div, #transactionsheader div, #subtotal div, .receiptpaymentcontainer div {
@@ -152,7 +157,7 @@
     cursor: pointer;
 }
 
-#currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
+#currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
     max-width: 100px;
     min-width: 100px;
 }
@@ -247,8 +252,8 @@
 
 #transactionpanel {
     background-color: #ffffff;
-    max-width: 600px;
-    min-width: 600px;
+    max-width: 800px;
+    min-width: 800px;
     height: 100vh;
     max-height: 100vh;
     border: 1px;
@@ -277,8 +282,8 @@
         font-size: 100%;
     }
     #transactionpanel {
-        max-width: 300px;
-        min-width: 300px;
+        max-width: 500px;
+        min-width: 500px;
     }
     #numberpad table {
         height: 400px;
@@ -292,9 +297,9 @@
     /* #producttypes, #taxrates {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     } */
-    #currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, #balance, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
-        max-width: 50px;
-        min-width: 50px;
+    #currentreceiptitemtax, #currentreceiptitemprice, #currentreceiptitemquantity, #transactiontaxheader, #transactionpriceheader, #transactionquantityheader, #subtotalquantity, #subtotaltax, #subtotalprice, .receiptitemtax, .receiptitemprice, .receiptitemquantity, .paymentprice {
+        max-width: 70px;
+        min-width: 70px;
     }
     #infopanel {
         max-width: calc(100vw - 300px);
