@@ -395,6 +395,14 @@ $(function() {
                                 doublesize: true }
                         ]
                     }, 
+                    { id: "tab-petszel", title: "Petszel", classes: 'localeus localeca haspetszel', 
+                        info: 'Signup at <a target="_blank" href="https://petszel.com/for-shelters-and-rescues">https://petszel.com</a>', 
+                        fields: [
+                            { id: "enabledpz", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pzclientid", post_field: "PetszelClientID", label: 'Client ID', type: "text", doublesize: true },
+                            { id: "pzclientsecret", post_field: "PetszelClientSecret", label: 'Client Secret', type: "text", doublesize: true }
+                        ]
+                    }, 
                     { id: "tab-savourlife", title: "SavourLife.com.au", classes: 'localeau localenz hassavourlife', 
                         info: 'Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>', fields: [
                             { id: "enabledsl", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
