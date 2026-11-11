@@ -88,7 +88,7 @@ $(function() {
                     }
                     h.push('<span style="margin-left: 15px;" class="asm-search-personflags">' + edit_header.animal_flags(r) + '</span>');
                     h.push('<br />');
-                    h.push(html.truncate(search.description(r)));
+                    h.push('<span class="asm-expander">' + search.description(r) + '</span>');
                     h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
@@ -126,7 +126,7 @@ $(function() {
                     h.push('<span class="asm-search-personflags">' + r.LICENCETYPENAME + ', ' + format.date(r.ISSUEDATE) + 
                         ' - ' + format.date(r.EXPIRYDATE) + '</span>');
                     h.push('<br/>');
-                    h.push(html.truncate(r.COMMENTS));
+                    h.push('<span class="asm-expander">' + r.COMMENTS + '</span>');
                     h.push('</p>');
                 }
                 else if (r.RESULTTYPE == "LOG") {
@@ -139,7 +139,7 @@ $(function() {
                     h.push('<br />');
                     h.push('<span class="asm-search-personflags">' + r.LOGTYPENAME + '</span>');
                     h.push('<br/>');
-                    h.push(html.truncate(r.COMMENTS));
+                    h.push('<span class="asm-expander">' + r.COMMENTS + '</span>');
                     h.push('</p>');
                 }
                 else if (r.RESULTTYPE == "PERSON") {
@@ -162,7 +162,7 @@ $(function() {
                     h.push('<br />');
                     h.push(r.OWNERTOWN + ", " + r.OWNERCOUNTY + " " + r.OWNERPOSTCODE);
                     h.push('<br />');
-                    h.push(html.truncate(r.COMMENTS));
+                    h.push('<span class="asm-expander">' + r.COMMENTS + '</span>');
                     h.push('<br style="clear: right;" />');
                     h.push('</p>');
                 }
@@ -181,7 +181,7 @@ $(function() {
                     h.push('<span class="asm-search-personflags">' + r.VOUCHERNAME + ', ' + format.date(r.DATEISSUED) + 
                         ' - ' + format.date(r.DATEREDEEMED) + '</span>');
                     h.push('<br/>');
-                    h.push(html.truncate(r.COMMENTS));
+                    h.push('<span class="asm-expander">' + r.COMMENTS + '</span>');
                     h.push('</p>');
                 }
                 if (r.RESULTTYPE == "CITATION") {
@@ -195,7 +195,7 @@ $(function() {
                     h.push('<span class="asm-search-personflags">' + r.CITATIONNAME + ', ' + format.currency(r.FINEAMOUNT) + ", " + format.date(r.CITATIONDATE) + 
                         ' - ' + format.date(r.FINEPAIDDATE) + '</span>');
                     h.push('<br/>');
-                    h.push(html.truncate(r.COMMENTS));
+                    h.push('<span class="asm-expander">' + r.COMMENTS + '</span>');
                     h.push('</p>');
                 }
                 else if (r.RESULTTYPE == "DONATION") {
@@ -208,7 +208,7 @@ $(function() {
                     h.push('<br />');
                     h.push('<span class="asm-search-personflags">' + r.DONATIONNAME + ', ' + format.currency(r.DONATION) + ", " + format.date(r.DATE) + '</span>');
                     h.push('<br/>');
-                    h.push(html.truncate(r.COMMENTS));
+                    h.push('<span class="asm-expander">' + r.COMMENTS + '</span>');
                     h.push('</p>');
                 }
                 else if (r.RESULTTYPE == "WAITINGLIST") {
@@ -219,7 +219,7 @@ $(function() {
                     h.push(html.icon("waitinglist", _("Waiting List")));
                     h.push('<a href="waitinglist?id=' + r.ID + '">' + r.OWNERNAME + ' - ' + format.padleft(r.WLID, 6) + '</a></span>');
                     h.push('<br />');
-                    h.push(html.truncate(r.ANIMALDESCRIPTION));
+                    h.push('<span class="asm-expander">' + r.ANIMALDESCRIPTION + '</span>');
                     h.push('</p>');
                 }
                 else if (r.RESULTTYPE == "ANIMALCONTROL") {
@@ -237,7 +237,7 @@ $(function() {
                     if (r.DISPATCHADDRESS) {
                         h.push(r.DISPATCHADDRESS + '<br />');
                     }
-                    h.push(html.truncate(r.CALLNOTES));
+                    h.push('<span class="asm-expander">' + r.CALLNOTES + '</span>');
                     h.push('</p>');
                 }
                 else if (r.RESULTTYPE == "LOSTANIMAL") {

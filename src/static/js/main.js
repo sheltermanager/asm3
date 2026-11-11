@@ -454,7 +454,7 @@ $(function() {
             callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
             if (controller.linkmode != "none" && controller.animallinks.length > 0) {
-                s = ['<div class="asm-main-section">'];
+                s = ['<div id="asm-homepage-animals" class="asm-main-section asm-expander" data-expander-mode="below" data-expander-limit="9" data-expander-classname="asm-shelterview-animal">'];
                 s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
@@ -540,23 +540,18 @@ $(function() {
                 s.push('</span></td>');
                 if (m.PRIORITY == 1) {
                     s.push('<td id="mt' + m.ID + '">');
-                    s.push('<span class="mtext" style="font-weight: bold !important">' + html.truncate(m.MESSAGE) + '</span>');
+                    s.push('<span class="mtext asm-expander" data-expander-limit="50" data-expander-mode="trailing" style="font-weight: bold !important">' + m.MESSAGE + '</span>');
                     s.push('<a class="messagetoggle" href="#" data="' + m.ID + '"></a>');
                     s.push('</td>');
                 }
                 else {
                     s.push('<td id="mt' + m.ID + '">');
-                    s.push('<span class="mtext">' + html.truncate(m.MESSAGE) + '</span>');
+                    s.push('<span class="mtext asm-expander" data-expander-limit="50" data-expander-mode="trailing">' + m.MESSAGE + '</span>');
                     s.push('<a class="messagetoggle" href="#" data="' + m.ID + '"></a>');
                     s.push('</td>');
                 }
             });
             s.push('</tr></tbody></table>');
-
-            $.each(controller.mess, function(i, m) {
-                s.push('<input id="long' + m.ID + '" type="hidden" value="' + html.title(common.replace_all(m.MESSAGE, "\n", "<br/>")) + '" />');
-                s.push('<input id="short' + m.ID + '" type="hidden" value="' + html.title(html.truncate(m.MESSAGE)) + '" />');
-            });
             s.push('</div>');
             return s.join("\n");
         },
@@ -986,43 +981,6 @@ $(function() {
                     await common.ajax_post("main", formdata);
                     t.closest("tr").fadeOut(); 
                 });
-
-            $(".messagetoggle").each(function() {
-                let data = $(this).attr("data");
-                let moretext = " " + _("more");
-                let ldv = $("#long" + data).val();
-                let sdv = $("#short" + data).val();
-                if (ldv.length != sdv.length) {
-                    $(this).html(moretext);
-                }
-            });
-
-            $(".messagetoggle").click(function() {
-                let data = $(this).attr("data");
-                let moretext = " " + _("more");
-                let lesstext = " " + _("less");
-                let mt = $("#mt" + data + " .mtext");
-                let ldv = $("#long" + data).val();
-                let sdv = $("#short" + data).val();
-                let ar = $(this);
-                if (ldv.length != sdv.length) {
-                    if (ar.text() == moretext) {
-                        mt.fadeOut(function() {
-                            mt.html(ldv);
-                            mt.fadeIn();
-                            ar.html(lesstext);
-                        });
-                    }
-                    else {
-                        mt.fadeOut(function() {
-                            mt.html(sdv);
-                            mt.fadeIn();
-                            ar.html(moretext);
-                        });
-                    }
-                }
-                return false;
-            });
 
             $("#newstoggle").click(function() {
                 if ($("#newsnav").hasClass("ui-icon-triangle-1-e")) {
