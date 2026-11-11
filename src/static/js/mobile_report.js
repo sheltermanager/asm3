@@ -91,6 +91,13 @@ $(document).ready(function() {
                 html.list_to_options(controller.entryreasons, "ID", "REASONNAME") + 
                 '</select></div>');
         }
+        else if (rtype == "LICENSETYPE") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("License Type") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
+                html.list_to_options(controller.licencetypes, "ID", "LICENCETYPENAME") + 
+                '</select></div>');
+        }
         else if (rtype == "LITTER") {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Litter") + '</label>' +

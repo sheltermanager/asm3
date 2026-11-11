@@ -1016,6 +1016,10 @@ def get_internallocation_name(dbo: Database, lid: int) -> str:
 def get_jurisdictions(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM jurisdiction ORDER BY JurisdictionName")
 
+def get_licencetype_name(dbo: Database, rid: int) -> str:
+    if rid is None: return ""
+    return dbo.query_string("SELECT LicenceTypeName FROM licencetype WHERE ID = ?", [rid])
+
 def get_licence_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM licencetype ORDER BY LicenceTypeName")
 
