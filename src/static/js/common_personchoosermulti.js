@@ -216,6 +216,7 @@ $.fn.personchoosermulti = asm_widget({
         }
         t.val(selval.join(","));
         t.trigger("change", [ t.val() ]);
+        common.inject_target();
         o.dialog.dialog("close");
     },
 
@@ -367,7 +368,7 @@ $.fn.personchoosermulti = asm_widget({
                     $.each(o.selectedrows, function(i, r) {
                         if (r.ID == p.ID) { h += " checked"; }
                     });
-                    h += "><a href=\"/person?id=" + p.ID + "\" data=\"" + p.ID + "\">" + p.OWNERNAME + "</a></td>";
+                    h += "><a href=\"person?id=" + p.ID + "\" data=\"" + p.ID + "\">" + p.OWNERNAME + "</a></td>";
                     h += "<td>" + p.OWNERCODE + "</td>";
                     h += "<td>" + p.OWNERADDRESS + "</td>";
                     h += "<td>" + p.OWNERPOSTCODE + "</td>";
@@ -379,7 +380,7 @@ $.fn.personchoosermulti = asm_widget({
                 dialog.find("table").trigger("update");
                 dialog.find("img").hide();
                 dialog.find("button").button("enable");
-                common.inject_target(); 
+                common.inject_target();
             },
             error: function(jqxhr, textstatus, response) {
                 // dialog.dialog("close");

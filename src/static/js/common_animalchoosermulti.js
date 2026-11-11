@@ -211,6 +211,7 @@ $.fn.animalchoosermulti = asm_widget({
         });
         t.val(selval.join(","));
         t.trigger("change", [ t.val() ]);
+        common.inject_target();
         o.dialog.dialog("close");
     },
 
@@ -367,6 +368,8 @@ $.fn.animalchoosermulti = asm_widget({
                     self.selectbyids(t, t.val());
                     t.trigger("select", [ t.val() ]);
                 }
+
+                common.inject_target();
 
             },
             error: function(jqxhr, textstatus, response) {
