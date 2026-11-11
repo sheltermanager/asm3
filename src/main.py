@@ -825,6 +825,22 @@ class jserror(ASMEndpoint):
         if EMAIL_ERRORS:
             asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False, bulk=True, fromoverride=False)
 
+class custom_icon(ASMEndpoint):
+    url = "custom_icon"
+    check_logged_in = False
+
+    def content(self, o):
+        dbo = o.dbo
+        size = o.post["size"]
+        self.cache_control(CACHE_ONE_DAY, 120)
+        if asm3.dbfs.file_exists(o.dbo, "icon.jpg"):
+            self.content_type("image/jpg")
+            icondata = asm3.dbfs.get_string_filepath(dbo, "/reports/icon.jpg")
+            return asm3.media.scale_image(icondata, f"{size}x{size}")
+        else:
+            self.content_type("image/png")
+            return asm3.utils.read_binary_file(f"static/images/logo/icon-{size}.png")
+
 class custom_logo(ASMEndpoint):
     url = "custom_logo"
     check_logged_in = False

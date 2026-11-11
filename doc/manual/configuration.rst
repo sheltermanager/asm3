@@ -137,14 +137,19 @@ so you can reference them in reports and document templates.
 There are certain special names for images that the system will use to override
 some of its standard pictures:
 
-* nopic.jpg – this is the image the system will display when an animal does not
-  have any image media. You cannot delete this image, however you can upload a
-  new image called nopic.jpg to replace it.
+* icon.jpg – this is the image the system will use for the icon shown on browser 
+  tabs and bookmarks. By default, it's the ASM logo but it can be changed for your
+  shelter. Ideally, your icon should be 128 pixels square, but the
+  system will scale down larger images.
 
 * logo.jpg – this is the image the system will use for the home logo at the top
   left corner. By default, it's the ASM logo but it can be changed for your
   shelter. Ideally, your logo should not be more than 32 pixels high, but the
   system will scale down larger images.
+
+* nopic.jpg – this is the image the system will display when an animal does not
+  have any image media. You cannot delete this image, however you can upload a
+  new image called nopic.jpg to replace it.
 
 * splash.jpg – this is the image the system will show on the login screen
   instead of the default ASM splash screens. Your splash image should be
