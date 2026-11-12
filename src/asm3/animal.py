@@ -5627,8 +5627,8 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
             currentownerid = m.ownerid
             currentownername = m.ownername
 
-            # Does the animal have a current ownerid? Set it if not and this is an owned exit movement
-            if exitmovement and m.movementtype != 7 and (ownerid is None or ownerid == 0):
+            # Does the animal have a current ownerid? Set it if not and this is an exit movement
+            if exitmovement and (ownerid is None or ownerid == 0):
                 ownerid = currentownerid
 
             # If this is an exit movement, take the animal off shelter

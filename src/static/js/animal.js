@@ -785,7 +785,8 @@ $(function() {
             if (controller.animal.ARCHIVED == 1 && 
                 (controller.animal.ACTIVEMOVEMENTTYPE == 1 ||
                 controller.animal.ACTIVEMOVEMENTTYPE == 3 || 
-                controller.animal.ACTIVEMOVEMENTTYPE == 5)) {
+                controller.animal.ACTIVEMOVEMENTTYPE == 5 ||
+                controller.animal.ACTIVEMOVEMENTTYPE == 7 )) {
                 $("#ownerrow").show();
             }
             else {
