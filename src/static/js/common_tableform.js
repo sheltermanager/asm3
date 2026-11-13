@@ -711,6 +711,9 @@ const tableform = {
      *      delete_perm: 'da',
      *      add_button_text: _("Add"),
      *      edit_button_text: _("Edit"), 
+     *      extra_button: true, // whether or not to show extra button
+     *      extra_button_text: _("Test"), // text to be displayed on extra button
+     *      extra_button_callback: function(row) {window.open("report?id=" + row.ID);}, // callback function for extra button
      *      edit_perm: 'ca',
      *      width: 500,
      *      height: 200, (omit for auto)
@@ -995,6 +998,12 @@ const tableform = {
         });
 
         var b = {}; 
+        if (dialog.extra_button) {
+            b[dialog.extra_button_text] = {
+                text: dialog.extra_button_text,
+                click: function() { dialog.extra_button_callback(row); }
+            };
+        }
         if (dialog.delete_button && dialog.delete_perm && common.has_permission(dialog.delete_perm)) {
             b[_("Delete")] = {
                 text: dialog.delete_button_text || _("Delete"),
