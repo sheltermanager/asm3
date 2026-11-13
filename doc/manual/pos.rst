@@ -1,5 +1,5 @@
 Point of Sale (POS) Interface
-================
+=============================
 
 ASM provides a simple, flexible point of sale interface to allow users to accept payments 
 for goods and services with automatic record keeping and stock management.
