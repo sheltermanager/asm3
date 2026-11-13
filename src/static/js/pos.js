@@ -45,8 +45,8 @@ $(function() {
                 '<div id="posbarcodeinputoverlay">',
                     '<input readonly id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
                 '</div>',
-                '<div id="findreceipt"><img src="static/images/icons/edit.png"></div>',
-                '<div id="findpad"><img src="static/images/icons/accounts.png"></div>',
+                // '<div id="findreceipt"><img src="static/images/icons/edit.png"></div>',
+                // '<div id="findpad"><img src="static/images/icons/accounts.png"></div>',
                 '<div id="mobilebalance">0.00</div>',
                 '<div id="poscontainer" class="fullheight" style="background-color: #eeeeee;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
@@ -66,13 +66,13 @@ $(function() {
                                     '</div>',
                                 '</div>',
                             '</div>',
-                            '<div id="posfullscreenon" class="posbuttoncontainer posmenubutton">',
-                                '<div class="posbutton" style="background-color: yellow; color: black;text-shadow: none;">',
-                                    '<div style="display: inline-block;">', 
-                                        '<div class="posbuttoncontent">' + _("Fullscreen On") + '</div>',
-                                    '</div>',
-                                '</div>',
-                            '</div>',
+                            // '<div id="posfullscreenon" class="posbuttoncontainer posmenubutton">',
+                            //     '<div class="posbutton" style="background-color: yellow; color: black;text-shadow: none;">',
+                            //         '<div style="display: inline-block;">', 
+                            //             '<div class="posbuttoncontent">' + _("Fullscreen On") + '</div>',
+                            //         '</div>',
+                            //     '</div>',
+                            // '</div>',
                             '<div id="posleavebutton" class="posbuttoncontainer posmenubutton">',
                                 '<div class="posbutton" style="background-color: blue; color: white;">',
                                     '<div style="display: inline-block;">', 
@@ -209,13 +209,12 @@ $(function() {
                 $("#findreceipt").hide();
                 $("#mobilebalance").hide();
             } else {
-                // $("#findpad").show();
-                // $("#findreceipt").show();
                 $("#mobilebalance").show();
             }
             if ($(window).width() > 800) {
                 $("#receipt").show();
                 $("#numberpad").show();
+                $("#postopleftpanel").show();
             } else {
                 $("#receipt").hide();
                 $("#numberpad").hide();
@@ -320,7 +319,8 @@ $(function() {
             // $("#posmenupanel").show();
         },
 
-        update_mode: function() {
+        update_mode: function(mode="") {
+            if (mode) { pos.mode = mode; }
             console.log("mode = " + pos.mode);
             if (pos.mode == "idle") { // Waiting to begin a transaction
                 $("#poscontainer").addClass("fullheight");
@@ -353,7 +353,6 @@ $(function() {
                 $("#postopleftpanel").css("overflow", "auto");
                 $(".activeproducttype").get(0).scrollIntoView();
                 $("#postopleftpanel").css("max-height", "50vh");
-                // $("#postopleftpanel").css("overflow", "hidden");
                 $("#infopanel").show();
                 $("#infopanel").get(0).scrollIntoView();
                 if ($(window).width() <= 800) {
@@ -363,6 +362,13 @@ $(function() {
                 $("#producttypes, #infopanel").hide();
                 $("#postopleftpanel").addClass("fullheight");
                 $("#taxrates").show();
+                $("#enterkey").removeClass("voidkey");
+                $("#enterkey").addClass("cancelkey");
+                $("#enterkey").text(_("Cancel"));
+                if ($(window).width() <= 800) {
+                    $("#receipt").hide();
+                    $("#postopleftpanel").show();
+                }
             } else if (pos.mode == "multiply") {
                 $("#multiplykey").addClass("multiply");
                 $("#numpadscreen").text("");
@@ -370,21 +376,31 @@ $(function() {
                 $("#postopleftpanel").addClass("fullheight");
                 $("#infopanel").html("");
                 $("#infopanel").hide();
+                $("#enterkey").removeClass("voidkey");
+                $("#enterkey").addClass("cancelkey");
+                $("#enterkey").text(_("Cancel"));
+                if ($(window).width() <= 800) {
+                    $("#receipt").hide();
+                    $("#postopleftpanel").show();
+                }
             } else if (pos.mode == "next") {
+                pos.multiplier = 1;
+                pos.activeproduct = {};
+                pos.activetaxrate = -1;
+                pos.activereceiptitem = false;
+                $("#multiplykey").removeClass("multiply");
                 $(".activeproducttype").removeClass("activeproducttype");
                 $("#producttypes").show();
                 $("#postopleftpanel").addClass("fullheight");
                 $("#infopanel").html("");
                 $("#infopanel").hide();
+                $("#enterkey").addClass("voidkey");
+                $("#enterkey").removeClass("cancelkey");
+                $("#enterkey").text(_("Void"));
+                $("#numpadscreen").text("");
+                
             }
-            // if (pos.mode != "multiply") {
-            //     $("#multiplykey").removeClass("multiply");
-            //     pos.multiplier = 1;
-            // }
             $("#posbarcodeinput").focus();
-            // console.log("Resizing");
-            // pos.update_layout();
-            // console.log("Resized");
         },
 
         sync: function() {
@@ -413,7 +429,7 @@ $(function() {
             $("body").on("touchstart", function(e) {
                 let touch = e.touches[0];
                 pos.startpos = [touch.clientX, touch.clientY];
-                console.log(pos.startpos);
+                pos.endpos = [touch.clientX, touch.clientY];
 
             });
             $("body").on("touchmove", function(e) {
@@ -421,14 +437,20 @@ $(function() {
                 pos.endpos = [touch.clientX, touch.clientY];
             });
             $("body").on("touchend", function(e) {
-                if (pos.endpos[0] - pos.startpos[0] > 100) {
+                if ( $(window).width() > 800 ) { return; }
+                if (pos.endpos[0] - pos.startpos[0] > 75) {
                     $("#numberpad").toggle();
-                } else if (pos.endpos[0] - pos.startpos[0] < -100) {
+                } else if (pos.endpos[0] - pos.startpos[0] < -75) {
                     $("#numberpad").hide();
-                    $("#receipt").toggle();
-                    document.querySelector('#receipt').scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    if ( $("#receipt").css("display") == "none" ) {
+                        $(".activeproducttype").click();
+                        $("#postopleftpanel").hide();
+                        $("#receipt").show();
+                    } else {
+                        $(".activereceiptitem").find(".receiptitemdescription").click();
+                        $("#receipt").hide();
+                        $("#postopleftpanel").show();
+                    }
                 }
             });
             $(".producttype").click(function() {
@@ -527,14 +549,14 @@ $(function() {
                 $(".activeproducttype").removeClass("activeproducttype");
                 $("#infopanel").html("");
                 $("#producttypes").show();
+                if ($(window).width() <= 800) {
+                    console.log("Hiding");
+                    $("#numberpad").hide();
+                }
             });
             $("#numberpad .numeral").mousedown(function() {
-                console.log("Numeral detected");
-                console.log("Numpad locked = " + pos.numpadlocked);
-                console.log(pos.numpadfocus);
                 if (pos.numpadlocked) { return false; }
                 if (pos.numpadfocus) {
-                    console.log($(this).text());
                     $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
                     if ($("#numpadscreen").text()) {
                         $("#enterkey").removeClass("voidkey");
@@ -545,13 +567,11 @@ $(function() {
                     }
                 } else {
                     if (!$("#numpadscreen").text()) {
-                        console.log("First numeral detected");
                         pos.mode = "priceinput";
                         pos.update_mode();
                     }
                     $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
                 }
-                // document.getElementById("asmposshortbeep").play();
             });
             $("#deletekey").mousedown(function() {
                 if (pos.numpadlocked) { return false; }
@@ -567,11 +587,11 @@ $(function() {
             });
             $("#enterkey").click(function() {
                 if (pos.numpadlocked) { return false; }
-                if (pos.numpadfocus  && !$("#enterkey").hasClass("voidkey")) {
-                    console.log(pos.numpadfocus);
-                    // if (pos.numpadfocus.hasClass("posprice")) {
-                    //     pos.numpadfocus.text(pos.format_price(pos.numpadfocus.text()));
-                    // }
+                if ( $("#enterkey").hasClass("cancelkey") ) {
+                    pos.update_mode("next");
+                    return;
+                }
+                if (pos.numpadfocus && !$("#enterkey").hasClass("voidkey")) {
                     if ( pos.numpadfocus.hasClass("receiptitemquantity") ) {
                         let quantity = parseInt($("#numpadscreen").text());
                         pos.numpadfocus.text(quantity);

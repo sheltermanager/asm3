@@ -234,7 +234,7 @@ html {
     background-color: green;
 }
 
-.voidkey {
+.voidkey, .cancelkey {
     background-color: red !important;
 }
 
@@ -338,20 +338,22 @@ html {
     /* box-shadow: 1px 1px 2px 1px grey; */
     color: white;
     text-shadow: 1px 1px #00000099;
-    padding: 15px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* padding-top: 5px;
+    padding-bottom: 5px; */
     display: none;
     position: fixed;
     top: 0px;
-    left: 0px;
+    /* left: 0px; */
     right: 0px;
-    border-bottom-right-radius: 20px;
+    /* border-bottom-right-radius: 20px; */
     border-bottom-left-radius: 20px;
-    min-width: 70px;
-    max-width: 70px;
-    margin-left: auto;
-    margin-right: auto;
+    /* min-width: 70px;
+    max-width: 70px; */
+    /* margin-left: auto; */
+    /* margin-right: auto; */
     font-size: 120%;
     font-weight: bold;
 }
@@ -454,6 +456,9 @@ html {
         width: 100%;
         border-top: 2px solid black;
         background-color: white;
+    }
+    #transactionlog {
+        max-height: none;
     }
     #producttypes, #taxrates {
         display: grid;

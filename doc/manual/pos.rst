@@ -5,7 +5,7 @@ ASM provides a simple, flexible point of sale interface to allow users to accept
 for goods and services with automatic record keeping and stock management.
 
 This interface was designed with touch enabled devices in mind but can also be used on a 
-desktop PC.
+desktop PC with a display at least 800px wide.
 
 To access this interface, follow the "Point of Sale" link under the stock menu.
 
@@ -22,9 +22,11 @@ The receipt records created by the point of sale system are recorded in your ASM
 database where they can be analysed using custom reports.
 
 Using Mobile Devices with Small Screens
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------------
 
-If you are using the POS interface on a screen less than 800px wide, the embedded number pad and receipt are hidden unless needed. Swiping right will toggle the number pad and swiping left will toggle the receipt.
+If you are using the POS interface on a screen less than 800px wide, the embedded number pad and receipt are hidden unless needed to make best use of the screen space available.
+
+Swiping right will toggle the number pad and swiping left will toggle the receipt.
 
 Processing a sale
 -----------------
