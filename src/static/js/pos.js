@@ -209,8 +209,8 @@ $(function() {
                 $("#findreceipt").hide();
                 $("#mobilebalance").hide();
             } else {
-                $("#findpad").show();
-                $("#findreceipt").show();
+                // $("#findpad").show();
+                // $("#findreceipt").show();
                 $("#mobilebalance").show();
             }
             if ($(window).width() > 800) {
@@ -410,6 +410,27 @@ $(function() {
             $(window).resize(pos.update_layout);
             pos.update_mode();
             // pos.update_layout();
+            $("body").on("touchstart", function(e) {
+                let touch = e.touches[0];
+                pos.startpos = [touch.clientX, touch.clientY];
+                console.log(pos.startpos);
+
+            });
+            $("body").on("touchmove", function(e) {
+                let touch = e.touches[0];
+                pos.endpos = [touch.clientX, touch.clientY];
+            });
+            $("body").on("touchend", function(e) {
+                if (pos.endpos[0] - pos.startpos[0] > 100) {
+                    $("#numberpad").toggle();
+                } else if (pos.endpos[0] - pos.startpos[0] < -100) {
+                    $("#numberpad").hide();
+                    $("#receipt").toggle();
+                    document.querySelector('#receipt').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
             $(".producttype").click(function() {
                 if (pos.activetaxrate == -1) {
                     if ($(this).hasClass("activeproducttype")) {
@@ -895,22 +916,19 @@ $(function() {
             //     $("#receipt").toggle();
             // });
 
-            $("#findpad").click(function() {
-                $("#numberpad").toggle();
-                // document.querySelector('#cashbutton').scrollIntoView({
-                //     behavior: 'smooth'
-                // });
-            });
+            // $("#findpad").click(function() {
+            //     $("#numberpad").toggle();
+            //     // document.querySelector('#cashbutton').scrollIntoView({
+            //     //     behavior: 'smooth'
+            //     // });
+            // });
+
             $("#findreceipt").click(function() {
                 $("#numberpad").hide();
                 $("#receipt").toggle();
                 document.querySelector('#receipt').scrollIntoView({
                     behavior: 'smooth'
                 });
-            });
-
-            $("#postcontainer").on("touchstart", function() {
-                console.log("Swiped!");
             });
         },
 

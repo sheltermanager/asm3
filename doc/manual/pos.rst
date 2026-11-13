@@ -21,6 +21,11 @@ The point of sale interface makes use of the following existing ASM data:
 The receipt records created by the point of sale system are recorded in your ASM 
 database where they can be analysed using custom reports.
 
+Using Mobile Devices with Small Screens
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you are using the POS interface on a screen less than 800px wide, the embedded number pad and receipt are hidden unless needed. Swiping right will toggle the number pad and swiping left will toggle the receipt.
+
 Processing a sale
 -----------------
 
@@ -65,8 +70,8 @@ Rather than selecting or scanning a product multiple times to add multiple sales
 can tap the number of items required on the embedded number pad, tap the "*" button, then 
 select or scan the product.
 
-Alternatively, once an item has been added tp the receipt, the user can tap on the quantity 
-field on the receipt and edit the quantity using the embedded number pad and confirm the 
+Alternatively, once an item has been added to the receipt, the user can tap on the 
+receipt item and edit the quantity using the embedded number pad and confirm the 
 change using the "Enter" key.
 
 Voiding Sales

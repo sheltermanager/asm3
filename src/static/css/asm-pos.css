@@ -339,7 +339,7 @@ html {
     color: white;
     text-shadow: 1px 1px #00000099;
     padding: 15px;
-    padding-top: 0px;
+    padding-top: 5px;
     padding-bottom: 5px;
     display: none;
     position: fixed;
