@@ -33,6 +33,7 @@ $(function() {
             this.refund = false;
             this.numpadlocked = true;
             this.lastkeypress = new Date();
+            this.mode = "idle";
         },
 
         render: function() {
@@ -44,15 +45,11 @@ $(function() {
                 '<div id="posbarcodeinputoverlay">',
                     '<input readonly id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
                 '</div>',
-                '<div id="poscontainer" style="background-color: #eeeeee; width: 100vw; height: 100vh;">',
+                '<div id="findreceipt"><img src="static/images/icons/edit.png"></div>',
+                '<div id="findpad"><img src="static/images/icons/accounts.png"></div>',
+                '<div id="mobilebalance">0.00</div>',
+                '<div id="poscontainer" class="fullheight" style="background-color: #eeeeee;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
-                        '<div id="producttypes">',
-                            pos.product_type_buttons(),
-                        '</div>',
-                        '<div id="taxrates">',
-                            pos.tax_rate_buttons(),
-                        '</div>',
-                        '<div id="infopanel"></div>',
                         '<div id="posmenupanel">',
                             '<h1 id="posmenutitle">' + _("ASM Point of Sale") + '</h1>',
                             '<div id="posstartbutton" class="posbuttoncontainer posmenubutton">',
@@ -63,14 +60,14 @@ $(function() {
                                 '</div>',
                             '</div>',
                             '<div id="posprintreceiptbutton" class="posbuttoncontainer posmenubutton">',
-                                '<div class="posbutton" style="background-color: white; color: black;">',
+                                '<div class="posbutton" style="background-color: white; color: black;text-shadow: none;">',
                                     '<div style="display: inline-block;">', 
                                         '<div  class="posbuttoncontent">' + _("Print Receipt") + '</div>',
                                     '</div>',
                                 '</div>',
                             '</div>',
                             '<div id="posfullscreenon" class="posbuttoncontainer posmenubutton">',
-                                '<div class="posbutton" style="background-color: yellow; color: black;">',
+                                '<div class="posbutton" style="background-color: yellow; color: black;text-shadow: none;">',
                                     '<div style="display: inline-block;">', 
                                         '<div class="posbuttoncontent">' + _("Fullscreen On") + '</div>',
                                     '</div>',
@@ -84,32 +81,44 @@ $(function() {
                                 '</div>',
                             '</div>',
                         '</div>',
+                        '<div id="postopleftpanel">',
+                            '<div id="producttypes">',
+                                pos.product_type_buttons(),
+                            '</div>',
+                            '<div id="taxrates">',
+                                pos.tax_rate_buttons(),
+                            '</div>',
+                        '</div>',
+                        '<div id="infopanel"></div>',
                     '</div>',
                     '<div id="transactionpanel">',
-                        '<div id="transactionlog" style="overflow: auto;">',
-                            '<div id="transactionsheader">',
-                                '<div id="transactiondescriptionheader">' + _("Description") + '</div>',
-                                '<div id="transactionquantityheader">' + _("#") + '</div>',
-                                '<div id="transactiontaxheader">' + _("Tax") + '</div>',
-                                '<div id="transactionpriceheader">' + _("Price") + '</div>',
+                        '<div id="receipt">',
+                            '<div id="transactionlog" style="overflow: auto;">',
+                                '<div id="transactionsheader">',
+                                    '<div id="transactiondescriptionheader">' + _("Description") + '</div>',
+                                    '<div id="transactionquantityheader">' + _("#") + '</div>',
+                                    '<div id="transactiontaxheader">' + _("Tax") + '</div>',
+                                    '<div id="transactionpriceheader">' + _("Price") + '</div>',
+                                '</div>',
+                                '<hr>',
                             '</div>',
                             '<hr>',
-                        '</div>',
-                        '<hr>',
-                        '<div id="subtotal">',
-                            '<div id="subtotaldescription">' + _("Subtotal") + '</div>',
-                            '<div id="subtotalquantity">0</div>',
-                            '<div id="subtotaltax">0.00</div>',
-                            '<div id="subtotalprice">0.00</div>',
-                        '</div>',
-                        '<hr>',
-                        '<div id="payments">',
+                            '<div id="subtotal">',
+                                '<div id="subtotaldescription">' + _("Subtotal") + '</div>',
+                                '<div id="subtotalquantity">0</div>',
+                                '<div id="subtotaltax">0.00</div>',
+                                '<div id="subtotalprice">0.00</div>',
+                            '</div>',
+                            '<hr>',
+                            '<div id="payments">',
+                            '</div>',
                         '</div>',
                         '<div id="numberpad">',
                             '<div id="balancecontainer">',
                                 '<div id="balancelabel">' + _("Balance") + '</div>',
                                 '<div id="balance" data-balance="0">0.00</div>',
                             '</div>',
+                            // '<a name="numpad">',
                             '<table>',
                             '<tr><th colspan="4" id="numpadscreen"></th></tr>',
                             '<tr><td class="numeral">7</td><td class="numeral">8</td><td class="numeral">9</td><td id="deletekey">' + _("Del") + '</td></tr>',
@@ -118,6 +127,7 @@ $(function() {
                             '<tr><td class="numeral">0</td><td class="numeral">00</td><td colspan="2" id="enterkey" class="voidkey">' + _("Void") + '</td></tr>',
                             '<tr><td colspan="2" id="cardbutton">' + _("Card") + '</td><td colspan="2" id="cashbutton">' + _("Cash") + '</td></tr>',
                             '</table>',
+                            // '</a>',
                         '</div>',
                     '</div>',
                     
@@ -184,17 +194,35 @@ $(function() {
         },
 
         format_price: function(price) {
-            console.log("Formatting " + price);
             let formattedprice = (parseFloat(price) / 100.00).toFixed(2);
-            if (parseInt(price) > 100000000) {
-                return ( parseInt(formattedprice.split(".")[0]) / 1000000 ) + "M." + formattedprice.split(".")[1];
-            } else if (parseInt(price) > 1000000) {
-                return ( parseInt(formattedprice.split(".")[0]) / 1000 ) + "K." + formattedprice.split(".")[1];
-            }
+                // if (parseInt(price) > 100000000) {
+                //     return ( parseInt(formattedprice.split(".")[0]) / 1000000 ) + "M." + formattedprice.split(".")[1];
+                // } else if (parseInt(price) > 1000000) {
+                //     return ( parseInt(formattedprice.split(".")[0]) / 1000 ) + "K." + formattedprice.split(".")[1];
+                // }
             return formattedprice;
         },
 
-        update_subtotal: function() {
+        update_layout: function() {
+            if ($(window).width() > 800 || pos.mode == "idle") {
+                $("#findpad").hide();
+                $("#findreceipt").hide();
+                $("#mobilebalance").hide();
+            } else {
+                $("#findpad").show();
+                $("#findreceipt").show();
+                $("#mobilebalance").show();
+            }
+            if ($(window).width() > 800) {
+                $("#receipt").show();
+                $("#numberpad").show();
+            } else {
+                $("#receipt").hide();
+                $("#numberpad").hide();
+            }
+        },
+
+        update_subtotal: function(next=true) {
             let quantity = 0;
             let price = 0.00;
             let tax = 0.00;
@@ -223,7 +251,17 @@ $(function() {
             });
             $("#balance").attr("data-balance", price);
             $("#balance").text(pos.format_price(price));
+            $("#mobilebalance").text(pos.format_price(price));
             $("#transactionlog").scrollTop($("#transactionlog").height());
+
+            $("#multiplykey").removeClass("multiply");
+            pos.multiplier = 1;
+
+            if (next) {
+                pos.mode = "next";
+                pos.update_mode();
+            }
+
         },
 
         reset_focus: function() {
@@ -270,18 +308,88 @@ $(function() {
                     }
                 );
             });
-            console.log("Writing");
             let formdata = "mode=write&jsondata=" + JSON.stringify(receiptdetails);
             let receiptid = await common.ajax_post("pos", formdata);
-            console.log(receiptid);
-            $("#posleftpanel").children().hide();
-            $("#posprintreceiptbutton").show();
-            $("#posmenupanel").show();
+            // $("#producttypes").hide();
+            pos.mode = "idle";
+            pos.update_mode();
+            // $("#taxrates").hide();
+            // $("#infopanel").hide();
+            // $("#posprintreceiptbutton").show();
+            // $("#transactionpanel").hide();
+            // $("#posmenupanel").show();
+        },
+
+        update_mode: function() {
+            console.log("mode = " + pos.mode);
+            if (pos.mode == "idle") { // Waiting to begin a transaction
+                $("#poscontainer").addClass("fullheight");
+                $("#postopleftpanel").removeClass("fullheight");
+                $("#postopleftpanel").css("height", "auto");
+                $("#producttypes").hide();
+                $("#taxrates").hide();
+                $("#infopanel").hide();
+                $("#posprintreceiptbutton").show();
+                $("#transactionpanel").hide();
+                $("#posmenupanel").show();
+                pos.update_layout();
+            } else if (pos.mode == "fresh") { // Start of transaction
+                $("#poscontainer").removeClass("fullheight");
+                $(".receiptitemcontainer").remove();
+                $(".receiptpaymentcontainer").remove();
+                $(".activeproducttype").removeClass("activeproducttype");
+                $("#posmenupanel").hide();
+                $("#producttypes").show();
+                $("#postopleftpanel").addClass("fullheight");
+                $("#infopanel").html("");
+                $("#infopanel").hide();
+                $("#transactionpanel").show();
+                pos.numpadlocked = false;
+                $("#refundkey").removeClass("refund");
+                pos.refund = false;
+                pos.update_layout();
+            } else if (pos.mode == "productselected") {
+                $("#postopleftpanel").removeClass("fullheight");
+                $("#postopleftpanel").css("overflow", "auto");
+                $(".activeproducttype").get(0).scrollIntoView();
+                $("#postopleftpanel").css("max-height", "50vh");
+                // $("#postopleftpanel").css("overflow", "hidden");
+                $("#infopanel").show();
+                $("#infopanel").get(0).scrollIntoView();
+                if ($(window).width() <= 800) {
+                    $("#numberpad").hide();
+                }
+            } else if (pos.mode == "priceinput") {
+                $("#producttypes, #infopanel").hide();
+                $("#postopleftpanel").addClass("fullheight");
+                $("#taxrates").show();
+            } else if (pos.mode == "multiply") {
+                $("#multiplykey").addClass("multiply");
+                $("#numpadscreen").text("");
+                $("#producttypes").show();
+                $("#postopleftpanel").addClass("fullheight");
+                $("#infopanel").html("");
+                $("#infopanel").hide();
+            } else if (pos.mode == "next") {
+                $(".activeproducttype").removeClass("activeproducttype");
+                $("#producttypes").show();
+                $("#postopleftpanel").addClass("fullheight");
+                $("#infopanel").html("");
+                $("#infopanel").hide();
+            }
+            // if (pos.mode != "multiply") {
+            //     $("#multiplykey").removeClass("multiply");
+            //     pos.multiplier = 1;
+            // }
+            $("#posbarcodeinput").focus();
+            // console.log("Resizing");
+            // pos.update_layout();
+            // console.log("Resized");
         },
 
         sync: function() {
             $("body").css("margin", 0);
-            $("html").css("max-height", "100vh");
+            // $("html").css("max-height", "100vh");
             $("#currentreceiptitemcontainer").hide();
             $("#asm-topline").hide();
             $("#quicklinks").hide();
@@ -299,8 +407,16 @@ $(function() {
             document.getElementById("asmposbeep").volume = 0.2;
             document.getElementById("asmposshortbeep").volume = 0.2;
             document.getElementById("asmposnope").volume = 0.2;
+            $(window).resize(pos.update_layout);
+            pos.update_mode();
+            // pos.update_layout();
             $(".producttype").click(function() {
-                if ( pos.activetaxrate == -1 ) {
+                if (pos.activetaxrate == -1) {
+                    if ($(this).hasClass("activeproducttype")) {
+                        pos.mode = "next";
+                        pos.update_mode();
+                        return;
+                    }
                     $("#currentreceiptitemdescription").text($(this).text());
                     $("#infopanel").html("");
                     let producttypeid = $(this).attr("data-producttypeid");
@@ -355,12 +471,13 @@ $(function() {
                         }
                     });
                     $("#infopanel").html(products);
-                    $("#infopanel").scrollTop(0);
+                    pos.mode = "productselected";
+                    pos.update_mode();
                 } else {
                     let taxrate = pos.activetaxrate;
                     let refund = 1;
                     if (pos.refund) { refund = -1; }
-                    let price = parseInt($("#numpadscreen").text()) * refund;
+                    let price = parseInt($("#numpadscreen").text()) * refund * pos.multiplier;
                     let taxamount = parseInt(parseFloat(price)  * taxrate);
                     if ( config.bool("VATExclusive") ) {
                         price += taxamount;
@@ -369,12 +486,13 @@ $(function() {
                         [
                             '<div class="receiptitemcontainer">',
                                 '<div class="receiptitemdescription" data-productid="0" data-producttypeid="0">' + $(this).text().trim() + '<span class="removereceiptitem">X</span></div>',
-                                '<div class="receiptitemquantity" data-unitprice="' + price + '">' + (1 * refund) + '</div>',
+                                '<div class="receiptitemquantity" data-unitprice="' + price + '">' + (pos.multiplier * refund) + '</div>',
                                 '<div class="receiptitemtax" class="posprice" data-taxrate="' + taxrate + '" data-taxamount="' + taxamount + '">' + pos.format_price(taxamount) + '</div>',
                                 '<div class="receiptitemprice" class="posprice" data-price="' + price + '">' + pos.format_price(price) + '</div>',
                             '</div>'
                         ].join("\n")
                     );
+                    document.getElementById("asmposbeep").play();
                     $("#numpadscreen").text("");
                     pos.activetaxrate = -1;
                     pos.update_subtotal();
@@ -390,42 +508,51 @@ $(function() {
                 $("#producttypes").show();
             });
             $("#numberpad .numeral").mousedown(function() {
+                console.log("Numeral detected");
+                console.log("Numpad locked = " + pos.numpadlocked);
+                console.log(pos.numpadfocus);
                 if (pos.numpadlocked) { return false; }
                 if (pos.numpadfocus) {
-                    pos.numpadfocus.text(pos.numpadfocus.text() + $(this).text());
+                    console.log($(this).text());
+                    $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
+                    if ($("#numpadscreen").text()) {
+                        $("#enterkey").removeClass("voidkey");
+                        $("#enterkey").text(_("Enter"));
+                    } else {
+                        $("#enterkey").addClass("voidkey");
+                        $("#enterkey").text(_("Void"));
+                    }
                 } else {
                     if (!$("#numpadscreen").text()) {
-                        $("#producttypes, #infopanel").hide();
-                        $("#taxrates").show();
+                        console.log("First numeral detected");
+                        pos.mode = "priceinput";
+                        pos.update_mode();
                     }
                     $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
                 }
-                document.getElementById("asmposshortbeep").play();
+                // document.getElementById("asmposshortbeep").play();
             });
             $("#deletekey").mousedown(function() {
                 if (pos.numpadlocked) { return false; }
-                if (pos.numpadfocus) {
-                    if (pos.numpadfocus.text() == "0.00") {
-                        pos.numpadfocus.text("");
-                    } else if (pos.numpadfocus.text()) {
-                        pos.numpadfocus.text(pos.numpadfocus.text().slice(0, pos.numpadfocus.text().length - 1));
-                    }
-                } else {
+                if ($("#numpadscreen").text() == "0.00") {
+                    $("#numpadscreen").text("");
+                } else if ($("#numpadscreen").text()) {
                     $("#numpadscreen").text($("#numpadscreen").text().slice(0, $("#numpadscreen").text().length - 1));
-                    if (!$("#numpadscreen").text()) {
-                        $("#producttypes, #infopanel").show();
-                        $("#taxrates").hide();
-                    }
+                }
+                if (pos.numpadfocus) {
+                    $("#enterkey").removeClass("voidkey");
+                    $("#enterkey").text(_("Enter"));
                 }
             });
             $("#enterkey").click(function() {
                 if (pos.numpadlocked) { return false; }
-                if (pos.numpadfocus) {
-                    if (pos.numpadfocus.hasClass("posprice")) {
-                        pos.numpadfocus.text(pos.format_price(pos.numpadfocus.text()));
-                    }
-                    if (pos.numpadfocus.hasClass("receiptitemquantity")) {
-                        let quantity = parseInt(pos.numpadfocus.text());
+                if (pos.numpadfocus  && !$("#enterkey").hasClass("voidkey")) {
+                    console.log(pos.numpadfocus);
+                    // if (pos.numpadfocus.hasClass("posprice")) {
+                    //     pos.numpadfocus.text(pos.format_price(pos.numpadfocus.text()));
+                    // }
+                    if ( pos.numpadfocus.hasClass("receiptitemquantity") ) {
+                        let quantity = parseInt($("#numpadscreen").text());
                         pos.numpadfocus.text(quantity);
                         let price = parseInt(pos.numpadfocus.attr("data-unitprice")) * quantity;
                         let taxrate = pos.numpadfocus.next().attr("data-taxrate");
@@ -442,6 +569,9 @@ $(function() {
                     $("#enterkey").text(_("Void"));
                     $("#enterkey").addClass("voidkey");
                     pos.update_subtotal();
+                    if ( $(window).width() <= 800 ) {
+                        $("#numberpad").hide();
+                    }
                 } else if (pos.activereceiptitem) {
                     pos.activereceiptitem.css("text-decoration", "line-through");
                     pos.activereceiptitem.attr("data-voided", "true");
@@ -450,17 +580,25 @@ $(function() {
                     $("#enterkey").text(_("Void"));
                     $("#enterkey").addClass("voidkey");
                     pos.update_subtotal();
+                    if ( $(window).width() <= 800 ) {
+                        $("#numberpad").hide();
+                    }
                 } else {
                     if (confirm( _("No data has been written to the database and no stock has been moved. Are you sure that you want to abandon this transaction?"))) {
                         $(".receiptitemcontainer").remove();
                         $(".receiptpaymentcontainer").remove();
                         pos.update_subtotal();
-                        $("#posleftpanel").children().hide();
+                        // $("#posleftpanel").children().hide();
+                        $("#producttypes").hide();
+                        $("#taxrates").hide();
+                        $("#infopanel").hide();
                         $("#posprintreceiptbutton").hide();
                         $("#posmenupanel").show();
                         $("#numpadscreen").text("");
                         pos.numpadlocked = true;
                         pos.activetaxrate = -1;
+                        pos.mode = "idle";
+                        pos.update_mode();
                     }
                 }
             });
@@ -506,23 +644,34 @@ $(function() {
                         );
                         pos.multiplier = 1;
                         $("#numpadscreen").text("");
-                        pos.update_subtotal();
+                        pos.update_subtotal(false);
+                        document.getElementById("asmposbeep").play();
                         return false;
                     }
                 });
 
             });
             $("#transactionpanel").on("click", ".receiptitemdescription", function() {
-                if (!pos.numpadfocus) {
-                    pos.activereceiptitem = $(this).closest(".receiptitemcontainer");
-                    if (pos.activereceiptitem.hasClass("activereceiptitem")) {
-                        pos.activereceiptitem.removeClass("activereceiptitem");
-                        pos.activereceiptitem = false;
-                    } else {
-                        $(".activereceiptitem").removeClass("activereceiptitem");
-                        pos.activereceiptitem.addClass("activereceiptitem");
+                // if (!pos.numpadfocus) {
+                pos.activereceiptitem = $(this).closest(".receiptitemcontainer");
+                if (!pos.activereceiptitem) { return false; }
+                if (pos.activereceiptitem.hasClass("activereceiptitem")) {
+                    pos.activereceiptitem.removeClass("activereceiptitem");
+                    pos.activereceiptitem = false;
+                    pos.numpadfocus = false;
+                    $("#numpadscreen").text("");
+                    $("#enterkey").addClass("voidkey");
+                    $("#enterkey").text(_("Void"));
+                } else {
+                    $(".activereceiptitem").removeClass("activereceiptitem");
+                    pos.activereceiptitem.addClass("activereceiptitem");
+                    pos.numpadfocus = pos.activereceiptitem.find(".receiptitemquantity");
+                    $("#numpadscreen").text(pos.activereceiptitem.find(".receiptitemquantity").text());
+                    if ( $(window).width() <= 800 ) {
+                        $("#numberpad").show();
                     }
                 }
+                // }
             });
             $("#transactionpanel").on("click", ".paymentdescription", function() {
                 if (!pos.numpadfocus) {
@@ -533,19 +682,22 @@ $(function() {
                     } else {
                         $(".activereceiptitem").removeClass("activereceiptitem");
                         pos.activereceiptitem.addClass("activereceiptitem");
+                        if ( $(window).width() <= 800 ) {
+                            $("#numberpad").show();
+                        }
                     }
                 }
             });
-            $("#transactionpanel").on("click", ".receiptitemquantity", function() {
-                $(".activereceiptitem").removeClass("activereceiptitem");
-                pos.activereceiptitem = false;
-                if ( !pos.numpadfocus && !$(this).closest(".receiptitemcontainer").attr("data-voided") ) {
-                    pos.numpadfocus = $(this);
-                    pos.numpadfocus.css("border", "1px solid black");
-                    $("#enterkey").text(_("Enter"));
-                    $("#enterkey").removeClass("voidkey");
-                }
-            });
+            // $("#transactionpanel").on("click", ".receiptitemquantity", function() {
+            //     $(".activereceiptitem").removeClass("activereceiptitem");
+            //     pos.activereceiptitem = false;
+            //     if ( !pos.numpadfocus && !$(this).closest(".receiptitemcontainer").attr("data-voided") ) {
+            //         pos.numpadfocus = $(this);
+            //         pos.numpadfocus.css("border", "1px solid black");
+            //         $("#enterkey").text(_("Enter"));
+            //         $("#enterkey").removeClass("voidkey");
+            //     }
+            // });
             $("#cashbutton").on("click", function() {
                 if (pos.numpadlocked) { return false; }
                 let refund = 1;
@@ -597,8 +749,15 @@ $(function() {
 
             $("#multiplykey").click(function() {
                 if (pos.numpadlocked) { return false; }
+                if (pos.mode == "multiply") {
+                    pos.mode = "next";
+                    pos.update_mode();
+                    return false;
+                }
                 if ($("#numpadscreen").text()) {
                     pos.multiplier = parseInt($("#numpadscreen").text());
+                    pos.mode = "multiply";
+                    pos.update_mode();
                     $("#producttypes, #infopanel").show();
                     $("#taxrates").hide();
                 }
@@ -620,19 +779,8 @@ $(function() {
             });
 
             $("#posstartbutton").click(function() {
-                $(".receiptitemcontainer").remove();
-                $(".receiptpaymentcontainer").remove();
-                pos.update_subtotal();
-                pos.activeproduct = {};
-                $(".activeproducttype").removeClass("activeproducttype");
-                $("#posmenupanel").hide();
-                $("#producttypes").show();
-                $("#infopanel").html("");
-                $("#infopanel").show();
-                pos.numpadlocked = false;
-                $("#refundkey").removeClass("refund");
-                pos.refund = false;
-                // document.querySelector("body").requestFullscreen();
+                pos.mode = "fresh";
+                pos.update_mode();
             });
 
             $("#posfullscreenon").click(function() {
@@ -737,6 +885,32 @@ $(function() {
                 $("#posbarcodeinput").val("");
                 $("#posbarcodeinputoverlay").css("z-index", -1);
                 $("#posbarcodeinput").css("z-index", -1);
+            });
+
+            // $("#posstartbutton").on("click", function() {
+            //     $("#numberpad").toggle();
+            // });
+
+            // $("#posstartbutton").on("click", function() {
+            //     $("#receipt").toggle();
+            // });
+
+            $("#findpad").click(function() {
+                $("#numberpad").toggle();
+                // document.querySelector('#cashbutton').scrollIntoView({
+                //     behavior: 'smooth'
+                // });
+            });
+            $("#findreceipt").click(function() {
+                $("#numberpad").hide();
+                $("#receipt").toggle();
+                document.querySelector('#receipt').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+
+            $("#postcontainer").on("touchstart", function() {
+                console.log("Swiped!");
             });
         },
 
