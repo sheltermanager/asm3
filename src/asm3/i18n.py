@@ -472,6 +472,19 @@ def python2displaytime(locale: str, d: datetime) -> str:
     except:
         return ""
 
+def python2iso(d: datetime, timezone: int) -> str:
+    """
+    Iso formats a python datetime.
+    'd' is a Python date, timezone if offset from UTC in hours.
+    Return value is a string.
+    """
+    if d is None: return ""
+    try:
+        utcdt = d + timedelta(hours=timezone)
+        return utcdt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    except:
+        return ""
+
 def python2unix(d: datetime) -> int:
     """
     Converts a python date to unix.
