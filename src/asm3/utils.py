@@ -1011,6 +1011,7 @@ def qr_datauri(data: str, sizespec: str = "150x150") -> str:
     size = w, w
     if h > w: size = h, h
     img = qrcode.make(data)
+    img = img.convert("RGB") # default colourspace from qrcode.make causes thumbnail/resize to crash
     img.thumbnail(size)
     output = asm3.utils.bytesio()
     img.save(output, "PNG")
