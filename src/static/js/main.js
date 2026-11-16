@@ -468,14 +468,6 @@ $(function() {
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });
-                if (controller.animallinks.length > hidemorethan) {
-                    s.push('<p class="asm-menu-category" style="border-bottom: none;">');
-                    s.push('<a id="animallinktoggle" href="#">');
-                    s.push('<span id="animallinknav" class="ui-icon ui-icon-triangle-1-e"></span>');
-                    s.push('<span id="animallinklabel">' + _("more") + '</span>');
-                    s.push('</a>');
-                    s.push('</p>');
-                }
                 s.push('</div>');
             }
             return s.join("\n");
