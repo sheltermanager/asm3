@@ -6,7 +6,7 @@ import asm3.lookups
 
 from .base import AbstractPublisher
 from asm3.sitedefs import PETSZEL_URL
-from asm3.typehints import Database, Dict, List, PublishCriteria, Results, ResultRow
+from asm3.typehints import Database, Dict, PublishCriteria, Results, ResultRow
 
 import sys
 
@@ -22,47 +22,84 @@ class PetszelPublisher(AbstractPublisher):
         self.initLog("petszel", "Petszel Publisher")
         self.dbo = dbo
 
-    def getAnimalMedia(self, animalid) -> Results:
+    def getAnimalConditions(self, animalid: int) -> Results:
+        """
+        Returns all conditions for animal with provided animalid
+        """
         m = self.dbo.query(
             "SELECT " \
-            "m.ID, " \
-            "m.MediaName, " \
-            "m.MediaNotes, " \
-            "m.MediaMimeType, " \
-            "m.DBFSID, " \
-            "m.CreatedDate, " \
-            "m.LastChangedDate " \
-            "FROM media m " \
+            "c.ID, " \
+            "l.ConditionName, " \
+            "t.ConditionTypeName, " \
+            "c.StartDatetime, " \
+            "c.EndDatetime, " \
+            "c.CreatedDate, " \
+            "c.LastChangedDate " \
+            "FROM animalcondition c " \
+            "INNER JOIN lkcondition l ON c.ConditionID = l.ID " \
+            "INNER JOIN lksconditiontype t ON l.ConditionTypeID = t.ID " \
             "WHERE " \
-            "m.LinkTypeID = ? " \
-            "AND m.LinkID = ? " \
-            "AND m.ExcludeFromPublish = 0 " \
-            "AND m.MediaType = ? " \
-            "AND m.MediaMimeType = 'image/jpeg'",
-            [asm3.media.ANIMAL, animalid, asm3.media.MEDIATYPE_FILE]
+            "c.AnimalID = ?",
+            [animalid,]
         )
         return m
 
-    def getAnimalConditions(self, animalid) -> Results:
+    def getAnimalMedia(self, animalid: int) -> Results:
+            """
+            Returns web preferred image for animal with provided animalid
+            """
             m = self.dbo.query(
                 "SELECT " \
-                "c.ID, " \
-                "l.ConditionName, " \
-                "t.ConditionTypeName, " \
-                "c.StartDatetime, " \
-                "c.EndDatetime, " \
-                "c.CreatedDate, " \
-                "c.LastChangedDate " \
-                "FROM animalcondition c " \
-                "INNER JOIN lkcondition l ON c.ConditionID = l.ID " \
-                "INNER JOIN lksconditiontype t ON l.ConditionTypeID = t.ID " \
+                "m.ID, " \
+                "m.MediaName, " \
+                "m.MediaNotes, " \
+                "m.MediaMimeType, " \
+                "m.DBFSID, " \
+                "m.CreatedDate, " \
+                "m.LastChangedDate " \
+                "FROM media m " \
                 "WHERE " \
-                "c.AnimalID = ?",
-                [animalid,]
+                "m.LinkTypeID = ? " \
+                "AND m.LinkID = ? " \
+                "AND m.WebsitePhoto = 1 " \
+                # "AND m.ExcludeFromPublish = 0 " \
+                "AND m.MediaType = ? " \
+                "AND m.MediaMimeType = 'image/jpeg'",
+                [asm3.media.ANIMAL, animalid, asm3.media.MEDIATYPE_FILE]
             )
             return m
 
-    def getData(self, lastpublished) -> Results:
+    def getAnimalVaccinations(self, animalid: int) -> Results:
+        """
+        Returns all vaccinations for animal with provided animalid
+        """
+        v = self.dbo.query(
+            "SELECT " \
+            "v.ID, " \
+            "t.VaccinationType, " \
+            "v.DateOfVaccination, " \
+            "v.DateExpires, " \
+            "v.BatchExpiryDate, " \
+            "v.BatchNumber, " \
+            "v.Comments, " \
+            "o.OwnerName AS VetName, " \
+            "v.Manufacturer, " \
+            "v.CreatedDate, " \
+            "v.LastChangedDate " \
+            "FROM animalvaccination v " \
+            "INNER JOIN vaccinationtype t ON v.VaccinationID = t.ID " \
+            "LEFT JOIN owner o ON v.AdministeringVetID = o.ID " \
+            "WHERE " \
+            "v.AnimalID = ? ",
+            [animalid,]
+        )
+        return v
+
+    def getData(self, cutoff: int = 180) -> Results:
+        """
+        Returns a list of adopted animals that that haven't already been published to Petszel, 
+        cutoff defines how far back in days adoptions are considered.
+        """
 
         cutoff = asm3.i18n.subtract_days(asm3.i18n.now(self.dbo.timezone), 180) # Adoptions before this date will be ignored
         weightlogtype = asm3.configuration.weight_change_log_type(self.dbo)
@@ -122,29 +159,6 @@ class PetszelPublisher(AbstractPublisher):
         )
         self.log("Got %d matching animals for publishing." % len(a))
         return a
-
-    def getVaccinations(self, animalid):
-        v = self.dbo.query(
-            "SELECT " \
-            "v.ID, " \
-            "t.VaccinationType, " \
-            "v.DateOfVaccination, " \
-            "v.DateExpires, " \
-            "v.BatchExpiryDate, " \
-            "v.BatchNumber, " \
-            "v.Comments, " \
-            "o.OwnerName AS VetName, " \
-            "v.Manufacturer, " \
-            "v.CreatedDate, " \
-            "v.LastChangedDate " \
-            "FROM animalvaccination v " \
-            "INNER JOIN vaccinationtype t ON v.VaccinationID = t.ID " \
-            "LEFT JOIN owner o ON v.AdministeringVetID = o.ID " \
-            "WHERE " \
-            "v.AnimalID = ? ",
-            [animalid,]
-        )
-        return v
 
     def run(self) -> None:
         
@@ -221,7 +235,9 @@ class PetszelPublisher(AbstractPublisher):
         self.cleanup()
 
     def processAnimal(self, an: ResultRow) -> Dict:
-        """ Processes an animal record and returns a data dictionary to upload as JSON """
+        """
+        Processes an animal record and returns a data dictionary to upload as JSON
+        """
 
         ofirstname = an.OWNERFORENAMES.split(" ")[0]
         omiddlenames = ""
@@ -540,7 +556,7 @@ class PetszelPublisher(AbstractPublisher):
                 )
             p["photos"] = photos
 
-            animalvaccinations = self.getVaccinations(an.ID)
+            animalvaccinations = self.getAnimalVaccinations(an.ID)
             if len(animalvaccinations):
                 vaccinations = []
                 for v in animalvaccinations:
