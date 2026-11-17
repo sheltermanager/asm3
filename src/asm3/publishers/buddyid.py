@@ -4,7 +4,7 @@ import asm3.configuration
 import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
-from asm3.sitedefs import BUDDYID_BASE_URL, BUDDYID_EMAIL, BUDDYID_PASSWORD
+from asm3.sitedefs import BUDDYID_BASE_URL, BUDDYID_EMAIL, BUDDYID_PASSWORD, BUDDYID_SECRET
 from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import sys
@@ -50,30 +50,39 @@ class BuddyIDPublisher(AbstractPublisher):
         if self.checkMicrochipLimit(animals): return
 
         # Authenticate to get our bearer token
-        url = f"{BUDDYID_BASE_URL}/login"
-        data = { "email": BUDDYID_EMAIL, "password": BUDDYID_PASSWORD }
-        self.log("Token request to %s: %s" % ( url, data)) 
-        try:
-            r = asm3.utils.post_form(url, data)
-            if r["status"] != 200:
-                self.setLastError("Authentication failed.")
-                self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                self.cleanup()
-                return
-            self.log("Response: %s" % r["response"])
-            token = asm3.utils.json_parse(r["response"])["access_token"]
-            # Create the HTTP headers we're going to send with each request
-            authheaders = {
-                "Authorization": f"Bearer {token}",
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-            self.log("Token received: %s" % token)
-        except Exception as err:
-            self.setLastError("Authentication failed.")
-            self.logError("Failed getting token: %s" % err, sys.exc_info())
-            self.cleanup()
-            return
+        # url = f"{BUDDYID_BASE_URL}/login"
+        # data = { "email": BUDDYID_EMAIL, "password": BUDDYID_PASSWORD }
+        # self.log("Token request to %s: %s" % ( url, data)) 
+        # try:
+        #     r = asm3.utils.post_form(url, data)
+        #     if r["status"] != 200:
+        #         self.setLastError("Authentication failed.")
+        #         self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+        #         self.cleanup()
+        #         return
+        #     self.log("Response: %s" % r["response"])
+        #     token = asm3.utils.json_parse(r["response"])["access_token"]
+
+        #     # Create the HTTP headers we're going to send with each request
+        #     authheaders = {
+        #         "Authorization": f"Bearer {provider_code}",
+        #         "Accept": "application/json",
+        #         "Content-Type": "application/json",
+        #         "x-vercel-protection-bypass": f"{BUDDYID_SECRET}"
+        #     }
+        #     self.log("Token received: %s" % token)
+        # except Exception as err:
+        #     self.setLastError("Authentication failed.")
+        #     self.logError("Failed getting token: %s" % err, sys.exc_info())
+        #     self.cleanup()
+        #     return
+
+        authheaders = {
+            "Authorization": f"Bearer {provider_code}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "x-vercel-protection-bypass": f"{BUDDYID_SECRET}"
+        }
 
         processed_animals = []
         failed_animals = []
