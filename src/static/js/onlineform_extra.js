@@ -548,8 +548,8 @@ $(document).ready(function() {
 
     // Load all multi-lookup widgets
     $(".asm-onlineform-lookupmulti").asmSelect({
-        animate: true,
-        sortable: true,
+        animate: false,
+        sortable: false,
         removeLabel: '<strong>&times;</strong>',
         addItemTarget: "inplace",
         listClass: 'bsmList-custom',  
