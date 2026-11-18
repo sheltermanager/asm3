@@ -551,6 +551,7 @@ $(document).ready(function() {
         animate: true,
         sortable: true,
         removeLabel: '<strong>&times;</strong>',
+        addItemTarget: "inplace",
         listClass: 'bsmList-custom',  
         listItemClass: 'bsmListItem-custom',
         listItemLabelClass: 'bsmListItemLabel-custom',
