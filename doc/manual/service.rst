@@ -747,6 +747,37 @@ will use a default, basic template::
     http://localhost:5000/service?method=animal_view_adoptable_html
     http://localhost:5000/service?method=animal_view_adoptable_html&template=onlyflags
 
+add_test
+--------
+
+.. rubric:: Permissions required: ADD_TEST
+.. rubric:: Requires authentication: YES
+
+Adds a test record to an existing animal. It never creates or changes the animal
+itself, and never creates lookup values. GET or POST can be used, with these
+parameters:
+
+* animalid or sheltercode: The animal to add the test to.
+
+* testtype: The name of an existing test type.
+
+* result: The name of an existing test result (optional, defaults to the first result).
+
+* required: The date the test was due, in yyyy-mm-dd format (required).
+
+* given: The date the test was performed, in yyyy-mm-dd format (optional).
+
+* cost: The cost in whole currency units multiplied by 100, eg: 4550 for 45.50 (optional).
+
+* comments: Comments for the test (optional).
+
+The return value is a JSON document with the new test's ID and the animal's ID::
+
+    { "id": 1234, "animalid": 56 }
+
+If the animal, test type or test result can't be found, the return value is a plain
+text message starting with ERROR.
+
 csv_import
 ----------
 

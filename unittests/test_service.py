@@ -111,6 +111,35 @@ class TestService(unittest.TestCase):
             asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", False, dbo)
             asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", True, dbo)
     
+    def test_handler_add_test(self):
+        dbo = base.get_dbo()
+        data = {
+            "animalname": "Testio",
+            "estimatedage": "1",
+            "animaltype": "1",
+            "entryreason": "1",
+            "species": "1",
+            "datebroughtin": "01/11/2024"
+        }
+        aid = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(data, "en"), "test")[0]
+        code = dbo.query_string("SELECT ShelterCode FROM animal WHERE ID = ?", [aid])
+        testtype = dbo.query_string("SELECT TestName FROM testtype ORDER BY ID")
+        def call(**kw):
+            d = { "method": "add_test", "username": "user", "password": "letmein" }
+            d.update(kw)
+            return asm3.service.handler(asm3.utils.PostedData(d, dbo.locale), dbo.installpath, "1.1.1.1", "", "Mozilla", "", True, dbo)
+        r = call(sheltercode=code, testtype=testtype, required="2024-11-01", given="2024-11-01", cost="4550", comments="Imported")
+        self.assertEqual("application/json", r[0])
+        tid = asm3.utils.json_parse(r[3])["id"]
+        t = dbo.first_row(dbo.query("SELECT AnimalID, Cost, Comments FROM animaltest WHERE ID = ?", [tid]))
+        self.assertEqual(aid, t.ANIMALID)
+        self.assertEqual(4550, t.COST)
+        self.assertEqual("Imported", t.COMMENTS)
+        # Unknown names are refused, never created
+        self.assertTrue(call(animalid=str(aid), testtype="No such test", required="2024-11-01")[3].startswith("ERROR"))
+        self.assertTrue(call(sheltercode="NOSUCHCODE", testtype=testtype, required="2024-11-01")[3].startswith("ERROR"))
+        self.assertTrue(call(animalid=str(aid), testtype=testtype, result="No such result", required="2024-11-01")[3].startswith("ERROR"))
+
     def test_handler_log_email(self):
         dbo = base.get_dbo()
         # Create an owner record
