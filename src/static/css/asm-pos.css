@@ -316,9 +316,9 @@ html {
     cursor: pointer;
     /* display: none; */
     position: fixed;
-    top: 60px;
+    top: 0px;
     right: 0px;
-    border-top-left-radius: 20px;
+    /* border-top-left-radius: 20px; */
     border-bottom-left-radius: 20px;
 }
 
@@ -423,17 +423,16 @@ html {
     }
 }
 
-/* @media screen and (max-width:800px) and (hover:hover) {
-    #postopleftpanel {
-        background-color: yellow;
+@media screen and (max-width:800px) and (hover:hover) {
+    #mobilebalance {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        left: 0px;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: calc(100vw - 200px);
     }
-    #findreceipt {
-        display: none;
-    }
-    #findpad {
-        display: none !important;
-    }
-} */
+}
 
 @media screen and (max-width:800px) {
     html {
