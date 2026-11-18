@@ -22,6 +22,7 @@ import asm3.html
 import asm3.media
 import asm3.log
 import asm3.lostfound
+import asm3.medical
 import asm3.movement
 import asm3.onlineform
 import asm3.person
@@ -41,7 +42,7 @@ from asm3.typehints import Database, PostedData, Results, ResultRow, ServiceResp
 AUTH_METHODS = [
     "csv_import", "csv_mail", "csv_report", 
     "json_report", "json_mail", 
-    "html_report", "rss_timeline", "upload_animal_image", 
+    "html_report", "rss_timeline", "upload_animal_image", "add_test", 
     "xml_adoptable_animal", "json_adoptable_animal", "csv_adoptable_animal", 
     "xml_adoptable_animals", "json_adoptable_animals", "csv_adoptable_animals", 
     "xml_adopted_animals", "json_adopted_animals", "csv_adopted_animals",
@@ -972,6 +973,34 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.ADD_MEDIA)
         asm3.media.attach_file_from_form(dbo, username, asm3.media.ANIMAL, int(animalid), asm3.media.MEDIASOURCE_SERVICEUPLOAD, post)
         return ("text/plain", 0, 0, "OK")
+
+    elif method == "add_test":
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.ADD_TEST)
+        if animalid != 0:
+            a = asm3.animal.get_animal(dbo, animalid)
+        else:
+            a = asm3.animal.get_animal_sheltercode(dbo, post["sheltercode"])
+        if a is None:
+            return ("text/plain", 0, 0, "ERROR: No animal found with that animalid or sheltercode")
+        testtypeid = dbo.query_int("SELECT ID FROM testtype WHERE LOWER(TestName) = ?", [ post["testtype"].strip().lower() ])
+        if testtypeid == 0:
+            return ("text/plain", 0, 0, "ERROR: No test type called '%s'" % post["testtype"])
+        if post["result"] != "":
+            resultid = dbo.query_int("SELECT ID FROM testresult WHERE LOWER(ResultName) = ?", [ post["result"].strip().lower() ])
+            if resultid == 0:
+                return ("text/plain", 0, 0, "ERROR: No test result called '%s'" % post["result"])
+        else:
+            resultid = dbo.query_int("SELECT MIN(ID) FROM testresult")
+        ntestid = asm3.medical.insert_test_from_form(dbo, username, asm3.utils.PostedData({
+            "animal":   str(a.ID),
+            "type":     str(testtypeid),
+            "result":   str(resultid),
+            "required": post["required"],
+            "given":    post["given"],
+            "cost":     str(post.integer("cost")),
+            "comments": post["comments"]
+        }, dbo.locale))
+        return ("application/json", 0, 0, asm3.utils.json({ "id": ntestid, "animalid": a.ID }))
 
     elif method == "email_received_log":
         if not asm3.configuration.email_log(dbo):
