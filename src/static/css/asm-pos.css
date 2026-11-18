@@ -314,10 +314,11 @@ html {
     /* box-shadow: 1px 1px 2px 1px grey; */
     padding: 15px;
     cursor: pointer;
-    display: none;
+    /* display: none; */
     position: fixed;
-    top: 0px;
+    top: 60px;
     right: 0px;
+    border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
 }
 
@@ -326,7 +327,7 @@ html {
     /* box-shadow: 1px 1px 2px 1px grey; */
     padding: 15px;
     cursor: pointer;
-    display: none;
+    /* display: none; */
     position: fixed;
     top: 0px;
     left: 0px;
@@ -422,6 +423,18 @@ html {
     }
 }
 
+/* @media screen and (max-width:800px) and (hover:hover) {
+    #postopleftpanel {
+        background-color: yellow;
+    }
+    #findreceipt {
+        display: none;
+    }
+    #findpad {
+        display: none !important;
+    }
+} */
+
 @media screen and (max-width:800px) {
     html {
         max-height: none;
@@ -471,11 +484,11 @@ html {
         font-size: 100%;
     }
     #findpad {
-        display: inline-block;
+        /* display: inline-block; */
         z-index: 9999;
     }
     #findreceipt {
-        display: inline-block;
+        /* display: inline-block; */
         z-index: 9999;
     }
     #posmenupanel {

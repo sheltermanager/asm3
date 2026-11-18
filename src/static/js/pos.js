@@ -45,8 +45,8 @@ $(function() {
                 '<div id="posbarcodeinputoverlay">',
                     '<input readonly id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
                 '</div>',
-                // '<div id="findreceipt"><img src="static/images/icons/edit.png"></div>',
-                // '<div id="findpad"><img src="static/images/icons/accounts.png"></div>',
+                '<div id="findreceipt"><img src="static/images/icons/edit.png"></div>',
+                '<div id="findpad"><img src="static/images/icons/accounts.png"></div>',
                 '<div id="mobilebalance">0.00</div>',
                 '<div id="poscontainer" class="fullheight" style="background-color: #eeeeee;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
@@ -205,8 +205,8 @@ $(function() {
 
         update_layout: function() {
             if ($(window).width() > 800 || pos.mode == "idle") {
-                $("#findpad").hide();
-                $("#findreceipt").hide();
+                $("#findpad").addClass("hidden");
+                $("#findreceipt").addClass("hidden");
                 $("#mobilebalance").hide();
             } else {
                 $("#mobilebalance").show();
@@ -218,6 +218,22 @@ $(function() {
             } else {
                 $("#receipt").hide();
                 $("#numberpad").hide();
+                if ( pos.mode == "idle" ) {
+                    // Always hide receipt/numpad buttons when idle
+                    $("#findpad").addClass("hidden");
+                    $("#findreceipt").addClass("hidden");
+                    console.log("Idle - hiding");
+                } else if (window.matchMedia("(hover:hover)").matches) {
+                    // Show receipt/numpad buttons if not touch device
+                    $("#findpad").removeClass("hidden");
+                    $("#findreceipt").removeClass("hidden");
+                    console.log("Not touch device - showing");
+                } else {
+                    // Hide receipt/numpad buttons if touch device
+                    $("#findpad").addClass("hidden");
+                    $("#findreceipt").addClass("hidden");
+                    console.log("Touch device - hiding");
+                }
             }
         },
 
@@ -332,6 +348,8 @@ $(function() {
                 $("#posprintreceiptbutton").show();
                 $("#transactionpanel").hide();
                 $("#posmenupanel").show();
+                $("#findreceipt").addClass("hidden");
+                $("#findpad").addClass("hidden");
                 pos.update_layout();
             } else if (pos.mode == "fresh") { // Start of transaction
                 $("#poscontainer").removeClass("fullheight");
@@ -347,6 +365,8 @@ $(function() {
                 pos.numpadlocked = false;
                 $("#refundkey").removeClass("refund");
                 pos.refund = false;
+                // $("#findreceipt").removeClass("hidden");
+                // $("#findpad").removeClass("hidden");
                 pos.update_layout();
             } else if (pos.mode == "productselected") {
                 $("#postopleftpanel").removeClass("fullheight");
@@ -438,6 +458,7 @@ $(function() {
             });
             $("body").on("touchend", function(e) {
                 if ( $(window).width() > 800 ) { return; }
+                if ( pos.mode == "idle" ) { return; }
                 if (pos.endpos[0] - pos.startpos[0] > 75) {
                     $("#numberpad").toggle();
                 } else if (pos.endpos[0] - pos.startpos[0] < -75) {
@@ -928,27 +949,21 @@ $(function() {
                 $("#posbarcodeinput").css("z-index", -1);
             });
 
-            // $("#posstartbutton").on("click", function() {
-            //     $("#numberpad").toggle();
-            // });
-
-            // $("#posstartbutton").on("click", function() {
-            //     $("#receipt").toggle();
-            // });
-
-            // $("#findpad").click(function() {
-            //     $("#numberpad").toggle();
-            //     // document.querySelector('#cashbutton').scrollIntoView({
-            //     //     behavior: 'smooth'
-            //     // });
-            // });
+            $("#findpad").click(function() {
+                $("#numberpad").toggle();
+            });
 
             $("#findreceipt").click(function() {
                 $("#numberpad").hide();
-                $("#receipt").toggle();
-                document.querySelector('#receipt').scrollIntoView({
-                    behavior: 'smooth'
-                });
+                if ( $("#receipt").css("display") == "none" ) {
+                    $(".activeproducttype").click();
+                    $("#postopleftpanel").hide();
+                    $("#receipt").show();
+                } else {
+                    $(".activereceiptitem").find(".receiptitemdescription").click();
+                    $("#receipt").hide();
+                    $("#postopleftpanel").show();
+                }
             });
         },
 
