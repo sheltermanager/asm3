@@ -39,9 +39,6 @@ $(function() {
         render: function() {
             this.model();
             let s = [
-                '<audio id="asmposshortbeep"><source src="static/audio/shortbeep.mp3" type="audio/mpeg"></audio>',
-                '<audio id="asmposbeep"><source src="static/audio/beep.mp3" type="audio/mpeg"></audio>',
-                '<audio id="asmposnope"><source src="static/audio/nope.mp3" type="audio/mpeg"></audio>',
                 '<div id="posbarcodeinputoverlay">',
                     '<input readonly id="posbarcodeinput" type="text" placeholder="' + _("Waiting for barcode..") + '">',
                 '</div>',
@@ -118,16 +115,14 @@ $(function() {
                                 '<div id="balancelabel">' + _("Balance") + '</div>',
                                 '<div id="balance" data-balance="0">0.00</div>',
                             '</div>',
-                            // '<a name="numpad">',
                             '<table>',
                             '<tr><th colspan="4" id="numpadscreen"></th></tr>',
                             '<tr><td class="numeral">7</td><td class="numeral">8</td><td class="numeral">9</td><td id="deletekey">' + _("Del") + '</td></tr>',
                             '<tr><td class="numeral">4</td><td class="numeral">5</td><td class="numeral">6</td><td id="refundkey">-</td></tr>',
-                            '<tr><td class="numeral">1</td><td class="numeral">2</td><td class="numeral">3</td><td id="multiplykey">*</td></tr>',
+                            '<tr><td class="numeral">1</td><td class="numeral">2</td><td class="numeral">3</td><td id="multiplykey">X</td></tr>',
                             '<tr><td class="numeral">0</td><td class="numeral">00</td><td colspan="2" id="enterkey" class="voidkey">' + _("Void") + '</td></tr>',
-                            '<tr><td colspan="2" id="cardbutton">' + _("Card") + '</td><td colspan="2" id="cashbutton">' + _("Cash") + '</td></tr>',
+                            '<tr id="paymentrow"><td colspan="2" id="cardbutton">' + _("Card") + '</td><td colspan="2" id="cashbutton">' + _("Cash") + '</td></tr>',
                             '</table>',
-                            // '</a>',
                         '</div>',
                     '</div>',
                     
@@ -194,13 +189,13 @@ $(function() {
         },
 
         format_price: function(price) {
-            let formattedprice = (parseFloat(price) / 100.00).toFixed(2);
+            // let formattedprice = (parseFloat(price) / 100.00).toFixed(2);
                 // if (parseInt(price) > 100000000) {
                 //     return ( parseInt(formattedprice.split(".")[0]) / 1000000 ) + "M." + formattedprice.split(".")[1];
                 // } else if (parseInt(price) > 1000000) {
                 //     return ( parseInt(formattedprice.split(".")[0]) / 1000 ) + "K." + formattedprice.split(".")[1];
                 // }
-            return formattedprice;
+            return format.currency(price);
         },
 
         update_layout: function() {
@@ -267,15 +262,20 @@ $(function() {
             $("#balance").attr("data-balance", price);
             $("#balance").text(pos.format_price(price));
             $("#mobilebalance").text(pos.format_price(price));
-            $("#transactionlog").scrollTop($("#transactionlog").height());
+            // $("#transactionlog").scrollTop($("#transactionlog").height());
 
             $("#multiplykey").removeClass("multiply");
             pos.multiplier = 1;
+            $("#multiplykey").text("X");
 
             if (next) {
                 pos.mode = "next";
                 pos.update_mode();
             }
+
+            var beep = new Audio('static/audio/beep.mp3');
+            beep.play();
+
 
         },
 
@@ -365,16 +365,14 @@ $(function() {
                 pos.numpadlocked = false;
                 $("#refundkey").removeClass("refund");
                 pos.refund = false;
-                // $("#findreceipt").removeClass("hidden");
-                // $("#findpad").removeClass("hidden");
                 pos.update_layout();
             } else if (pos.mode == "productselected") {
                 $("#postopleftpanel").removeClass("fullheight");
                 $("#postopleftpanel").css("overflow", "auto");
-                $(".activeproducttype").get(0).scrollIntoView();
+                // $(".activeproducttype").get(0).scrollIntoView();
                 $("#postopleftpanel").css("max-height", "50vh");
                 $("#infopanel").show();
-                $("#infopanel").get(0).scrollIntoView();
+                // $("#infopanel").get(0).scrollIntoView();
                 if ($(window).width() <= 800) {
                     $("#numberpad").hide();
                 }
@@ -391,6 +389,7 @@ $(function() {
                 }
             } else if (pos.mode == "multiply") {
                 $("#multiplykey").addClass("multiply");
+                $("#multiplykey").text(pos.multiplier + " X ");
                 $("#numpadscreen").text("");
                 $("#producttypes").show();
                 $("#postopleftpanel").addClass("fullheight");
@@ -403,14 +402,19 @@ $(function() {
                     $("#receipt").hide();
                     $("#postopleftpanel").show();
                 }
+                $("#paymentrow").hide();
+            } else if (pos.mode == "editreceipt") {
+                $("#paymentrow").hide();
             } else if (pos.mode == "next") {
                 pos.multiplier = 1;
                 pos.activeproduct = {};
                 pos.activetaxrate = -1;
                 pos.activereceiptitem = false;
                 $("#multiplykey").removeClass("multiply");
+                $("#multiplykey").text("X");
                 $(".activeproducttype").removeClass("activeproducttype");
                 $("#producttypes").show();
+                $("#postopleftpanel").css("max-height", "");
                 $("#postopleftpanel").addClass("fullheight");
                 $("#infopanel").html("");
                 $("#infopanel").hide();
@@ -418,7 +422,7 @@ $(function() {
                 $("#enterkey").removeClass("cancelkey");
                 $("#enterkey").text(_("Void"));
                 $("#numpadscreen").text("");
-                
+                $("#paymentrow").show();
             }
             $("#posbarcodeinput").focus();
         },
@@ -440,9 +444,6 @@ $(function() {
 
         bind: function() {
             $("#posbarcodeinput").focus();
-            document.getElementById("asmposbeep").volume = 0.2;
-            document.getElementById("asmposshortbeep").volume = 0.2;
-            document.getElementById("asmposnope").volume = 0.2;
             $(window).resize(pos.update_layout);
             pos.update_mode();
             // pos.update_layout();
@@ -476,7 +477,9 @@ $(function() {
             });
             $(".producttype").click(function() {
                 if (pos.activetaxrate == -1) {
+                    // We are choosing a product type enroute to a specific product rather than a manual sale
                     if ($(this).hasClass("activeproducttype")) {
+                        // A product type is already selected, deselect it
                         pos.mode = "next";
                         pos.update_mode();
                         return;
@@ -538,6 +541,7 @@ $(function() {
                     pos.mode = "productselected";
                     pos.update_mode();
                 } else {
+                    // We are choosing a product type for a manual sale rather than enroute to a specific product
                     let taxrate = pos.activetaxrate;
                     let refund = 1;
                     if (pos.refund) { refund = -1; }
@@ -556,7 +560,6 @@ $(function() {
                             '</div>'
                         ].join("\n")
                     );
-                    document.getElementById("asmposbeep").play();
                     $("#numpadscreen").text("");
                     pos.activetaxrate = -1;
                     pos.update_subtotal();
@@ -576,7 +579,8 @@ $(function() {
                 }
             });
             $("#numberpad .numeral").mousedown(function() {
-                if (pos.numpadlocked) { return false; }
+                if ( pos.numpadlocked ) { return false; }
+                if ( $("#numpadscreen").text() == "0" ) { $("#numpadscreen").text(""); }
                 if (pos.numpadfocus) {
                     $("#numpadscreen").text($("#numpadscreen").text() + $(this).text());
                     if ($("#numpadscreen").text()) {
@@ -605,16 +609,23 @@ $(function() {
                     $("#enterkey").removeClass("voidkey");
                     $("#enterkey").text(_("Enter"));
                 }
+                if ( $("#numpadscreen").text() == "" ) {
+                    $("#numpadscreen").text("0");
+                }
             });
             $("#enterkey").click(function() {
                 if (pos.numpadlocked) { return false; }
                 if ( $("#enterkey").hasClass("cancelkey") ) {
+                    // Bale out of current sale
                     pos.update_mode("next");
                     return;
                 }
                 if (pos.numpadfocus && !$("#enterkey").hasClass("voidkey")) {
                     if ( pos.numpadfocus.hasClass("receiptitemquantity") ) {
-                        let quantity = parseInt($("#numpadscreen").text());
+                        // User is confirming a receipt item quantity change
+                        let refund = 1;
+                        if (pos.refund) { refund = -1; }
+                        let quantity = parseInt($("#numpadscreen").text()) * refund;
                         pos.numpadfocus.text(quantity);
                         let price = parseInt(pos.numpadfocus.attr("data-unitprice")) * quantity;
                         let taxrate = pos.numpadfocus.next().attr("data-taxrate");
@@ -625,6 +636,9 @@ $(function() {
                         pos.numpadfocus.next().next().attr("data-price", price);
                         pos.numpadfocus.next().next().text(pos.format_price(price));
                         pos.numpadfocus.css("border", "none");
+                        $(".activereceiptitem").removeClass("activereceiptitem");
+                        $("#refundkey").removeClass("refund");
+                        pos.refund = false;
                     }
                     $(".numpadtarget").removeClass("numpadtarget");
                     pos.numpadfocus = null;
@@ -705,35 +719,44 @@ $(function() {
                             ].join("\n")
                         );
                         pos.multiplier = 1;
+                        $("#paymentrow").show();
                         $("#numpadscreen").text("");
                         pos.update_subtotal(false);
-                        document.getElementById("asmposbeep").play();
                         return false;
                     }
                 });
 
             });
             $("#transactionpanel").on("click", ".receiptitemdescription", function() {
-                // if (!pos.numpadfocus) {
                 pos.activereceiptitem = $(this).closest(".receiptitemcontainer");
-                if (!pos.activereceiptitem) { return false; }
                 if (pos.activereceiptitem.hasClass("activereceiptitem")) {
+                    // Item is already selected, unselecting
                     pos.activereceiptitem.removeClass("activereceiptitem");
                     pos.activereceiptitem = false;
+                    $("#refundkey").removeClass("refund");
+                    pos.refund = false;
                     pos.numpadfocus = false;
-                    $("#numpadscreen").text("");
-                    $("#enterkey").addClass("voidkey");
-                    $("#enterkey").text(_("Void"));
+                    pos.update_mode("next");
                 } else {
+                    // The item is not the currently selected receipt item
                     $(".activereceiptitem").removeClass("activereceiptitem");
                     pos.activereceiptitem.addClass("activereceiptitem");
                     pos.numpadfocus = pos.activereceiptitem.find(".receiptitemquantity");
-                    $("#numpadscreen").text(pos.activereceiptitem.find(".receiptitemquantity").text());
+                    let receiptquantity = parseInt(pos.activereceiptitem.find(".receiptitemquantity").text());
+                    if ( receiptquantity < 0 ) {
+                        receiptquantity = receiptquantity * -1
+                        $("#refundkey").addClass("refund");
+                        pos.refund = true;
+                    } else {
+                        $("#refundkey").removeClass("refund");
+                        pos.refund = false;
+                    }
+                    $("#numpadscreen").text(receiptquantity);
                     if ( $(window).width() <= 800 ) {
                         $("#numberpad").show();
                     }
+                    pos.update_mode("editreceipt");
                 }
-                // }
             });
             $("#transactionpanel").on("click", ".paymentdescription", function() {
                 if (!pos.numpadfocus) {
@@ -810,13 +833,13 @@ $(function() {
             });
 
             $("#multiplykey").click(function() {
-                if (pos.numpadlocked) { return false; }
-                if (pos.mode == "multiply") {
+                if ( pos.numpadlocked || pos.activereceiptitem || pos.activetaxrate != -1 ) { return false; }
+                if ( pos.mode == "multiply" ) {
                     pos.mode = "next";
                     pos.update_mode();
                     return false;
                 }
-                if ($("#numpadscreen").text()) {
+                if ( $("#numpadscreen").text() ) {
                     pos.multiplier = parseInt($("#numpadscreen").text());
                     pos.mode = "multiply";
                     pos.update_mode();
@@ -833,6 +856,11 @@ $(function() {
                 } else {
                     $(this).addClass("refund");
                     pos.refund = true;
+                }
+                if ( pos.activereceiptitem ) {
+                    $("#enterkey").removeClass("voidkey");
+                    $("#enterkey").removeClass("cancelkey");
+                    $("#enterkey").text(_("Enter"));
                 }
             });
 
@@ -915,26 +943,23 @@ $(function() {
                     }
                     $("#posbarcodeinputoverlay").css("z-index", 9998);
                     $("#posbarcodeinput").css("z-index", 9999);
-                    if (e.keyCode == 13) {
+                    if ( e.keyCode == 13 ) {
                         console.log("Checking for barcode");
                         $.each(controller.products, function(i, v) {
+                            if ( !$("#posbarcodeinput").val() ) { return; }
                             if (v.BARCODE == $("#posbarcodeinput").val()) {
-                                console.log("Found barcode");
                                 $("#producttypes").find(".posbutton").first().click();
                                 let productid = v.ID;
-                                console.log(productid);
-                                // $(".productcontainer").find("[data-productid='" + productid + "']").click();
                                 $(".productcontainer[data-productid='" + productid + "']").click(); 
                                 $("#posbarcodeinput").val("");
                                 $("#posbarcodeinputoverlay").css("z-index", -1);
                                 $("#posbarcodeinput").css("z-index", -1);
-                                document.getElementById("asmposbeep").play();
                                 return false;
                             }
                             if (i == controller.products.length - 1) {
-                                console.log("Nope");
-                                document.getElementById("asmposnope").play();
                                 $("#posbarcodeinput").val("");
+                                var nope = new Audio('static/audio/nope.mp3');
+                                nope.play();
                             }
                         });
                     } else {

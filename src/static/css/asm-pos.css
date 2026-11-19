@@ -34,6 +34,9 @@ html {
 
 #receipt {
     display: block;
+    min-height: calc(100vh - 800px);
+    max-height: calc(100vh - 800px);
+    overflow: auto;
 }
 
 #numberpad {
@@ -205,7 +208,7 @@ html {
     margin-bottom: 5px;
 }
 
-#productsheader .productinfodescription {
+#productsheader div {
     display: table-cell;
     vertical-align: middle;
 }
@@ -226,9 +229,9 @@ html {
     background-color: black;    
 }
 
-#transactionlog {
+/* #transactionlog {
     max-height: calc(100vh - 800px);
-}
+} */
 
 #enterkey {
     background-color: green;
@@ -268,7 +271,7 @@ html {
 
 #postopleftpanel {
     height: 50vh;
-    max-height: 50vh;
+    min-height: 50vh;
     overflow: auto;
 }
 
@@ -285,11 +288,12 @@ html {
     background-color: #ffffff;
     max-width: 800px;
     min-width: 800px;
-    height: 100vh;
+    min-height: 100vh;
     max-height: 100vh;
     border: 1px;
     position: relative;
     display: none;
+    overflow: auto;
 }
 
 #numberpad table {
@@ -380,7 +384,8 @@ html {
     /* #numberpad td {
         font-size: 150%;
     } */
-    #transactionlog {
+    #receipt {
+        min-height: calc(100vh - 500px);
         max-height: calc(100vh - 500px);
     }
     /* #producttypes, #taxrates {
@@ -423,6 +428,7 @@ html {
     }
 }
 
+/* Small screen without touch support */
 @media screen and (max-width:800px) and (hover:hover) {
     #mobilebalance {
         border-bottom-left-radius: 20px;
@@ -431,25 +437,38 @@ html {
         margin-left: auto;
         margin-right: auto;
         max-width: calc(100vw - 200px);
+        text-align: center;
+    }
+    #poscontainer, #posbarcodeinputoverlay {
+        display: block;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        max-height: 100vh !important;
+    }
+    #infopanel {
+        max-height: 50vh !important;
     }
 }
 
+/* All small screens */
 @media screen and (max-width:800px) {
     html {
         max-height: none;
     }
     #postopleftpanel {
         /* min-height: 100vh; */
-        max-height: 100vh;
+        max-height: 90vh;
         overflow: auto;
     }
     #infopanel {
-        max-height: 50vh;
+        max-height: 40vh;
         min-height: 0;
     }
-    #poscontainer {
+    #poscontainer, #posbarcodeinputoverlay {
         display: block;
-        height: auto;
+        height: 90vh;
+        min-height: 90vh;
+        max-height: 90vh;
     }
     #transactionpanel {
         width: 100%;
@@ -468,8 +487,11 @@ html {
         width: 100%;
         border-top: 2px solid black;
         background-color: white;
+        min-height: 0;
+        max-height: auto;
     }
-    #transactionlog {
+    #transactionpanel {
+        min-height: 0;
         max-height: none;
     }
     #producttypes, #taxrates {

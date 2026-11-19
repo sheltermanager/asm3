@@ -5,7 +5,7 @@ ASM provides a simple, flexible point of sale interface to allow users to accept
 for goods and services with automatic record keeping and stock management.
 
 This interface was designed with touch enabled devices in mind but can also be used on a 
-desktop PC with a display at least 800px wide.
+desktop PC.
 
 To access this interface, follow the "Point of Sale" link under the stock menu.
 
@@ -24,7 +24,7 @@ database where they can be analysed using custom reports.
 Using Mobile Devices with Small Screens
 ---------------------------------------
 
-If you are using the POS interface on a screen less than 800px wide, the embedded number pad and receipt are hidden unless needed to make best use of the screen space available.
+If you are using the POS interface on a touch enabled screen less than 800px wide, the embedded number pad and receipt are hidden unless needed to make best use of the screen space available.
 
 Swiping right will toggle the number pad and swiping left will toggle the receipt.
 
@@ -64,6 +64,8 @@ A product can be selected manually by:
 Alternatively the process can be streamlined by using an external barcode scanner. Assuming 
 that the product's barcode is recorded on it's product record. Simply scan the barcode and 
 the product will be added to the sale.
+
+.. note:: We have tested this system using the "Tera D5100 Wireless 1D/2D Barcode Scanner" which we understand to be typical.
 
 Selling Managed Products in Bulk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
