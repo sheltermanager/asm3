@@ -24,9 +24,11 @@ database where they can be analysed using custom reports.
 Using Mobile Devices with Small Screens
 ---------------------------------------
 
-If you are using the POS interface on a touch enabled screen less than 800px wide, the embedded number pad and receipt are hidden unless needed to make best use of the screen space available.
+If you are using the POS interface on a screen less than 800px wide, the embedded number pad and receipt are hidden unless needed to make best use of the screen space available.
 
-Swiping right will toggle the number pad and swiping left will toggle the receipt.
+On touch enabled devices, swiping right will toggle the number pad and swiping left will toggle the receipt.
+
+On non-touch enabled devices a button in the top left will toggle the receipt and a button in the top right will toggle the number pad.
 
 Processing a sale
 -----------------
