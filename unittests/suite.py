@@ -105,6 +105,7 @@ fullsuite = [
     lt(unittests.test_onlineform),
     lt(unittests.test_paymentprocessor),
     lt(unittests.test_person),
+    lt(unittests.test_petnecto),
     lt(unittests.test_publish),
     lt(unittests.test_reports),
     lt(unittests.test_search),
