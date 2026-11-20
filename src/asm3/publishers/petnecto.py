@@ -11,6 +11,7 @@ import re
 import requests
 import sys
 import time
+import unicodedata
 import urllib.parse
 
 # Only these fields are ever sent to Petnecto. None of them is personal data: no owner, adopter,
@@ -24,7 +25,6 @@ PETNECTO_FIELDS = (
 
 SHELTER_ID_RE = re.compile(r"^sh_[A-Za-z0-9_-]{1,80}$")
 TOKEN_RE = re.compile(r"^pnp_[A-Za-z0-9_-]{43}$")
-EMAIL_RE = re.compile(r"[^\s@<>()]{1,64}@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
 CODE_BAD_RE = re.compile(r"[^A-Za-z0-9._-]")
 
 MAX_PHOTOS = 8
@@ -65,12 +65,153 @@ def yes_no_unknown(v: Any) -> str:
     if v == 1: return "no"
     return "unknown"
 
+# -- contact details out of the description ----------------------------------------------------------
+#
+# No email address, phone number or social handle that a shelter typed into an animal's description is sent: the listing
+# on Petnecto links back to the shelter instead. Cutting out just the address leaves broken prose ("Questions? Write to  and
+# we will reply."), so the unit removed is the SENTENCE that carries the detail, or only a bracketed aside when the rest of
+# the sentence stands alone. A sentence whose address was already cut out ("Write to  and we will reply", "Email:  or") goes
+# too, and so does a short lead-in that pointed at a dropped sentence ("Questions?", "To adopt:"). Paragraph breaks are kept.
+#
+# Detection reads the text in NFKC form (so full-width digits and the full-width @ count); what is kept is the shelter's own
+# text, unchanged. Every pattern is bounded (no nested open-ended repetition), so a hostile description cannot make the
+# regular expression engine backtrack for long. Python's re has no \p{L}: [^\W_] is a letter or digit, [^\W\d_] a letter.
+
+_LN = r"[^\W_]"                     # a letter or a digit
+_LNH = r"(?:[^\W_]|-)"              # a letter, a digit or a hyphen
+_LET = r"[^\W\d_]"                  # a letter
+_AT = r"(?:\s*[(\[{]\s*at\s*[)\]}]\s*|\s+at\s+)"
+_DOT = r"(?:\s*[(\[{]\s*dot\s*[)\]}]\s*|\s+dot\s+|\.)"
+_TLD = r"(?:com|org|net|edu|gov|info|us|ca|uk|au|nz|ie|de|fr|es|it|nl|jp|tw|io|co)"
+
+CONTACT_DETAILS = (
+    # an email address
+    re.compile(r"[\w.%+-]{1,64}@" + _LNH + r"{1,63}(?:\." + _LNH + r"{1,63}){0,4}\." + _LET + r"{2,24}"),
+    # an address written with "at" and "dot": jane at example dot com, jane(at)example[dot]org
+    re.compile(r"(?<!" + _LN + r")[\w.%+-]{1,64}" + _AT + _LNH + r"{1,63}(?:" + _DOT + _LNH + r"{1,63}){0,3}" + _DOT + _TLD + r"(?!" + _LN + r")", re.I),
+    # a North American phone number
+    re.compile(r"(?<!\d)(?:\+?1[\s.-]{0,2})?\(?\d{3}\)?[\s.-]{0,2}\d{3}[\s.-]{0,2}\d{4}(?!\d)"),
+    # 10 to 15 digits with separators: phone numbers anywhere (and microchip numbers)
+    re.compile(r"(?<!\d)(?:\+\d{1,3}[\s.-]{0,2})?(?:\d[\s.()-]{0,2}){9,14}\d(?!\d)"),
+    # a short local number after a word that asks for a call: "call 555-0100"
+    re.compile(r"(?<!" + _LET + r")(?:call|text|phone|tel|telephone|ring|whatsapp|mobile|cell|line)(?!" + _LET + r")[^.!?\n。！？]{0,24}?\d[\d\s.()-]{5,16}\d", re.I),
+    # a social handle
+    re.compile(r"(?<![\w.@])@[A-Za-z0-9_][A-Za-z0-9_.]{1,28}[A-Za-z0-9_](?![\w@])"),
+    # a messaging, mailto or tel link
+    re.compile(r"(?<!" + _LET + r")(?:wa\.me|m\.me|t\.me|line\.me)/\S{1,80}|mailto:\S{1,200}|tel:\+?[\d-]{3,20}", re.I),
+)
+
+# What is left after someone else cut the address out: a contact verb whose object is gone.
+_L = r"(?<!" + _LET + r")"
+_NEXT = r"\s*(?=$|[,.;:!?)\]。！？、，]|(?:and|or|for|if|with|today|anytime|now|soon|to|y|o|para|et|ou|pour|und|oder)(?!" + _LET + r"))"
+ORPHANED_CONTACTS = (
+    re.compile(_L + r"(?:write|e-?mail|mail|message|contact|reach|call|text|phone|ring|dm|whatsapp)(?:\s+(?:us|me|them|her|him|jane|our team|the shelter))?\s+(?:to|at|on|via|through)" + _NEXT, re.I),
+    re.compile(_L + r"(?:e-?mail|phone|tel|telephone|mobile|cell|contact|whatsapp|line id|correo|t[ée]l[ée]phone|telefon|kontakt)\s*:" + _NEXT, re.I),
+    re.compile(_L + r"(?:escr[ií]b(?:e|enos|eme|anos)|ll[aá]m(?:a|anos|enos)|contact(?:a|anos|enos))\s+(?:a|al)" + _NEXT, re.I),
+    re.compile(_L + r"(?:[ée]cri(?:vez|s)|appelez|contactez)(?:-(?:nous|moi))?\s+(?:à|au)" + _NEXT, re.I),
+    re.compile(_L + r"(?:schreib(?:en|t)?|ruf(?:en|t)?)(?:\s+(?:sie|uns|mir))*\s+(?:an|unter)" + _NEXT, re.I),
+)
+LEAD_IN = re.compile(r"^[^.!?。！？]{1,40}[?:？：]\s*$")
+ASIDE = re.compile(r"\s*[(\[（][^()\[\]（）]{0,200}[)\]）]")
+
+def has_contact(s: str) -> bool:
+    """ True when the text carries an email address, a phone number, a handle or a contact link. """
+    n = unicodedata.normalize("NFKC", s)
+    return any(r.search(n) for r in CONTACT_DETAILS)
+
+def is_orphaned(s: str) -> bool:
+    """ True when the text holds a contact verb whose address was already cut out ("Write to  and we will reply") """
+    n = unicodedata.normalize("NFKC", s)
+    return any(r.search(n) for r in ORPHANED_CONTACTS)
+
+def is_lead_in(s: str) -> bool:
+    """ A short lead-in that only points at what follows: "Questions?", "To adopt:" """
+    return LEAD_IN.match(s) is not None and len(s.split()) <= 4
+
+def sentences(line: str) -> List[str]:
+    """
+    One line cut into sentences. A full stop only ends a sentence before a space or the end of the line, so "jane@x.org"
+    and "12.5 kg" stay whole; the CJK stops end one at once.
+    """
+    out = []
+    start = 0
+    i = 0
+    n = len(line)
+    while i < n:
+        c = line[i]
+        if c in "。！？":
+            j = i + 1
+            while j < n and (line[j].isspace() or line[j] in "」』）)\"'”’"): j += 1
+            out.append(line[start:j])
+            start = j
+            i = j
+            continue
+        if c in ".!?":
+            j = i + 1
+            while j < n and line[j] in ".!?": j += 1
+            while j < n and line[j] in "\"'”’)]": j += 1
+            if j >= n or line[j].isspace():
+                while j < n and line[j].isspace(): j += 1
+                out.append(line[start:j])
+                start = j
+            i = j
+            continue
+        i += 1
+    if start < n: out.append(line[start:])
+    return out
+
+def without_aside(s: str) -> Any:
+    """ The sentence with a bracketed aside that carries the detail taken out, or None if the sentence must go as a whole """
+    changed = [False]
+    def drop(m: Any) -> str:
+        if has_contact(m.group(0)) or is_orphaned(m.group(0)):
+            changed[0] = True
+            return ""
+        return m.group(0)
+    t = ASIDE.sub(drop, s)
+    if not changed[0]: return None
+    tidy = re.sub(r"[ \t]{2,}", " ", re.sub(r"\s+([,.;:!?。！？、，])", r"\1", t))
+    if has_contact(tidy) or is_orphaned(tidy) or re.sub(r"[.!?。！？\s]", "", tidy) == "": return None
+    return tidy
+
+def clean_line(line: str) -> str:
+    kept = []
+    for s in sentences(line):
+        if not has_contact(s) and not is_orphaned(s):
+            kept.append(s)
+            continue
+        aside = without_aside(s)
+        if aside is not None:
+            kept.append(aside)
+            continue
+        # the sentence goes, and so does a short lead-in that only pointed at it ("Questions?", "To adopt:")
+        if len(kept) > 0 and is_lead_in(kept[-1]): kept.pop()
+    return re.sub(r"\s+([,.;:!?])", r"\1", re.sub(r"[ \t]{2,}", " ", "".join(kept))).strip()
+
+def drop_contacts(text: str) -> str:
+    """ The text without any contact detail, as clean prose. A paragraph break stays one; a line left empty goes. """
+    if not text: return ""
+    out = []
+    for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n"):
+        if line.strip() == "":
+            if len(out) > 0 and out[-1] != "": out.append("")
+            continue
+        c = clean_line(line)
+        if c != "": out.append(c)
+        elif len(out) > 0 and is_lead_in(out[-1]): out.pop() # "To adopt:" over a line that went
+    while len(out) > 0 and out[-1] == "": out.pop()
+    return "\n".join(out)
+
 def clean_text(s: Any) -> Tuple[str, bool]:
-    """ Normalises line endings and removes email addresses. Returns the text and whether an address was removed. """
+    """
+    Normalises line endings and takes out every sentence that carries a contact detail. Returns the text and whether
+    anything was taken out. Each sentence left is free of contact details; if the joined text still reads as one (a number
+    split across two sentences), the description is not sent at all rather than sent with it.
+    """
     s = asm3.utils.nulltostr(s).replace("\r\n", "\n").replace("\r", "\n").strip()
-    removed = EMAIL_RE.search(s) is not None
-    if removed: s = EMAIL_RE.sub("", s).strip()
-    return s, removed
+    t = drop_contacts(s)
+    if has_contact(t): t = ""
+    return t, t != s and (has_contact(s) or is_orphaned(s))
 
 class PetnectoPublisher(AbstractPublisher):
     """
@@ -130,7 +271,7 @@ class PetnectoPublisher(AbstractPublisher):
     def processAnimal(self, an: ResultRow, status: str = "adoptable") -> Dict:
         """ Processes an animal record and returns the dictionary to upload as JSON. """
         description, removed = clean_text(an.WEBSITEMEDIANOTES)
-        if removed: self.log("%s: an email address was removed from the description before sending" % an.SHELTERCODE)
+        if removed: self.log("%s: contact details were taken out of the description before sending" % an.SHELTERCODE)
         sex = asm3.utils.nulltostr(an.SEXNAME).lower()
         if sex not in ("male", "female"): sex = "unknown"
         dob = asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d") if an.DATEOFBIRTH is not None else None
