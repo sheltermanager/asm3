@@ -10,7 +10,8 @@ import os, shutil, subprocess, sys
 ROOT = os.path.dirname(os.path.abspath(__file__)) + os.sep + ".." + os.sep
 FILE = ROOT + "src/asm3/publishers/petnecto.py"
 
-# [name, [(exact text, replacement), ...], a test name that must fail]
+# [name, [(exact text, replacement), ...], a test name (or a subTest label) that must fail]
+TIMEOUT = 600 # seconds for one run of the suite
 MUTATIONS = [
     ("redirects are followed with the token", [("allow_redirects = False", "allow_redirects = True")], "test_run_posts_every_animal_with_the_token"),
     ("no timeout on the request", [("timeout = TIMEOUT, ", "")], "test_run_posts_every_animal_with_the_token"),
@@ -18,7 +19,20 @@ MUTATIONS = [
     ("personal data is not stripped from the rows", [("strip_personal_data = True", "strip_personal_data = False")], "test_rows_are_stripped_before_use"),
     ("an owner field is added to what is sent", [("            \"status\":               status\n", "            \"status\":               status, \"owner\": an.CURRENTOWNERNAME\n"), ("        assert tuple(data.keys()) == PETNECTO_FIELDS", "")], "test_process_animal_sends_only_the_listed_fields"),
     ("hidden details are sent as the description (rows not stripped)", [("strip_personal_data = True", "strip_personal_data = False"), ("clean_text(an.WEBSITEMEDIANOTES)", "clean_text(an.HIDDENANIMALDETAILS + an.WEBSITEMEDIANOTES)")], "test_nothing_personal_is_sent"),
-    ("email addresses stay in the description", [("    removed = EMAIL_RE.search(s) is not None\n    if removed: s = EMAIL_RE.sub(\"\", s).strip()", "    removed = False")], "test_email_removed_from_description"),
+    ("the description is sent as written", [("description, removed = clean_text(an.WEBSITEMEDIANOTES)", "description, removed = asm3.utils.nulltostr(an.WEBSITEMEDIANOTES), True")], "test_contact_sentence_removed_from_description"),
+    ("tidied text is reported as a removal", [("    return t, t != s and (has_contact(s) or is_orphaned(s))", "    return t, t != s")], "test_clean_text"),
+    # the contact strip: each guard against the case that needs it (the label of a subTest in TestContactStrip)
+    ("orphans: an address cut out earlier leaves its sentence", [("    return any(r.search(n) for r in ORPHANED_CONTACTS)", "    return False")], "C1 a leftover from an earlier email strip"),
+    ("sentences: a full stop inside an address ends a sentence", [("            if j >= n or line[j].isspace():", "            if True:")], "C1 the same sentence with the address still in it"),
+    ("detect: phone numbers are not looked for", [("    return any(r.search(n) for r in CONTACT_DETAILS)", "    return any(r.search(n) for r in CONTACT_DETAILS[:2] + CONTACT_DETAILS[5:])")], "C4 a North American phone with +1"),
+    ("detect: 'at ... dot' addresses are not looked for", [("    return any(r.search(n) for r in CONTACT_DETAILS)", "    return any(r.search(n) for r in CONTACT_DETAILS[:1] + CONTACT_DETAILS[2:])")], "C3 an address written with at and dot"),
+    ("detect: handles are not looked for", [("    return any(r.search(n) for r in CONTACT_DETAILS)", "    return any(r.search(n) for r in CONTACT_DETAILS[:5] + CONTACT_DETAILS[6:])")], "C6 a social handle"),
+    ("detect: full-width characters are read as they are", [("    n = unicodedata.normalize(\"NFKC\", s)\n    return any(r.search(n) for r in CONTACT_DETAILS)", "    n = s\n    return any(r.search(n) for r in CONTACT_DETAILS)")], "C4 a full-width Japanese phone number"),
+    ("lead-in: 'Questions?' is left pointing at nothing", [("        if len(kept) > 0 and is_lead_in(kept[-1]): kept.pop()\n", "")], "C8 the lead-in before a dropped sentence goes"),
+    ("lead-in: a line-long lead-in stays", [("elif len(out) > 0 and is_lead_in(out[-1]): out.pop()", "elif False: out.pop()")], "C8 paragraphs stay apart"),
+    ("aside: a bracketed detail takes the whole sentence", [("        if aside is not None:\n            kept.append(aside)\n            continue\n", "")], "C7 a bracketed aside keeps the sentence"),
+    ("bounds: the 'at ... dot' pattern repeats without limit", [("(?:\" + _DOT + _LNH + r\"{1,63}){0,3}\" + _DOT", "(?:\\s*\" + _DOT + r\"?\\s*[\\w.-]+)*\" + _DOT")], "H1 hostile input does not make the patterns backtrack"),
+    ("a number split across sentences is sent", [("    if has_contact(t): t = \"\"\n", "")], "H4 a number split across two sentences"),
     ("a refused token does not stop the run", [("                    fatal = True\n                    break\n                elif status == 429:", "                elif status == 429:")], "test_a_refused_token_stops_the_run_at_once_and_is_never_logged"),
     ("the token reaches the log", [("AbstractPublisher.logError(self, redact(msg, self.token), None)", "AbstractPublisher.logError(self, msg + ' ' + self.token, None)"), ("AbstractPublisher.log(self, redact(msg, self.token))", "AbstractPublisher.log(self, msg)")], "test_a_refused_token_stops_the_run_at_once_and_is_never_logged"),
     ("animals that left are put on hold, never removed", [("if an.DECEASEDDATE is not None or an.ACTIVEMOVEMENTDATE is not None: status = \"removed\"", "pass")], "test_adopted_animal_is_taken_down_once"),
@@ -51,14 +65,25 @@ def main():
             s = original
             missing = False
             for a, b in edits:
-                if a not in s: missing = True; break
+                if a not in s:
+                    missing = True
+                    break
                 s = s.replace(a, b, 1)
             if missing:
-                print("BROKEN  %s: the text to mutate was not found" % name); bad += 1; continue
+                print("BROKEN  %s: the text to mutate was not found" % name)
+                bad += 1
+                continue
             ran += 1
             open(FILE, "w").write(s)
             shutil.copy(ROOT + "scripts/unittestdb/base.db", ROOT + "scripts/unittestdb/test.db")
-            r = subprocess.run([sys.executable, "-m", "unittest", "unittests.test_petnecto"], cwd = ROOT, capture_output = True, text = True)
+            try:
+                r = subprocess.run([sys.executable, "-m", "unittest", "unittests.test_petnecto"], cwd = ROOT, capture_output = True, text = True, timeout = TIMEOUT)
+            except subprocess.TimeoutExpired:
+                # a runaway pattern can hang the suite: that counts as caught only for the test that guards against it
+                caught = test.startswith("H1")
+                print("%s  %s (timed out)" % ("CAUGHT" if caught else "MISSED", name))
+                if not caught: bad += 1
+                continue
             out = r.stdout + r.stderr
             failed = [ l for l in out.split("\n") if l.startswith(("FAIL:", "ERROR:")) ]
             caught = r.returncode != 0 and any(test in l for l in failed)

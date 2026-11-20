@@ -1,5 +1,7 @@
 
 import json
+import re
+import time
 import unittest
 from unittest import mock
 from unittests import base
@@ -24,7 +26,8 @@ URL = "https://petnecto.example.org"
 # Strings that are personal data or private notes. None of them may ever appear in what is sent.
 SECRETS = [
     "SECRET-HIDDEN-DETAILS", "SECRET-REASON", "SECRET-WARNING", "SECRET-PICKUP", "977123123456789",
-    "Dirk", "Diggler", "10 Downing Street", "SW1 2ER", "07734 567890", "dirk@diggler.com", "secret@shelter.example"
+    "Dirk", "Diggler", "10 Downing Street", "SW1 2ER", "07734 567890", "dirk@diggler.com", "secret@shelter.example",
+    "555-0100", "adopt@shelter.example"
 ]
 
 class FakeResponse:
@@ -73,7 +76,7 @@ class TestPetnecto(unittest.TestCase):
             },
             {
                 "animalname": "Secondio", "estimatedage": "1", "animaltype": "1", "entryreason": "1", "breed1": "1", "breed2": "1", "species": "1",
-                "comments": "Another good dog.", "dateofbirth": "01/01/2021", "basecolour": "1"
+                "comments": "Another good dog.\nQuestions? Call (417) 555-0100 or write to adopt@shelter.example.", "dateofbirth": "01/01/2021", "basecolour": "1"
             }
         ]
         f = open(base.PATH + "../src/media/reports/nopic.jpg", "rb")
@@ -149,13 +152,15 @@ class TestPetnecto(unittest.TestCase):
             self.assertEqual("", r.ORIGINALOWNERNAME)
             self.assertEqual("", r.BROUGHTINBYOWNERNAME)
 
-    def test_email_removed_from_description(self):
+    def test_contact_sentence_removed_from_description(self):
         p = self.publisher()
-        r = [ x for x in self.ours(p.getAnimals()) if x.ANIMALNAME == "Petnectio" ][0]
-        d = p.processAnimal(r)
-        self.assertNotIn("@", d["description"])
-        self.assertIn("A friendly dog.", d["description"])
-        self.assertIn("an email address was removed", "\n".join(p.logBuffer))
+        rows = self.ours(p.getAnimals())
+        d = p.processAnimal([ x for x in rows if x.ANIMALNAME == "Petnectio" ][0])
+        self.assertEqual("A friendly dog.", d["description"])
+        self.assertIn("contact details were taken out", "\n".join(p.logBuffer))
+        # the lead-in "Questions?" goes with the sentence it pointed at, and nothing like "write to  and" is left
+        d = p.processAnimal([ x for x in rows if x.ANIMALNAME == "Secondio" ][0])
+        self.assertEqual("Another good dog.", d["description"])
 
     def test_good_with_and_basic_fields(self):
         p = self.publisher()
@@ -181,9 +186,11 @@ class TestPetnecto(unittest.TestCase):
         self.assertEqual("", p.cleanCode(None))
 
     def test_clean_text(self):
-        t, removed = asm3.publishers.petnecto.clean_text("a\r\nb\rc x@y.org")
-        self.assertEqual(("a\nb\nc", True), (t, removed))
-        self.assertEqual(("", False), asm3.publishers.petnecto.clean_text(None))
+        f = asm3.publishers.petnecto.clean_text
+        self.assertEqual(("a\nb", True), f("a\r\nb\rc x@y.org"))
+        self.assertEqual(("", False), f(None))
+        self.assertEqual(("A calm cat.\n\nShe purrs.", False), f(" A calm cat.\r\n\r\nShe purrs. "))
+        self.assertEqual(("A calm  cat.".replace("  ", " "), False), f("A calm  cat.")) # tidied, but nothing was taken out
 
     def test_base_url_problem(self):
         f = asm3.publishers.petnecto.base_url_problem
@@ -320,7 +327,8 @@ class TestPetnecto(unittest.TestCase):
         self.dbo.execute("UPDATE animal SET ShelterCode = 'X Y/2' WHERE ID = %d" % self.animals[0][0])
         fake = FakePetnecto()
         self.run_publisher(fake)
-        codes = sorted([ c["body"]["shelter_code"] for c in fake.posts() ])
+        # only our two animals: in the full suite, other tests leave adoptable animals in the same database
+        codes = sorted([ c["body"]["shelter_code"] for c in fake.posts() if c["body"]["name"] in ("Petnectio", "Secondio") ])
         self.assertEqual(["A-B-1", "X-Y-2"], codes)
         data = { "animal": int(self.animals[1][0]), "person": self.pnid, "movementdate": base.today_display(), "type": "1" }
         self.mid = asm3.movement.insert_movement_from_form(self.dbo, "test", asm3.utils.PostedData(data, "en"))
@@ -372,3 +380,90 @@ class TestPetnecto(unittest.TestCase):
             self.assertEqual(0, len(fake.calls), message)
             self.assertIn(message, "\n".join(p.logBuffer))
             self.assertNotIn(TOKEN, "\n".join(p.logBuffer))
+
+# The contact strip, case by case. The same fixtures Petnecto's own receiving side is tested with, so the two agree.
+# [label, description as the shelter wrote it, what is sent]. unittests/petnecto_negctl.py names these labels.
+CONTACT_CASES = [
+    ("C1 a leftover from an earlier email strip", "Pickle is a bouncy young terrier cross. Lots of energy, learns fast. Questions? Write to  and we will reply.", "Pickle is a bouncy young terrier cross. Lots of energy, learns fast."),
+    ("C1 the same sentence with the address still in it", "Pickle is a bouncy young terrier cross. Questions? Write to jane.doe+dogs@example.org and we will reply.", "Pickle is a bouncy young terrier cross."),
+    ("C2 'email me at' and a phone in one sentence", "Email me at jane.doe@example.org or call (417) 555-0100. Biscuit loves naps.", "Biscuit loves naps."),
+    ("C2 several addresses", "Contacts: a@x.com, b@y.org; c@z.net. Sweet dog, house-trained.", "Sweet dog, house-trained."),
+    ("C3 an address written with at and dot", "Rosie is shy at first. Reach Jane at jane at example dot com.", "Rosie is shy at first."),
+    ("C3 an address written with (at) and [dot]", "Ask for jane(at)example[dot]org! Rosie loves toys.", "Rosie loves toys."),
+    ("C4 a North American phone with +1", "Call +1 417.555.0100 today. Max is 4.", "Max is 4."),
+    ("C4 an international phone", "Milo is calm. Ring +44 20 7946 0958 for a visit.", "Milo is calm."),
+    ("C4 a short local number after 'call'", "Call 555-0100 to meet her. She is sweet.", "She is sweet."),
+    ("C4 a full-width Japanese phone number", "もちは人懐っこい子猫です。電話は０９０－１２３４－５６７８まで。抱っこが大好きです。", "もちは人懐っこい子猫です。抱っこが大好きです。"),
+    ("C5 an email in Japanese text", "もちは人懐っこい子猫です。連絡はmochi@example.jpまで。抱っこが大好きです。", "もちは人懐っこい子猫です。抱っこが大好きです。"),
+    ("C5 Spanish, address and leftover", "Luna es muy cariñosa. Escríbenos a luna@refugio.org y te respondemos.", "Luna es muy cariñosa."),
+    ("C5 Spanish leftover only", "Luna es muy cariñosa. Escríbenos a  y te respondemos.", "Luna es muy cariñosa."),
+    ("C5 French leftover", "Félix adore les câlins. Écrivez-nous à  pour plus d'infos.", "Félix adore les câlins."),
+    ("C5 German leftover", "Bello ist verspielt. Schreiben Sie uns an  und wir antworten.", "Bello ist verspielt."),
+    ("C5 Arabic with a phone", "قطة لطيفة وهادئة. اتصل على 0501234567.", "قطة لطيفة وهادئة."),
+    ("C5 Arabic with Arabic-Indic digits", "قطة لطيفة وهادئة. اتصل على ٠٥٠١٢٣٤٥٦٧.", "قطة لطيفة وهادئة."),
+    ("C5 Chinese (Taiwan) with a mobile number", "小黑很親人。請來電 0912-345-678。喜歡散步。", "小黑很親人。喜歡散步。"),
+    ("C6 a social handle", "Follow her on Instagram @mochi_the_cat! She is 2.", "She is 2."),
+    ("C6 a WhatsApp link and a mailto", "Message wa.me/14175550100 now. Or mailto:jane@example.org. Calm dog.", "Calm dog."),
+    ("C7 a bracketed aside keeps the sentence", "Mochi (ask Jane, 417-555-0100) loves laps.", "Mochi loves laps."),
+    ("C7 'Email:' with the address gone", "Biscuit is great with kids. Email:  or phone: .", "Biscuit is great with kids."),
+    ("C8 paragraphs stay apart; an emptied line goes", "Daisy is three.\n\nTo adopt:\nwrite to daisy@example.org\n\nShe loves the beach.", "Daisy is three.\n\nShe loves the beach."),
+    ("C8 the lead-in before a dropped sentence goes", "Interested? Text 417-555-0100. Daisy is three.", "Daisy is three."),
+    ("C9 nothing left at all", "Email jane@example.org.", ""),
+]
+
+# Text with no contact detail in it, which must be sent exactly as written.
+CONTACT_KEEP = [
+    "Born 2024-05-21, weighs 12.5 kg. She sits at the door and waits. Adoption fee $150.",
+    "Call her name and she comes running. Contact with other dogs is fine. Reach out to us and we will help.",
+    "Questions? Is she a good fit for your family? She is house-trained.",
+    "Rex is 10 to 12 years old, at home with cats, and good on a lead.",
+    "もちは人懐っこい子猫です。抱っこが大好きで、ほかの猫とも仲良くできます。Mochi is a friendly kitten who loves to be held.",
+    "Luna es muy cariñosa y tranquila. Félix adore les câlins. Bello ist verspielt.",
+    "Her intake number is A-2026/004. She was found on 3 May.",
+    "Mishmish (مشمش) is gentle. «Il adore jouer», says his foster.",
+]
+
+# Clean prose: no double space, no space before punctuation, no dangling "and" or "to", no space at either end
+UNCLEAN = re.compile(r" {2}| [,.;:!?]|\b(?:and|or|to|at)\s*[.!?]?$|^\s|\s$")
+
+class TestContactStrip(unittest.TestCase):
+
+    def test_contact_cases(self):
+        f = asm3.publishers.petnecto
+        for label, given, want in CONTACT_CASES:
+            with self.subTest(label):
+                got = f.drop_contacts(given)
+                self.assertEqual(want, got)
+                self.assertFalse(f.has_contact(got))
+                self.assertIsNone(UNCLEAN.search(re.sub(r"\n+", " ", got)) if got else None, got)
+
+    def test_text_without_contacts_is_untouched(self):
+        f = asm3.publishers.petnecto
+        for t in CONTACT_KEEP:
+            with self.subTest("K1 untouched: %s" % t[:40]):
+                self.assertFalse(f.has_contact(t))
+                self.assertEqual(t, f.drop_contacts(t))
+                self.assertEqual((t, False), f.clean_text(t))
+
+    def test_hostile_and_huge_input(self):
+        f = asm3.publishers.petnecto
+        with self.subTest("H1 hostile input does not make the patterns backtrack for long"):
+            huge = ("a." * 4000 + " at " + "b." * 4000 + " dot ") * 2 + "x" * 2000
+            t0 = time.time()
+            f.drop_contacts(huge)
+            f.has_contact(huge)
+            many = " ".join([ "Pup %d likes walks. Write to pup%d@example.org and we will reply." % (i, i) for i in range(400) ])
+            out = f.drop_contacts(many)
+            ms = (time.time() - t0) * 1000
+            self.assertLess(ms, 3000, "took %d ms" % ms)
+            self.assertNotIn("@", out)
+            self.assertNotIn("Write to", out)
+            self.assertEqual(401, len(out.split("likes walks.")))
+        with self.subTest("H2 empty and blank text stays empty"):
+            for t in ("", "   ", "\n\n\n", None):
+                self.assertEqual("", f.drop_contacts(t))
+        with self.subTest("H3 a phone hidden behind a right-to-left override still goes"):
+            self.assertEqual("Nice cat.", f.drop_contacts("‮Call 417-555-0100‬. Nice cat."))
+        with self.subTest("H4 a number split across two sentences withholds the description"):
+            t, removed = f.clean_text("Call 417. 555-0100 any day.")
+            self.assertEqual(("", True), (t, removed))
