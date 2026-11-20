@@ -13,6 +13,7 @@ import unittests.test_animal
 import unittests.test_automail
 import unittests.test_checkmicrochip
 import unittests.test_clinic
+import unittests.test_cron
 import unittests.test_csvimport
 import unittests.test_dbfs
 import unittests.test_dbupdate
@@ -87,6 +88,7 @@ fullsuite = [
     lt(unittests.test_automail),
     lt(unittests.test_checkmicrochip),
     lt(unittests.test_clinic),
+    lt(unittests.test_cron),
     lt(unittests.test_csvimport),
     lt(unittests.test_dbfs),
     lt(unittests.test_dbupdate),

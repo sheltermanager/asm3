@@ -2,8 +2,11 @@
 
 import os, sys
 
+# The path to the folder containing the ASM3 modules
+PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
+
 # Add our modules to the sys.path
-sys.path.append(os.getcwd())
+sys.path.append(PATH)
 
 from asm3 import automail
 from asm3 import animalcontrol
@@ -505,7 +508,7 @@ def run(dbo: Database, mode: str) -> None:
         dbo.locale = configuration.locale(dbo) 
         dbo.timezone = configuration.timezone(dbo)
         dbo.timezone_dst = configuration.timezone_dst(dbo)
-    dbo.installpath = os.getcwd() + os.sep
+    dbo.installpath = PATH
     al.debug("set locale and timezone for database: %s, %d" % (dbo.locale, dbo.timezone), "cron", dbo)
     if mode == "all":
         daily(dbo)
