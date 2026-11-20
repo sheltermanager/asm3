@@ -351,14 +351,19 @@ $(function() {
                             }
                         ]}, 
                     { id: "tab-petnecto", title: "Petnecto", classes: 'haspetnecto', 
-                        info: _("Get a token at") + ' <a target="_blank" href="https://petnecto.com/shelters/join">petnecto.com</a>. ' + 
-                            _("Petnecto is sent each animal's name, species, breed, sex, age, size, colour, description and photo links. No owner, adopter or contact details are sent."), 
+                        info: 'Make your token at <a target="_blank" href="https://petnecto.com/account/software">petnecto.com/account/software</a>, ' + 
+                            'the private page linked from your Petnecto invitation.<br />' + 
+                            'Petnecto is sent each adoptable animal\'s code, name, species, breed, sex, date of birth and age, size, colour, neutered, ' + 
+                            'good with dogs, cats and children, date brought in, ' + 
+                            'description and photo links. Email addresses, phone numbers and social handles are taken out of the description, ' + 
+                            'and no owner, adopter or other person\'s details are ever sent.', 
                         fields: [
                             { id: "enabledpn", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
-                            { id: "pnshelterid", post_field: "PetnectoShelterID", label: _("Petnecto shelter ID"), type: "text", 
-                                callout: _("Petnecto gives you a shelter ID (it starts with sh_) and a token (it starts with pnp_) when you sign up.") }, 
-                            { id: "pntoken", post_field: "PetnectoToken", label: _("Petnecto token"), type: "text", 
-                                callout: _("The token is for this shelter only. It is not your ASM login or an ASM API key. You can ask Petnecto to cancel it at any time.") }
+                            { id: "pnshelterid", post_field: "PetnectoShelterID", label: 'Petnecto Shelter ID', type: "text", 
+                                callout: 'Your shelter ID on Petnecto. It starts with sh_' }, 
+                            { id: "pntoken", post_field: "PetnectoToken", label: 'Petnecto Token', type: "text", 
+                                callout: 'The token starts with pnp_ and is for this shelter only. It is not your ASM login or an ASM API key. ' + 
+                                    'You can revoke it at petnecto.com/account/software at any time, and Petnecto takes your animals down.' }
                         ]
                     }, 
                     { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', 
