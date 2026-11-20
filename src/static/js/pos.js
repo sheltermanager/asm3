@@ -32,7 +32,8 @@ $(function() {
             this.multiplier = 1;
             this.refund = false;
             this.numpadlocked = true;
-            this.lastkeypress = new Date();
+            this.chrome = false;
+            if ( window.chrome ) { this.chrome = true; }
             this.mode = "idle";
         },
 
@@ -228,6 +229,15 @@ $(function() {
                     $("#findpad").addClass("hidden");
                     $("#findreceipt").addClass("hidden");
                     console.log("Touch device - hiding");
+                }
+                if ( pos.chrome ) {
+                    $("#postopleftpanel").css("max-height", "90vh");
+                    $("#infopanel").css("height", "40vh");
+                    $("#poscontainer").css("height", "90vh");
+                    $("#poscontainer").css("min-height", "90vh");
+                    $("#poscontainer").css("max-height", "90vh");
+                    $("#poscontainer").css("max-height", "90vh");
+                    $("#posbarcodeinputoverlay").css("height", "90vh");
                 }
             }
         },
@@ -429,7 +439,6 @@ $(function() {
 
         sync: function() {
             $("body").css("margin", 0);
-            // $("html").css("max-height", "100vh");
             $("#currentreceiptitemcontainer").hide();
             $("#asm-topline").hide();
             $("#quicklinks").hide();
