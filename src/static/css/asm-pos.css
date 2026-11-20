@@ -276,6 +276,7 @@ html {
     /* height: 50vh;
     min-height: 50vh; */
     overflow: auto;
+    background-color: yellow;
 }
 
 #producttypes, #taxrates {
@@ -522,6 +523,7 @@ html {
     }
     .fullheight {
         height: auto;
+        min-height: 0;
     }
 }
 

@@ -447,7 +447,6 @@ $(function() {
             $("#producttypes").hide();
             $("#posprintreceiptbutton").hide();
             $("#infopanel").hide();
-            
             // $("#numpadscreen").hide();
         },
 
