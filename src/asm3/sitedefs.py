@@ -307,6 +307,8 @@ PETCO_LOVELOST_DEBUG = get_boolean("petco_lovelost_debug", False)
 PETFBI_FTP_HOST = get_string("petfbi_ftp_host", "petfiles.petfbi.org")
 PETFINDER_FTP_HOST = get_string("petfinder_ftp_host", "members.petfinder.com")
 PETFINDER_SEND_PHOTOS_BY_FTP = get_boolean("petfinder_send_photos_by_ftp", True)
+# The base URL of the Petnecto receiving service, eg: https://petnecto.com (no trailing slash). Empty (the default) leaves the Petnecto publisher switched off.
+PETNECTO_URL = get_string("petnecto_url", "")
 PETRESCUE_URL = get_string("petrescue_url", "")
 RESCUEGROUPS_FTP_HOST = get_string("rescuegroups_ftp_host", "ftp.rescuegroups.org")
 SAVOURLIFE_API_KEY = get_string("savourlife_api_key", "")

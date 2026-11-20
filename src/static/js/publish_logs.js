@@ -19,6 +19,7 @@ $(function() {
             "petfbi":           "PetFBI.org",
             "petfinder":        "petfinder.com",
             "petlink":          "petlink.net",
+            "petnecto":         "petnecto.com",
             "petrescue":        "petrescue.com.au",
             "petslocateduk":    "petslocated.co.uk",
             "pettracuk":        "AVID PETtrac",

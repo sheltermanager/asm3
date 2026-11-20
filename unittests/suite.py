@@ -30,6 +30,7 @@ import unittests.test_movement
 import unittests.test_onlineform
 import unittests.test_paymentprocessor
 import unittests.test_person
+import unittests.test_petnecto
 import unittests.test_publish
 import unittests.test_reports
 import unittests.test_search
@@ -104,6 +105,7 @@ fullsuite = [
     lt(unittests.test_onlineform),
     lt(unittests.test_paymentprocessor),
     lt(unittests.test_person),
+    lt(unittests.test_petnecto),
     lt(unittests.test_publish),
     lt(unittests.test_reports),
     lt(unittests.test_search),
