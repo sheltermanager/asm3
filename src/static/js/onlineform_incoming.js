@@ -523,7 +523,7 @@ $(function() {
             common.widget_destroy("#dialog-attach-person");
             common.widget_destroy("#attachanimal", "animalchooser");
             common.widget_destroy("#attachperson", "personchooser");
-            onlineform_incoming.remove_processed(); 
+            onlineform_incoming.remove_processed();
         },
 
         name: "onlineform_incoming",
