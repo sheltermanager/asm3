@@ -350,6 +350,22 @@ $(function() {
                                 type: "select", options: html.list_to_options(controller.flags, "FLAG", "FLAG") 
                             }
                         ]}, 
+                    { id: "tab-petnecto", title: "Petnecto", classes: 'haspetnecto', 
+                        info: 'Make your token at <a target="_blank" href="https://petnecto.com/account/software">petnecto.com/account/software</a>, ' + 
+                            'the private page linked from your Petnecto invitation.<br />' + 
+                            'Petnecto is sent each adoptable animal\'s code, name, species, breed, sex, date of birth and age, size, colour, neutered, ' + 
+                            'good with dogs, cats and children, date brought in, ' + 
+                            'description and photo links. Email addresses, phone numbers and social handles are taken out of the description, ' + 
+                            'and no owner, adopter or other person\'s details are ever sent.', 
+                        fields: [
+                            { id: "enabledpn", label: _("Enabled"), type: "check", classes: 'enablecheck' }, 
+                            { id: "pnshelterid", post_field: "PetnectoShelterID", label: 'Petnecto Shelter ID', type: "text", 
+                                callout: 'Your shelter ID on Petnecto. It starts with sh_' }, 
+                            { id: "pntoken", post_field: "PetnectoToken", label: 'Petnecto Token', type: "text", 
+                                callout: 'The token starts with pnp_ and is for this shelter only. It is not your ASM login or an ASM API key. ' + 
+                                    'You can revoke it at petnecto.com/account/software at any time, and Petnecto takes your animals down.' }
+                        ]
+                    }, 
                     { id: "tab-petrescue", title: "PetRescue.com.au", classes: 'localeau haspetrescue', 
                         info: 'Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>', 
                         fields: [
@@ -681,6 +697,7 @@ $(function() {
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
             if (!controller.haspetcademy) { $(".haspetcademy").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
+            if (!controller.haspetnecto) { $(".haspetnecto").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
             if (!controller.hassac) { $(".hassac").hide(); }

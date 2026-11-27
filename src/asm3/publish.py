@@ -22,6 +22,7 @@ import asm3.publishers.petcademy
 import asm3.publishers.petcolovelost 
 import asm3.publishers.petfinder
 import asm3.publishers.petlink
+import asm3.publishers.petnecto
 import asm3.publishers.petrescue
 import asm3.publishers.petslocateduk
 import asm3.publishers.pettracuk
@@ -76,6 +77,12 @@ PUBLISHER_LIST["pr"] = {
     "label":    "Publish to PetRescue.com.au",
     "class":    asm3.publishers.petrescue.PetRescuePublisher,
     "locales":  "en_AU",
+    "sub24hour": True
+}
+PUBLISHER_LIST["pn"] = {
+    "label":    "Publish to Petnecto",
+    "class":    asm3.publishers.petnecto.PetnectoPublisher,
+    "locales":  "en en_GB en_CA fr_CA en_AU",
     "sub24hour": True
 }
 PUBLISHER_LIST["sac"] = {
