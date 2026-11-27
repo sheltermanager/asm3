@@ -445,12 +445,12 @@ html {
     }
     #poscontainer {
         display: block;
-        height: 100vh !important;
-        min-height: 100vh !important;
-        max-height: 100vh !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        max-height: 100dvh !important;
     }
     #infopanel {
-        max-height: 50vh !important;
+        max-height: 50dvh !important;
     }
 }
 

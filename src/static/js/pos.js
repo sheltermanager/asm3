@@ -230,15 +230,15 @@ $(function() {
                     $("#findreceipt").addClass("hidden");
                     console.log("Touch device - hiding");
                 }
-                if ( pos.chrome ) {
-                    $("#postopleftpanel").css("max-height", "90vh");
-                    $("#infopanel").css("height", "40vh");
-                    $("#poscontainer").css("height", "90vh");
-                    $("#poscontainer").css("min-height", "90vh");
-                    $("#poscontainer").css("max-height", "90vh");
-                    $("#poscontainer").css("max-height", "90vh");
-                    $("#posbarcodeinputoverlay").css("height", "90vh");
-                }
+                // if ( pos.chrome ) {
+                //     $("#postopleftpanel").css("max-height", "90vh");
+                //     $("#infopanel").css("height", "40vh");
+                //     $("#poscontainer").css("height", "90vh");
+                //     $("#poscontainer").css("min-height", "90vh");
+                //     $("#poscontainer").css("max-height", "90vh");
+                //     $("#poscontainer").css("max-height", "90vh");
+                //     $("#posbarcodeinputoverlay").css("height", "90vh");
+                // }
             }
         },
 
