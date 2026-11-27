@@ -30,15 +30,15 @@ html {
     display: flex;
     font-size: 150%;
     width: 100vw;
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 100dvh;
+    height: 100dvh;
     overflow: auto;
 }
 
 #receipt {
     display: block;
-    min-height: calc(100vh - 800px);
-    max-height: calc(100vh - 800px);
+    min-height: calc(100dvh - 800px);
+    max-height: calc(100dvh - 800px);
     overflow: auto;
 }
 
@@ -87,9 +87,9 @@ html {
 }
 
 .fullheight {
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
 }
 
 .posbuttoncontainer {
