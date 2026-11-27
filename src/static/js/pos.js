@@ -49,7 +49,7 @@ $(function() {
                 '<div id="poscontainer" class="fullheight" style="background-color: #eeeeee;">',
                     '<div id="posleftpanel" style="flex: 100%;">',
                         '<div id="posmenupanel">',
-                            '<h1 id="posmenutitle">' + _("ASM Point of Sale") + '</h1>',
+                            '<h1 id="posmenutitle">' + _("ASM Point of Sale") + " (Chrome: " + common.modules["pos"].chrome + ')</h1>',
                             '<div id="posstartbutton" class="posbuttoncontainer posmenubutton">',
                                 '<div class="posbutton" style="background-color: green; color: white;">',
                                     '<div style="display: inline-block;">', 
