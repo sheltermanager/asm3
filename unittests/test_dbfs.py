@@ -59,6 +59,47 @@ class TestDBFS(unittest.TestCase):
             asm3.dbfs.rename_document_repository(base.get_dbo(), "/document_repositoryx", "nopic.jpg", "renamed.jpg")
         self.assertNotEqual(0, len(asm3.dbfs.get_string_filepath(base.get_dbo(), "/reports/nopic.jpg")))
 
+    def test_rename_with_relative_path(self):
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/document_repository/move.txt", b"content")
+        asm3.dbfs.rename_document_repository(base.get_dbo(), "/document_repository", "move.txt", "sub/moved.txt")
+        self.assertEqual(b"content", asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/sub/moved.txt"))
+        self.assertFalse(asm3.dbfs.file_exists(base.get_dbo(), "move.txt", "/document_repository"))
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/document_repository/sub/moved.txt")
+
+    def test_rename_with_absolute_path(self):
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/document_repository/absmove.txt", b"content")
+        asm3.dbfs.rename_document_repository(base.get_dbo(), "/document_repository", "absmove.txt", "/document_repository/absdir/absmoved.txt")
+        self.assertEqual(b"content", asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/absdir/absmoved.txt"))
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/document_repository/absdir/absmoved.txt")
+
+    def test_rename_path_traversal_rejected(self):
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/document_repository/trav.txt", b"content")
+        with self.assertRaises(asm3.utils.ASMValidationError):
+            asm3.dbfs.rename_document_repository(base.get_dbo(), "/document_repository", "trav.txt", "../travmoved.txt")
+        # The file must remain in its original location
+        self.assertEqual(b"content", asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/trav.txt"))
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/document_repository/trav.txt")
+
+    def test_rename_in_subfolder_preserves_path(self):
+        asm3.dbfs.put_string_filepath(base.get_dbo(), "/document_repository/keepdir/keep.txt", b"content")
+        asm3.dbfs.rename_document_repository(base.get_dbo(), "/document_repository/keepdir", "keep.txt", "kept.txt")
+        self.assertEqual(b"content", asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/keepdir/kept.txt"))
+        self.assertFalse(asm3.dbfs.file_exists(base.get_dbo(), "keep.txt", "/document_repository/keepdir"))
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/document_repository/keepdir/kept.txt")
+
+    def test_rename_file_id_with_path(self):
+        dbfsid = asm3.dbfs.put_string_filepath(base.get_dbo(), "/document_repository/idmove.txt", b"content")
+        asm3.dbfs.rename_file_id(base.get_dbo(), dbfsid, "idnew/idmoved.txt")
+        self.assertEqual(b"content", asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/idnew/idmoved.txt"))
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/document_repository/idnew/idmoved.txt")
+
+    def test_rename_blank_name_rejected(self):
+        dbfsid = asm3.dbfs.put_string_filepath(base.get_dbo(), "/document_repository/blank.txt", b"content")
+        with self.assertRaises(asm3.utils.ASMValidationError):
+            asm3.dbfs.rename_file_id(base.get_dbo(), dbfsid, "   ")
+        self.assertEqual(b"content", asm3.dbfs.get_string_filepath(base.get_dbo(), "/document_repository/blank.txt"))
+        asm3.dbfs.delete_filepath(base.get_dbo(), "/document_repository/blank.txt")
+
     def test_get_report_images(self):
         self.assertNotEqual(0, len(asm3.dbfs.get_report_images(base.get_dbo())))
 
